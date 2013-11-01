@@ -6,7 +6,7 @@ namespace test
 {
 	class MainClass
 	{
-		public static void Main (string[] args)
+		public static void Main(string[] args)
 		{
 			bool create = false;
 

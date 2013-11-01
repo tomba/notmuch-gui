@@ -41,7 +41,7 @@ namespace NotMuch
 		{
 			Native.notmuch_database_destroy(m_ptr);
 		}
-		
+
 		Database(IntPtr ptr)
 			: base(ptr)
 		{
