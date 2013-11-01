@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public class Database : Disposable
+	public class Database : DisposableBase
 	{
 		public static Database Create(string path)
 		{
@@ -39,7 +39,7 @@ namespace NotMuch
 
 		protected override void DestroyHandle()
 		{
-			Native.notmuch_database_destroy(m_ptr);
+			Native.notmuch_database_destroy(this.Handle);
 		}
 
 		Database(IntPtr ptr)
@@ -51,7 +51,7 @@ namespace NotMuch
 		{
 			get
 			{
-				IntPtr p = Native.notmuch_database_get_path(m_ptr);
+				IntPtr p = Native.notmuch_database_get_path(this.Handle);
 				return Marshal.PtrToStringAnsi(p);
 			}
 		}

@@ -39,7 +39,8 @@
     <Compile Include="Native.cs" />
     <Compile Include="Query.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="Disposable.cs" />
+    <Compile Include="DisposableBase.cs" />
+    <Compile Include="Messages.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,21 +3,42 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public class Query
+	public class Query : DisposableBase
 	{
-		public Query(Database db, string queryString)
+		public static Query Create(Database db, string queryString)
 		{
 			IntPtr query = Native.notmuch_query_create(db.Handle, queryString);
 
-			IntPtr msgs = Native.notmuch_query_search_messages(query);
+			return new Query(query);
+		}
 
-			while (Native.notmuch_messages_valid(msgs))
+		Query(IntPtr handle)
+			: base(handle)
+		{
+		}
+
+		public Messages Search()
+		{
+			IntPtr msgsP = Native.notmuch_query_search_messages(this.Handle);
+
+			return new Messages(msgsP);
+		}
+
+		public void Run()
+		{
+			var msgs = Search();
+
+			foreach (var msg in msgs)
 			{
-				Console.WriteLine("loop");
+				var fn = msg.FileName;
+				var from = msg.GetHeader("From");
 
-				var msgP = Native.notmuch_messages_get(msgs);
-
-				var msg = new Message(msgP);
+				Console.WriteLine("{0}, {1}", fn, from);
+			}
+			/*
+			while (msgs.Valid)
+			{
+				var msg = msgs.Current;
 
 				var fn = msg.FileName;
 
@@ -25,11 +46,15 @@ namespace NotMuch
 
 				msg.Dispose();
 
-				Native.notmuch_messages_move_to_next(msgs);
+				msgs.Next();
 			}
+*/
+			//msgs.Dispose();
+		}
 
-			Native.notmuch_query_destroy(query);
+		protected override void DestroyHandle()
+		{
+			Native.notmuch_query_destroy(this.Handle);
 		}
 	}
 }
-

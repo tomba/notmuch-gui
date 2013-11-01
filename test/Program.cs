@@ -28,8 +28,11 @@ namespace test
 
 			Console.WriteLine("path {0}", db.Path);
 
-			var q = new Query(db, "tomi");
+			var q = Query.Create(db, "tomi");
 
+			q.Run();
+
+			q.Dispose();
 
 			db.Dispose();
 		}

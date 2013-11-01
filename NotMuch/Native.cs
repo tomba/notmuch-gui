@@ -43,6 +43,9 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_message_get_filename(IntPtr message);
+
+		[DllImport("libnotmuch")]
+		public static extern IntPtr notmuch_message_get_header(IntPtr message, string header);
 	}
 
 	public enum DatabaseMode
