@@ -2,10 +2,12 @@ using System;
 using Gtk;
 using NotMuch;
 using System.IO;
+using WebKit;
 
 public partial class MainWindow: Gtk.Window
 {
 	Database m_db;
+	WebKit.WebView m_view;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -14,8 +16,26 @@ public partial class MainWindow: Gtk.Window
 		SetupQueryList();
 		SetupMailList();
 
-		var path = "/home/tomba/tmp/nm-db";
+		var path = "/home/tomba/Maildir";
 		m_db = Database.Open(path, DatabaseMode.READ_ONLY);
+
+		/*
+		var webView = new WebKit.WebView();
+		webView.Open("http://mono-project.com");
+		//webView.LoadString();
+		webView.Editable = false;
+		vpaned1.Add(webView);
+*/
+		ScrolledWindow scrollWindow = new ScrolledWindow();
+		scrollWindow.HeightRequest = 200;
+		var webView = new WebKit.WebView();
+		//webView.Open("http://mono-project.com");
+		webView.Editable = false;
+		scrollWindow.Add(webView);
+		vpaned1.Add(scrollWindow);
+		scrollWindow.ShowAll();
+
+		m_view = webView;
 	}
 
 	protected override void OnDestroyed()
@@ -117,13 +137,163 @@ public partial class MainWindow: Gtk.Window
 
 			var filename = model.GetValue(iter, 2).ToString();
 
-			var text = File.ReadAllText(filename);
-
-			textview1.Buffer.Text = text;
+			ShowEmail(filename);
 		}
 		else
 		{
-			textview1.Buffer.Clear();
+			//textview1.Buffer.Clear();
 		}
+	}
+
+	void DumpStructure(GMime.Entity ent)
+	{
+		if (ent.ContentType != null)
+			Console.WriteLine("{0}: {1}", ent.GetType(), ent.ContentType.ToString());
+		else
+			Console.WriteLine("{0}: none", ent.GetType());
+
+		if (ent is GMime.Message)
+		{
+			var msg = (GMime.Message)ent;
+
+			DumpStructure(msg.MimePart);
+		}
+		else if (ent is GMime.Multipart)
+		{
+			var mp = (GMime.Multipart)ent;
+
+			foreach (GMime.Entity part in mp)
+				DumpStructure(part);
+		}
+		else if (ent is GMime.Part)
+		{
+			var part = (GMime.Part)ent;
+		}
+		else
+		{
+			throw new Exception();
+		}
+	}
+
+	GMime.Part FindFirstContent(GMime.Entity ent, GMime.ContentType ct)
+	{
+		if (ent is GMime.Message)
+		{
+			var msg = (GMime.Message)ent;
+
+			return FindFirstContent(msg.MimePart, ct);
+		}
+		else if (ent is GMime.Multipart)
+		{
+			var mp = (GMime.Multipart)ent;
+
+			foreach (GMime.Entity part in mp)
+			{
+				var p = FindFirstContent(part, ct);
+				if (p != null)
+					return p;
+			}
+
+			return null;
+		}
+		else if (ent is GMime.Part)
+		{
+			var part = (GMime.Part)ent;
+
+			if (part.ContentType.IsType(ct.MediaType, ct.MediaSubtype))
+				return part;
+			else
+				return null;
+		}
+		else
+		{
+			throw new Exception();
+		}
+	}
+
+	void ShowEmail(string filename)
+	{
+		var text = File.ReadAllText(filename);
+
+		var stream = new GMime.StreamMem(text);
+
+		var p = new GMime.Parser(stream);
+		var msg = p.ConstructMessage();
+
+		DumpStructure(msg);
+
+		var textpart = FindFirstContent(msg, new GMime.ContentType("text", "plain"));
+
+		if (textpart == null)
+		{
+			textpart = FindFirstContent(msg, new GMime.ContentType("text", "html"));
+			if (textpart == null)
+				throw new Exception();
+		}
+
+		//var textpart = msg.Body;
+
+		AddText(textpart);
+
+		//var wqeqw = stream2.();
+
+		//m_view.LoadString(wqeqw, "text/plain", null, null);
+		//m_view.LoadHtmlString(text, null);
+		//textview1.Buffer.Text = text;
+	}
+
+	enum HtmlFilterFlags
+	{
+		PRE = 1 << 0,
+		CONVERT_NL = 1 << 1,
+		CONVERT_SPACES = 1 << 2,
+		CONVERT_URLS = 1 << 3,
+		MARK_CITATION = 1 << 4,
+		CONVERT_ADDRESSES = 1 << 5,
+		ESCAPE_8BIT = 1 << 6,
+		CITE = 1 << 7,
+	}
+
+	void AddText(GMime.Part part)
+	{
+		var memstream = new GMime.StreamMem();
+
+		var filterstream = new GMime.StreamFilter(memstream);
+
+		bool filt = false;
+
+		if (filt)
+		{
+			var flags = 0
+		            //| HtmlFilterFlags.PRE
+			            | HtmlFilterFlags.CONVERT_NL
+			            | HtmlFilterFlags.MARK_CITATION;
+			filterstream.Add(new GMime.FilterHTML((uint)flags, 0xff0000));
+		}
+
+		part.ContentObject.WriteToStream(filterstream);
+
+		//msg.ContentType.IsType("text", "*") && !msg.ContentType.IsType("text", "html")
+		/*
+		var sw = new GMime.StreamWrapper(stream2);
+		sw.Position = 0;
+		var texti = new StreamReader(sw).ReadToEnd();
+*/
+
+		byte[] arr = new byte[(int)memstream.Length];
+		memstream.Seek(0);
+		memstream.Read(arr, (uint)memstream.Length);
+
+		var cs = part.ContentType.GetParameter("charset");
+
+		var encoding = System.Text.Encoding.GetEncoding(cs);
+		var texti = encoding.GetString(arr);
+
+		//var texti = System.Text.ASCIIEncoding.ASCII.GetString(arr);
+
+		var ct = part.ContentType.ToString();
+		var ce = part.ContentEncoding.ToString();
+
+		m_view.LoadString(texti, ct, null, null);
 	}
 }

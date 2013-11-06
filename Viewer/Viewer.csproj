@@ -51,6 +51,12 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Mono.Posix" />
+    <Reference Include="webkit-sharp">
+      <HintPath>..\..\..\..\usr\lib\cli\webkit-sharp-1.1\webkit-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gmime-sharp">
+      <HintPath>..\..\..\..\usr\lib\cli\gmime-sharp-2.6\gmime-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">

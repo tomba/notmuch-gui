@@ -9,8 +9,6 @@ public partial class MainWindow
 	private global::Gtk.VPaned vpaned1;
 	private global::Gtk.ScrolledWindow GtkScrolledWindow1;
 	private global::Gtk.TreeView treeviewList;
-	private global::Gtk.ScrolledWindow GtkScrolledWindow2;
-	private global::Gtk.TextView textview1;
 
 	protected virtual void Build ()
 	{
@@ -39,7 +37,6 @@ public partial class MainWindow
 		// Container child hpaned1.Gtk.Paned+PanedChild
 		this.vpaned1 = new global::Gtk.VPaned ();
 		this.vpaned1.CanFocus = true;
-		this.vpaned1.Name = "vpaned1";
 		this.vpaned1.Position = 332;
 		// Container child vpaned1.Gtk.Paned+PanedChild
 		this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow ();
@@ -53,16 +50,6 @@ public partial class MainWindow
 		this.vpaned1.Add (this.GtkScrolledWindow1);
 		global::Gtk.Paned.PanedChild w4 = ((global::Gtk.Paned.PanedChild)(this.vpaned1 [this.GtkScrolledWindow1]));
 		w4.Resize = false;
-		// Container child vpaned1.Gtk.Paned+PanedChild
-		this.GtkScrolledWindow2 = new global::Gtk.ScrolledWindow ();
-		this.GtkScrolledWindow2.Name = "GtkScrolledWindow2";
-		this.GtkScrolledWindow2.ShadowType = ((global::Gtk.ShadowType)(1));
-		// Container child GtkScrolledWindow2.Gtk.Container+ContainerChild
-		this.textview1 = new global::Gtk.TextView ();
-		this.textview1.CanFocus = true;
-		this.textview1.Name = "textview1";
-		this.GtkScrolledWindow2.Add (this.textview1);
-		this.vpaned1.Add (this.GtkScrolledWindow2);
 		this.hpaned1.Add (this.vpaned1);
 		this.Add (this.hpaned1);
 		if ((this.Child != null)) {
