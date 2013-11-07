@@ -3,15 +3,13 @@ using System.Collections.Generic;
 
 namespace NotMuch
 {
-	public class Messages : DisposableBase, IEnumerable<Message>
+	public struct Messages : IEnumerable<Message>
 	{
-		public Messages(IntPtr handle)
-			: base(handle)
-		{
-		}
+		internal IntPtr Handle;
 
-		protected override void DestroyHandle()
+		public Messages(IntPtr handle)
 		{
+			this.Handle = handle;
 		}
 
 		public bool Valid { get { return Native.notmuch_messages_valid(this.Handle); } }
@@ -62,12 +60,6 @@ namespace NotMuch
 
 			public bool MoveNext()
 			{
-				if (m_cur != null)
-				{
-					m_cur.Dispose();
-					m_cur = null;
-				}
-
 				if (m_valid)
 					m_msgs.Next();
 				else
@@ -103,11 +95,6 @@ namespace NotMuch
 
 			public void Dispose()
 			{
-				if (m_cur != null)
-				{
-					m_cur.Dispose();
-					m_cur = null;
-				}
 			}
 
 			#endregion

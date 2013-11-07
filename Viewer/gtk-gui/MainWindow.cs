@@ -15,6 +15,7 @@ public partial class MainWindow
 	private global::Gtk.Statusbar statusbar2;
 	private global::Gtk.Label label1;
 	private global::Gtk.Label label2;
+	private global::Gtk.Label label3;
 
 	protected virtual void Build ()
 	{
@@ -99,11 +100,21 @@ public partial class MainWindow
 		w10.Position = 2;
 		w10.Expand = false;
 		w10.Fill = false;
-		this.vbox2.Add (this.statusbar2);
-		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar2]));
+		// Container child statusbar2.Gtk.Box+BoxChild
+		this.label3 = new global::Gtk.Label ();
+		this.label3.Name = "label3";
+		this.label3.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
+		this.statusbar2.Add (this.label3);
+		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label3]));
+		w11.PackType = ((global::Gtk.PackType)(1));
 		w11.Position = 3;
 		w11.Expand = false;
 		w11.Fill = false;
+		this.vbox2.Add (this.statusbar2);
+		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar2]));
+		w12.Position = 3;
+		w12.Expand = false;
+		w12.Fill = false;
 		this.Add (this.vbox2);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();

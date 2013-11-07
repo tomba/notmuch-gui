@@ -3,6 +3,7 @@ using Gtk;
 using NotMuch;
 using System.IO;
 using WebKit;
+using System.Diagnostics;
 
 public partial class MainWindow: Gtk.Window
 {
@@ -61,7 +62,7 @@ public partial class MainWindow: Gtk.Window
 		queryStore.AppendValues("ttlampopumppuhuolto");
 		queryStore.AppendValues("Tomi");
 		queryStore.AppendValues("from:ti.com");
-		queryStore.AppendValues("Test3");
+		queryStore.AppendValues("");
 	}
 
 	void SetupMailList()
@@ -96,24 +97,63 @@ public partial class MainWindow: Gtk.Window
 		// THE ITER WILL POINT TO THE SELECTED ROW
 		if (selection.GetSelected(out model, out iter))
 		{
+			long t1, t2, t3, t4;
+
+			var sw = Stopwatch.StartNew();
+
 			//Console.WriteLine("Selected Value:" + model.GetValue(iter, 0).ToString() + model.GetValue(iter, 1).ToString());
 
 			var queryString = model.GetValue(iter, 0).ToString();
 
 			var q = Query.Create(m_db, queryString);
 
-			var msgs = q.Search();
+			var msgs = q.SearchMessages();
 
-			foreach (var msg in msgs)
+			t1 = sw.ElapsedMilliseconds;
+			sw.Restart();
+
+			const int max = 5000;
+			int count = 0;
+
+			treeviewList.FreezeChildNotify();
+
+			while (msgs.Valid)
 			{
+				var msg = msgs.Current;
+
 				var filename = msg.FileName;
 				var from = msg.GetHeader("From");
 				var subject = msg.GetHeader("Subject");
 
 				m_mailStore.AppendValues(from, subject, filename);
+
+				count++;
+
+				if (count >= max)
+				{
+					Console.WriteLine("aborting search, max count reached");
+					break;
+				}
+
+				msgs.Next();
 			}
 
+			treeviewList.ThawChildNotify();
+
+			t2 = sw.ElapsedMilliseconds;
+			sw.Restart();
+
+			label3.Text = String.Format("{0}/{1} msgs", count.ToString(), q.Count);
+
+			t3 = sw.ElapsedMilliseconds;
+			sw.Restart();
+
 			q.Dispose();
+
+			t4 = sw.ElapsedMilliseconds;
+			sw.Stop();
+
+			Console.WriteLine("Added {0} messages in {1},{2},{3},{4} ms", count, t1, t2, t3, t4);
 		}
 	}
 

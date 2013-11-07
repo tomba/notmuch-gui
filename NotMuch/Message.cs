@@ -3,14 +3,16 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public class Message : DisposableBase
+	public struct Message
 	{
-		internal Message(IntPtr ptr)
-            : base(ptr)
+		internal IntPtr Handle;
+
+		internal Message(IntPtr handle)
 		{
+			Handle = handle;
 		}
 
-		protected override void DestroyHandle()
+		public void DestroyHandle()
 		{
 			Native.notmuch_message_destroy(this.Handle);
 		}

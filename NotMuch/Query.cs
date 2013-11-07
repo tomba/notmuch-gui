@@ -17,39 +17,26 @@ namespace NotMuch
 		{
 		}
 
-		public Messages Search()
+		public int Count
+		{
+			get
+			{
+				return (int)Native.notmuch_query_count_messages(this.Handle);
+			}
+		}
+
+		public Messages SearchMessages()
 		{
 			IntPtr msgsP = Native.notmuch_query_search_messages(this.Handle);
 
 			return new Messages(msgsP);
 		}
 
-		public void Run()
+		public Threads SearchThreads()
 		{
-			var msgs = Search();
+			IntPtr msgsP = Native.notmuch_query_search_threads(this.Handle);
 
-			foreach (var msg in msgs)
-			{
-				var fn = msg.FileName;
-				var from = msg.GetHeader("From");
-
-				Console.WriteLine("{0}, {1}", fn, from);
-			}
-			/*
-			while (msgs.Valid)
-			{
-				var msg = msgs.Current;
-
-				var fn = msg.FileName;
-
-				Console.WriteLine(fn);
-
-				msg.Dispose();
-
-				msgs.Next();
-			}
-*/
-			//msgs.Dispose();
+			return new Threads(msgsP);
 		}
 
 		protected override void DestroyHandle()

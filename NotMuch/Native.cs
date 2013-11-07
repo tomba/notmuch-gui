@@ -27,7 +27,14 @@ namespace NotMuch
 		public static extern void notmuch_query_destroy(IntPtr query);
 
 		[DllImport("libnotmuch")]
+		public static extern uint notmuch_query_count_messages(IntPtr query);
+
+		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_query_search_messages(IntPtr query);
+
+		[DllImport("libnotmuch")]
+		public static extern IntPtr notmuch_query_search_threads(IntPtr query);
+
 		// Messages
 		[DllImport("libnotmuch")]
 		public static extern bool notmuch_messages_valid(IntPtr messages);
@@ -37,6 +44,7 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_messages_get(IntPtr messages);
+
 		// Message
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_message_destroy(IntPtr message);
@@ -46,6 +54,17 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_message_get_header(IntPtr message, string header);
+
+		// Threads
+		[DllImport("libnotmuch")]
+		public static extern bool notmuch_threads_valid(IntPtr threads);
+
+		[DllImport("libnotmuch")]
+		public static extern void notmuch_threads_move_to_next(IntPtr threads);
+
+		[DllImport("libnotmuch")]
+		public static extern IntPtr notmuch_threads_get(IntPtr threads);
+
 	}
 
 	public enum DatabaseMode
