@@ -4,6 +4,7 @@ using NotMuch;
 using System.IO;
 using WebKit;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 public partial class MainWindow: Gtk.Window
 {
@@ -86,6 +87,69 @@ public partial class MainWindow: Gtk.Window
 	{
 	}
 
+	void ProcessSearch(object data)
+	{
+		Console.WriteLine("Process in thread {0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
+
+		var queryString = (string)data;
+
+		long t1, t2, t3, t4;
+
+		var sw = Stopwatch.StartNew();
+
+		var q = Query.Create(m_db, queryString);
+
+		var msgs = q.SearchMessages();
+
+		t1 = sw.ElapsedMilliseconds;
+		sw.Restart();
+
+		const int max = 5000;
+		int count = 0;
+
+		treeviewList.FreezeChildNotify();
+
+		while (msgs.Valid)
+		{
+			var msg = msgs.Current;
+
+			var filename = msg.FileName;
+			var from = msg.GetHeader("From");
+			var subject = msg.GetHeader("Subject");
+
+			m_mailStore.AppendValues(from, subject, filename);
+
+			count++;
+
+			if (count >= max)
+			{
+				Console.WriteLine("aborting search, max count reached");
+				break;
+			}
+
+			msgs.Next();
+		}
+
+		treeviewList.ThawChildNotify();
+
+		t2 = sw.ElapsedMilliseconds;
+		sw.Restart();
+
+		label3.Text = String.Format("{0}/{1} msgs", count.ToString(), q.Count);
+
+		t3 = sw.ElapsedMilliseconds;
+		sw.Restart();
+
+		q.Dispose();
+
+		t4 = sw.ElapsedMilliseconds;
+		sw.Stop();
+
+		Console.WriteLine("Added {0} messages in {1},{2},{3},{4} ms", count, t1, t2, t3, t4);
+	}
+
+	Task m_queryTask;
+
 	protected void OnTreeviewSearchCursorChanged(object sender, EventArgs e)
 	{
 		m_mailStore.Clear();
@@ -97,63 +161,17 @@ public partial class MainWindow: Gtk.Window
 		// THE ITER WILL POINT TO THE SELECTED ROW
 		if (selection.GetSelected(out model, out iter))
 		{
-			long t1, t2, t3, t4;
-
-			var sw = Stopwatch.StartNew();
-
-			//Console.WriteLine("Selected Value:" + model.GetValue(iter, 0).ToString() + model.GetValue(iter, 1).ToString());
-
 			var queryString = model.GetValue(iter, 0).ToString();
 
-			var q = Query.Create(m_db, queryString);
+			var sc = System.Threading.SynchronizationContext.Current;
 
-			var msgs = q.SearchMessages();
+			Console.WriteLine("Main in thread {0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
 
-			t1 = sw.ElapsedMilliseconds;
-			sw.Restart();
-
-			const int max = 5000;
-			int count = 0;
-
-			treeviewList.FreezeChildNotify();
-
-			while (msgs.Valid)
-			{
-				var msg = msgs.Current;
-
-				var filename = msg.FileName;
-				var from = msg.GetHeader("From");
-				var subject = msg.GetHeader("Subject");
-
-				m_mailStore.AppendValues(from, subject, filename);
-
-				count++;
-
-				if (count >= max)
-				{
-					Console.WriteLine("aborting search, max count reached");
-					break;
-				}
-
-				msgs.Next();
-			}
-
-			treeviewList.ThawChildNotify();
-
-			t2 = sw.ElapsedMilliseconds;
-			sw.Restart();
-
-			label3.Text = String.Format("{0}/{1} msgs", count.ToString(), q.Count);
-
-			t3 = sw.ElapsedMilliseconds;
-			sw.Restart();
-
-			q.Dispose();
-
-			t4 = sw.ElapsedMilliseconds;
-			sw.Stop();
-
-			Console.WriteLine("Added {0} messages in {1},{2},{3},{4} ms", count, t1, t2, t3, t4);
+			m_queryTask = Task.Factory.StartNew(ProcessSearch, queryString);
+			m_queryTask.ContinueWith(t => {
+				Console.WriteLine("Finalize in thread {0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
+				m_queryTask = null;
+			}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 	}
 
