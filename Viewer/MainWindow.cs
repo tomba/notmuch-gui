@@ -70,9 +70,10 @@ public partial class MainWindow: Gtk.Window
 
 	void SetupMailList()
 	{
-		treeviewList.AppendColumn("From", new Gtk.CellRendererText(), "text", 0);
-		treeviewList.AppendColumn("Subject", new Gtk.CellRendererText(), "text", 1);
+		treeviewList.AppendColumn("From", new Gtk.CellRendererText(), "text", 1);
+		treeviewList.AppendColumn("Subject", new Gtk.CellRendererText(), "text", 2);
 
+		// id, from, subject
 		m_mailStore = new Gtk.ListStore(typeof(string), typeof(string), typeof(string));
 		treeviewList.Model = m_mailStore;
 	}
@@ -121,7 +122,7 @@ public partial class MainWindow: Gtk.Window
 			var from = msg.GetHeader("From");
 			var subject = msg.GetHeader("Subject");
 
-			mailStore.AppendValues(from, subject, id);
+			mailStore.AppendValues(id, from, subject);
 
 			count++;
 
@@ -201,7 +202,7 @@ public partial class MainWindow: Gtk.Window
 		// THE ITER WILL POINT TO THE SELECTED ROW
 		if (selection.GetSelected(out model, out iter))
 		{
-			var id = (string)model.GetValue(iter, 2);
+			var id = (string)model.GetValue(iter, 0);
 
 			var msgN = m_db.FindMessage(id);
 
