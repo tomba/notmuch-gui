@@ -12,7 +12,6 @@ public partial class MainWindow: Gtk.Window
 {
 	Database m_db;
 	WebKit.WebView m_webView;
-	Gtk.ListStore m_mailStore;
 	CancellationTokenSource m_cts;
 	Task m_queryTask;
 
@@ -33,7 +32,7 @@ public partial class MainWindow: Gtk.Window
 		m_db = Database.Open(path, DatabaseMode.READ_ONLY);
 
 		// select first items
-		//treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
+		treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
 	}
 
 	protected override void OnDestroyed()
@@ -91,13 +90,6 @@ public partial class MainWindow: Gtk.Window
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 150;
 		treeviewList.AppendColumn(c);
-
-		// id, from, subject
-		m_mailStore = new Gtk.ListStore(typeof(string), typeof(string), typeof(string));
-		//treeviewList.Model = m_mailStore;
-
-		treeviewList.Model = new TreeModelAdapter(new MyTreeModel());
-
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -128,7 +120,7 @@ public partial class MainWindow: Gtk.Window
 			Console.WriteLine("cancelling done");
 		}
 
-		m_mailStore.Clear();
+		treeviewList.Model = null;
 
 		if (!selection.GetSelected(out model, out iter))
 			return;
@@ -155,8 +147,12 @@ public partial class MainWindow: Gtk.Window
 		t1 = sw.ElapsedMilliseconds;
 		sw.Restart();
 
-		const int max = 10000;
+		const int max = 1000000;
 		int count = 0;
+
+		var model = new MyTreeModel(totalCount, q);
+
+		treeviewList.Model = new TreeModelAdapter(model);
 
 		while (msgs.Valid)
 		{
@@ -168,18 +164,14 @@ public partial class MainWindow: Gtk.Window
 
 			var msg = msgs.Current;
 
-			var id = msg.Id;
-			var from = msg.GetHeader("From");
-			var subject = msg.GetHeader("Subject");
-
-			m_mailStore.AppendValues(id, from, subject);
+			model.Append(msg);
 
 			if (count == 0)
 				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
 
 			count++;
 
-			if (count % 100 == 0)
+			//if (count % 100 == 0)
 			{
 				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), totalCount);
 
@@ -202,8 +194,6 @@ public partial class MainWindow: Gtk.Window
 		t2 = sw.ElapsedMilliseconds;
 		sw.Restart();
 
-		q.Dispose();
-
 		t3 = sw.ElapsedMilliseconds;
 		sw.Stop();
 
@@ -212,8 +202,6 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnTreeviewListCursorChanged(object sender, EventArgs e)
 	{
-		return;
-
 		TreeSelection selection = (sender as TreeView).Selection;
 		TreeModel model;
 		TreeIter iter;
