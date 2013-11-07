@@ -8,6 +8,9 @@ namespace Viewer
 		public static void Main(string[] args)
 		{
 			Application.Init();
+
+			System.Threading.SynchronizationContext.SetSynchronizationContext(new GLib.GLibSynchronizationContext());
+
 			MainWindow win = new MainWindow();
 			win.Show();
 
