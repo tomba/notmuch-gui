@@ -144,7 +144,7 @@ namespace Viewer
 			else
 				val = new GLib.Value(col == 0 ? (node as MemberInfo).Name : "Member");
 
-			Console.WriteLine("getval {0} {1}", cou++, col);
+			Console.WriteLine("getval {0} {1} {2}", cou++, col, node);
 		}
 
 		public bool IterNext(ref TreeIter iter)

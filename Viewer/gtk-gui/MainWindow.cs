@@ -53,6 +53,7 @@ public partial class MainWindow
 		this.treeviewList = new global::Gtk.TreeView ();
 		this.treeviewList.CanFocus = true;
 		this.treeviewList.Name = "treeviewList";
+		this.treeviewList.FixedHeightMode = true;
 		this.GtkScrolledWindow1.Add (this.treeviewList);
 		this.hpaned1.Add (this.GtkScrolledWindow1);
 		this.vbox2.Add (this.hpaned1);

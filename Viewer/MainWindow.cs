@@ -71,10 +71,26 @@ public partial class MainWindow: Gtk.Window
 	void SetupMailList()
 	{
 		treeviewList.FixedHeightMode = true;
-	
-		treeviewList.AppendColumn("Id", new Gtk.CellRendererText(), "text", 0);
-		treeviewList.AppendColumn("From", new Gtk.CellRendererText(), "text", 1);
-		treeviewList.AppendColumn("Subject", new Gtk.CellRendererText(), "text", 2);
+
+		TreeViewColumn c;
+
+		c = new TreeViewColumn("Id", new Gtk.CellRendererText(), "text", 0);
+		//c.Expand = true;
+		c.Sizing = TreeViewColumnSizing.Fixed;
+		c.FixedWidth = 150;
+		treeviewList.AppendColumn(c);
+
+		c = new TreeViewColumn("From", new Gtk.CellRendererText(), "text", 1);
+		//c.Expand = true;
+		c.Sizing = TreeViewColumnSizing.Fixed;
+		c.FixedWidth = 150;
+		treeviewList.AppendColumn(c);
+
+		c = new TreeViewColumn("Subject", new Gtk.CellRendererText(), "text", 2);
+		//c.Expand = false;
+		c.Sizing = TreeViewColumnSizing.Fixed;
+		c.FixedWidth = 150;
+		treeviewList.AppendColumn(c);
 
 		// id, from, subject
 		m_mailStore = new Gtk.ListStore(typeof(string), typeof(string), typeof(string));
