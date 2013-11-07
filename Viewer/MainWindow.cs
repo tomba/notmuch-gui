@@ -147,14 +147,11 @@ public partial class MainWindow: Gtk.Window
 
 	void DumpStructure(GMime.Entity ent)
 	{
-		if (ent.ContentType != null)
-			Console.WriteLine("{0}: {1}", ent.GetType(), ent.ContentType.ToString());
-		else
-			Console.WriteLine("{0}: none", ent.GetType());
-
 		if (ent is GMime.Message)
 		{
 			var msg = (GMime.Message)ent;
+
+			Console.WriteLine("{0}", ent.GetType());
 
 			DumpStructure(msg.MimePart);
 		}
@@ -162,12 +159,17 @@ public partial class MainWindow: Gtk.Window
 		{
 			var mp = (GMime.Multipart)ent;
 
+			Console.WriteLine("{0}", ent.GetType());
+
 			foreach (GMime.Entity part in mp)
 				DumpStructure(part);
 		}
 		else if (ent is GMime.Part)
 		{
 			var part = (GMime.Part)ent;
+			Console.WriteLine("{0}: {1}, {2}, {3}",
+				part.GetType(), part.ContentType.ToString(), part.ContentType.GetParameter("charset"),
+				part.ContentEncoding.ToString());
 		}
 		else
 		{
@@ -262,6 +264,8 @@ public partial class MainWindow: Gtk.Window
 
 		bool filt = false;
 
+		var charset = part.ContentType.GetParameter("charset");
+
 		if (filt)
 		{
 			var flags = 0
@@ -271,6 +275,8 @@ public partial class MainWindow: Gtk.Window
 			filterstream.Add(new GMime.FilterHTML((uint)flags, 0xff0000));
 		}
 
+		//filterstream.Add(new GMime.FilterBasic(part.ContentEncoding, true));
+		//filterstream.Add(new GMime.FilterCharset(charset, "utf-8"));
 		part.ContentObject.WriteToStream(filterstream);
 
 		//msg.ContentType.IsType("text", "*") && !msg.ContentType.IsType("text", "html")
@@ -284,15 +290,24 @@ public partial class MainWindow: Gtk.Window
 		memstream.Seek(0);
 		memstream.Read(arr, (uint)memstream.Length);
 
-		var cs = part.ContentType.GetParameter("charset");
 
-		var encoding = System.Text.Encoding.GetEncoding(cs);
+		var ct = part.ContentType.ToString();
+
+		label1.Text = ct;
+		label2.Text = charset;
+
+		for (int i = 0; i < arr.Length && i < 100; ++i)
+			Console.Write("{0}/{1:x} ", (char)arr[i], arr[i]);
+
+		var encoding = System.Text.Encoding.GetEncoding(charset);
+		encoding = System.Text.ASCIIEncoding.UTF8;
 		var texti = encoding.GetString(arr);
 
 		//var texti = System.Text.ASCIIEncoding.ASCII.GetString(arr);
 
-		var ct = part.ContentType.ToString();
-		var ce = part.ContentEncoding.ToString();
+		//var ce = part.ContentEncoding.ToString();
+
+		textview1.Buffer.Text = texti;
 
 		m_view.LoadString(texti, ct, null, null);
 	}

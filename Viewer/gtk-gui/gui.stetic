@@ -8,49 +8,30 @@
     <widget-library name="../../../../../usr/lib/cli/webkit-sharp-1.1/webkit-sharp.dll" />
     <widget-library name="../bin/Debug/Viewer.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="1216 735">
+  <widget class="Gtk.Window" id="MainWindow" design-size="997 646">
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
     <property name="WindowPosition">CenterOnParent</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
-      <widget class="Gtk.HPaned" id="hpaned1">
+      <widget class="Gtk.VBox" id="vbox2">
         <property name="MemberName" />
-        <property name="CanFocus">True</property>
-        <property name="Position">200</property>
+        <property name="Spacing">6</property>
         <child>
-          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
-            <property name="MemberName" />
-            <property name="ShadowType">In</property>
-            <child>
-              <widget class="Gtk.TreeView" id="treeviewSearch">
-                <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="ShowScrollbars">True</property>
-                <signal name="RowActivated" handler="OnTreeviewSearchRowActivated" />
-                <signal name="CursorChanged" handler="OnTreeviewSearchCursorChanged" />
-              </widget>
-            </child>
-          </widget>
-          <packing>
-            <property name="Resize">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.VPaned" id="vpaned1">
+          <widget class="Gtk.HPaned" id="hpaned1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Position">332</property>
+            <property name="Position">357</property>
             <child>
-              <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
+              <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
                 <property name="MemberName" />
                 <property name="ShadowType">In</property>
                 <child>
-                  <widget class="Gtk.TreeView" id="treeviewList">
+                  <widget class="Gtk.TreeView" id="treeviewSearch">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="ShowScrollbars">True</property>
-                    <signal name="CursorChanged" handler="OnTreeviewListCursorChanged" />
+                    <signal name="CursorChanged" handler="OnTreeviewSearchCursorChanged" />
                   </widget>
                 </child>
               </widget>
@@ -59,9 +40,92 @@
               </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.VPaned" id="vpaned1">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Position">289</property>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gtk.TreeView" id="treeviewList">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                        <signal name="CursorChanged" handler="OnTreeviewListCursorChanged" />
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Resize">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder />
+                </child>
+              </widget>
             </child>
           </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Statusbar" id="statusbar2">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.Label" id="label1">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">label1</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label2">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">label2</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow2">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gtk.TextView" id="textview1">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+                <property name="Text" translatable="yes" />
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="PackType">End</property>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+          </packing>
         </child>
       </widget>
     </child>
