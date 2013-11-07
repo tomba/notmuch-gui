@@ -33,7 +33,7 @@ public partial class MainWindow: Gtk.Window
 		m_db = Database.Open(path, DatabaseMode.READ_ONLY);
 
 		// select first items
-		treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
+		//treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
 	}
 
 	protected override void OnDestroyed()
@@ -70,12 +70,18 @@ public partial class MainWindow: Gtk.Window
 
 	void SetupMailList()
 	{
+		treeviewList.FixedHeightMode = true;
+	
+		treeviewList.AppendColumn("Id", new Gtk.CellRendererText(), "text", 0);
 		treeviewList.AppendColumn("From", new Gtk.CellRendererText(), "text", 1);
 		treeviewList.AppendColumn("Subject", new Gtk.CellRendererText(), "text", 2);
 
 		// id, from, subject
 		m_mailStore = new Gtk.ListStore(typeof(string), typeof(string), typeof(string));
-		treeviewList.Model = m_mailStore;
+		//treeviewList.Model = m_mailStore;
+
+		treeviewList.Model = new TreeModelAdapter(new MyTreeModel());
+
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -133,7 +139,7 @@ public partial class MainWindow: Gtk.Window
 		t1 = sw.ElapsedMilliseconds;
 		sw.Restart();
 
-		const int max = 500000;
+		const int max = 10000;
 		int count = 0;
 
 		while (msgs.Valid)
@@ -190,6 +196,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnTreeviewListCursorChanged(object sender, EventArgs e)
 	{
+		return;
+
 		TreeSelection selection = (sender as TreeView).Selection;
 		TreeModel model;
 		TreeIter iter;
