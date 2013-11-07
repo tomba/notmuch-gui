@@ -3,13 +3,26 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="Viewer/MainWindow.cs">
     <Files>
       <File FileName="test/Program.cs" Line="1" Column="1" />
-      <File FileName="NotMuch/Database.cs" Line="1" Column="1" />
+      <File FileName="NotMuch/Database.cs" Line="36" Column="4" />
       <File FileName="NotMuch/Message.cs" Line="1" Column="1" />
       <File FileName="NotMuch/Native.cs" Line="1" Column="1" />
       <File FileName="NotMuch/Query.cs" Line="1" Column="1" />
       <File FileName="Viewer/Program.cs" Line="1" Column="1" />
-      <File FileName="Viewer/MainWindow.cs" Line="280" Column="46" />
+      <File FileName="Viewer/MainWindow.cs" Line="275" Column="3" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="NotMuch" expanded="True" />
+          <Node name="test" expanded="True" />
+          <Node name="Viewer" expanded="True">
+            <Node name="UserInterface" expanded="True">
+              <Node name="MainWindow" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

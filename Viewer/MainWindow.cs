@@ -7,7 +7,7 @@ using WebKit;
 public partial class MainWindow: Gtk.Window
 {
 	Database m_db;
-	WebKit.WebView m_view;
+	WebKit.WebView m_webView;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -16,26 +16,18 @@ public partial class MainWindow: Gtk.Window
 		SetupQueryList();
 		SetupMailList();
 
+		m_webView = new WebKit.WebView();
+		m_webView.Editable = false;
+
+		scrolledwindowWeb.Add(m_webView);
+		scrolledwindowWeb.ShowAll();
+
 		var path = "/home/tomba/Maildir";
 		m_db = Database.Open(path, DatabaseMode.READ_ONLY);
 
-		/*
-		var webView = new WebKit.WebView();
-		webView.Open("http://mono-project.com");
-		//webView.LoadString();
-		webView.Editable = false;
-		vpaned1.Add(webView);
-*/
-		ScrolledWindow scrollWindow = new ScrolledWindow();
-		scrollWindow.HeightRequest = 200;
-		var webView = new WebKit.WebView();
-		//webView.Open("http://mono-project.com");
-		webView.Editable = false;
-		scrollWindow.Add(webView);
-		vpaned1.Add(scrollWindow);
-		scrollWindow.ShowAll();
-
-		m_view = webView;
+		// select first items
+		treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
+		treeviewList.SetCursor(TreePath.NewFirst(), null, false);
 	}
 
 	protected override void OnDestroyed()
@@ -66,6 +58,7 @@ public partial class MainWindow: Gtk.Window
 
 		treeviewSearch.Model = queryStore;
 
+		queryStore.AppendValues("ttlampopumppuhuolto");
 		queryStore.AppendValues("Tomi");
 		queryStore.AppendValues("from:ti.com");
 		queryStore.AppendValues("Test3");
@@ -215,33 +208,35 @@ public partial class MainWindow: Gtk.Window
 
 	void ShowEmail(string filename)
 	{
-		var text = File.ReadAllText(filename);
+		int fd = Mono.Unix.Native.Syscall.open(filename, Mono.Unix.Native.OpenFlags.O_RDONLY);
 
-		var stream = new GMime.StreamMem(text);
+		var readStream = new GMime.StreamFs(fd);
 
-		var p = new GMime.Parser(stream);
+		var p = new GMime.Parser(readStream);
 		var msg = p.ConstructMessage();
 
 		DumpStructure(msg);
 
-		var textpart = FindFirstContent(msg, new GMime.ContentType("text", "plain"));
+		GMime.Part textpart = null;
 
 		if (textpart == null)
-		{
 			textpart = FindFirstContent(msg, new GMime.ContentType("text", "html"));
-			if (textpart == null)
-				throw new Exception();
-		}
 
-		//var textpart = msg.Body;
+		if (textpart == null)
+			FindFirstContent(msg, new GMime.ContentType("text", "plain"));
+
+		if (textpart == null)
+			textpart = FindFirstContent(msg, new GMime.ContentType("text", "*"));
+			
+		if (textpart == null)
+			throw new Exception();
 
 		AddText(textpart);
 
-		//var wqeqw = stream2.();
+		label1.Text = textpart.ContentType.ToString();
+		label2.Text = textpart.ContentType.GetParameter("charset");
 
-		//m_view.LoadString(wqeqw, "text/plain", null, null);
-		//m_view.LoadHtmlString(text, null);
-		//textview1.Buffer.Text = text;
+		Mono.Unix.Native.Syscall.close(fd);
 	}
 
 	enum HtmlFilterFlags
@@ -262,53 +257,33 @@ public partial class MainWindow: Gtk.Window
 
 		var filterstream = new GMime.StreamFilter(memstream);
 
-		bool filt = false;
+		filterstream.Add(new GMime.FilterCRLF(false, false));
 
 		var charset = part.ContentType.GetParameter("charset");
+		if (charset != null)
+			filterstream.Add(new GMime.FilterCharset(charset, "utf-8"));
 
-		if (filt)
+		if (!part.ContentType.IsType("text", "html"))
 		{
 			var flags = 0
-		            //| HtmlFilterFlags.PRE
+			            //| HtmlFilterFlags.PRE
 			            | HtmlFilterFlags.CONVERT_NL
 			            | HtmlFilterFlags.MARK_CITATION;
-			filterstream.Add(new GMime.FilterHTML((uint)flags, 0xff0000));
+			uint quoteColor = 0x888888;
+			filterstream.Add(new GMime.FilterHTML((uint)flags, quoteColor));
 		}
 
-		//filterstream.Add(new GMime.FilterBasic(part.ContentEncoding, true));
-		//filterstream.Add(new GMime.FilterCharset(charset, "utf-8"));
 		part.ContentObject.WriteToStream(filterstream);
 
-		//msg.ContentType.IsType("text", "*") && !msg.ContentType.IsType("text", "html")
-		/*
-		var sw = new GMime.StreamWrapper(stream2);
+		filterstream.Flush();
+
+		var encoding = System.Text.UTF8Encoding.UTF8;
+
+		var sw = new GMime.StreamWrapper(memstream);
 		sw.Position = 0;
-		var texti = new StreamReader(sw).ReadToEnd();
-*/
-
-		byte[] arr = new byte[(int)memstream.Length];
-		memstream.Seek(0);
-		memstream.Read(arr, (uint)memstream.Length);
-
-
-		var ct = part.ContentType.ToString();
-
-		label1.Text = ct;
-		label2.Text = charset;
-
-		for (int i = 0; i < arr.Length && i < 100; ++i)
-			Console.Write("{0}/{1:x} ", (char)arr[i], arr[i]);
-
-		var encoding = System.Text.Encoding.GetEncoding(charset);
-		encoding = System.Text.ASCIIEncoding.UTF8;
-		var texti = encoding.GetString(arr);
-
-		//var texti = System.Text.ASCIIEncoding.ASCII.GetString(arr);
-
-		//var ce = part.ContentEncoding.ToString();
+		var texti = new StreamReader(sw, encoding).ReadToEnd();
 
 		textview1.Buffer.Text = texti;
-
-		m_view.LoadString(texti, ct, null, null);
+		m_webView.LoadHtmlString(texti, null);
 	}
 }
