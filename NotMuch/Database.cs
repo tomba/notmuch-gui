@@ -37,6 +37,17 @@ namespace NotMuch
 			return db;
 		}
 
+		public Message? FindMessage(string messageId)
+		{
+			IntPtr msgPtr;
+
+			Status r= Native.notmuch_database_find_message(this.Handle, messageId, out msgPtr);
+			if (r != Status.SUCCESS)
+				return null;
+
+			return new Message(msgPtr);
+		}
+
 		protected override void DestroyHandle()
 		{
 			Native.notmuch_database_destroy(this.Handle);

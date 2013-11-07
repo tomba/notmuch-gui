@@ -5,6 +5,7 @@ using System.IO;
 using WebKit;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Threading;
 
 public partial class MainWindow: Gtk.Window
 {
@@ -63,6 +64,7 @@ public partial class MainWindow: Gtk.Window
 		queryStore.AppendValues("ttlampopumppuhuolto");
 		queryStore.AppendValues("Tomi");
 		queryStore.AppendValues("from:ti.com");
+		queryStore.AppendValues("from:linkedin");
 		queryStore.AppendValues("");
 	}
 
@@ -81,10 +83,6 @@ public partial class MainWindow: Gtk.Window
 	{
 		Application.Quit();
 		a.RetVal = true;
-	}
-
-	protected void OnTreeviewSearchRowActivated(object o, RowActivatedArgs args)
-	{
 	}
 
 	void ProcessSearch(object data)
@@ -107,17 +105,23 @@ public partial class MainWindow: Gtk.Window
 		const int max = 5000;
 		int count = 0;
 
-		treeviewList.FreezeChildNotify();
+		var mailStore = new Gtk.ListStore(typeof(string), typeof(string), typeof(string));
 
 		while (msgs.Valid)
 		{
+			if (m_queryTaskCTS.IsCancellationRequested)
+			{
+				Console.WriteLine("CANCEL");
+				break;
+			}
+
 			var msg = msgs.Current;
 
-			var filename = msg.FileName;
+			var id = msg.Id;
 			var from = msg.GetHeader("From");
 			var subject = msg.GetHeader("Subject");
 
-			m_mailStore.AppendValues(from, subject, filename);
+			mailStore.AppendValues(from, subject, id);
 
 			count++;
 
@@ -130,8 +134,6 @@ public partial class MainWindow: Gtk.Window
 			msgs.Next();
 		}
 
-		treeviewList.ThawChildNotify();
-
 		t2 = sw.ElapsedMilliseconds;
 		sw.Restart();
 
@@ -140,38 +142,53 @@ public partial class MainWindow: Gtk.Window
 		t3 = sw.ElapsedMilliseconds;
 		sw.Restart();
 
-		q.Dispose();
-
 		t4 = sw.ElapsedMilliseconds;
 		sw.Stop();
 
 		Console.WriteLine("Added {0} messages in {1},{2},{3},{4} ms", count, t1, t2, t3, t4);
+
+		Gtk.Application.Invoke(delegate
+		{
+			m_mailStore = mailStore;
+			treeviewList.Model = m_mailStore;
+		});
 	}
 
 	Task m_queryTask;
+	CancellationTokenSource m_queryTaskCTS;
 
 	protected void OnTreeviewSearchCursorChanged(object sender, EventArgs e)
 	{
-		m_mailStore.Clear();
+		if (m_queryTask != null)
+		{
+			Console.WriteLine("cancelling");
+			m_queryTaskCTS.Cancel();
+			m_queryTask.Wait();
+			Console.WriteLine("cancel done");
+		
+			m_queryTask = null;
+			m_queryTaskCTS = null;
+		}
 
 		TreeSelection selection = (sender as TreeView).Selection;
 		TreeModel model;
 		TreeIter iter;
 
-		// THE ITER WILL POINT TO THE SELECTED ROW
 		if (selection.GetSelected(out model, out iter))
 		{
-			var queryString = model.GetValue(iter, 0).ToString();
+			var queryString = (string)model.GetValue(iter, 0);
 
 			var sc = System.Threading.SynchronizationContext.Current;
 
 			Console.WriteLine("Main in thread {0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
 
-			m_queryTask = Task.Factory.StartNew(ProcessSearch, queryString);
-			m_queryTask.ContinueWith(t => {
-				Console.WriteLine("Finalize in thread {0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
-				m_queryTask = null;
-			}, TaskScheduler.FromCurrentSynchronizationContext());
+			m_queryTaskCTS = new CancellationTokenSource();
+
+			m_queryTask = Task.Factory.StartNew(ProcessSearch, queryString, m_queryTaskCTS.Token);
+		}
+		else
+		{
+			m_mailStore.Clear();
 		}
 	}
 
@@ -184,11 +201,20 @@ public partial class MainWindow: Gtk.Window
 		// THE ITER WILL POINT TO THE SELECTED ROW
 		if (selection.GetSelected(out model, out iter))
 		{
-			//Console.WriteLine("Selected Value:" + model.GetValue(iter, 0).ToString() + model.GetValue(iter, 1).ToString());
+			var id = (string)model.GetValue(iter, 2);
 
-			var filename = model.GetValue(iter, 2).ToString();
+			var msgN = m_db.FindMessage(id);
+
+			if (msgN == null)
+				throw new Exception();
+
+			var msg = msgN.Value;
+
+			var filename = msg.FileName;
 
 			ShowEmail(filename);
+
+			msg.DestroyHandle();
 		}
 		else
 		{

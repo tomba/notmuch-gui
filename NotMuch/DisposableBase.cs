@@ -28,7 +28,7 @@ namespace NotMuch
 		{
 			if (this.Handle != IntPtr.Zero)
 			{
-				Console.WriteLine("destroy {0} {1}", this, this.Handle);
+				//Console.WriteLine("destroy {0} {1}", this, this.Handle);
 				DestroyHandle();
 				this.Handle = IntPtr.Zero;
 			}

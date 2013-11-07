@@ -19,6 +19,10 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_database_get_path(IntPtr ptr);
+
+		[DllImport("libnotmuch")]
+		public static extern Status notmuch_database_find_message(IntPtr ptr, string messageId, out IntPtr msgPtr);
+
 		// Query
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_query_create(IntPtr db, string queryString);
@@ -48,6 +52,9 @@ namespace NotMuch
 		// Message
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_message_destroy(IntPtr message);
+
+		[DllImport("libnotmuch")]
+		public static extern IntPtr notmuch_message_get_message_id(IntPtr message);
 
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_message_get_filename(IntPtr message);

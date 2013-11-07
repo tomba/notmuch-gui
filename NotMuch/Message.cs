@@ -32,8 +32,16 @@ namespace NotMuch
 			IntPtr sp = Native.notmuch_message_get_header(this.Handle, name);
 
 			return Marshal.PtrToStringAnsi(sp);
+		}
 
+		public string Id
+		{
+			get
+			{
+				IntPtr sp = Native.notmuch_message_get_message_id(this.Handle);
+
+				return Marshal.PtrToStringAnsi(sp);
+			}
 		}
 	}
 }
-
