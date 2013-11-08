@@ -64,6 +64,7 @@ public partial class MainWindow: Gtk.Window
 		queryStore.AppendValues("Tomi");
 		queryStore.AppendValues("from:ti.com");
 		queryStore.AppendValues("from:linkedin");
+		queryStore.AppendValues("to:linux-kernel@vger.kernel.org");
 		queryStore.AppendValues("*");
 		queryStore.AppendValues("");
 	}
