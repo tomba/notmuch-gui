@@ -27,6 +27,13 @@ namespace NotMuch
 			}
 		}
 
+		public Tags GetTags()
+		{
+			IntPtr tags = Native.notmuch_message_get_tags(this.Handle);
+
+			return new Tags(tags);
+		}
+
 		public string GetHeader(string name)
 		{
 			IntPtr sp = Native.notmuch_message_get_header(this.Handle, name);
@@ -34,7 +41,7 @@ namespace NotMuch
 			return Marshal.PtrToStringAnsi(sp);
 		}
 
-		static DateTime s_epoch = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+		static DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
 		/// <summary>
 		/// Returns the date in UTC

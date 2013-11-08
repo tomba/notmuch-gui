@@ -57,7 +57,7 @@ namespace NotMuchGUI
 		{
 			get
 			{
-				return 3;
+				return 4;
 			}
 		}
 
@@ -128,6 +128,21 @@ namespace NotMuchGUI
 					case 2:
 						var date = msg.Date.ToLocalTime();
 						str = date.ToString("g");
+						break;
+
+					case 3:
+						var tags = msg.GetTags();
+
+						List<string> list = new List<string>();
+
+						while (tags.Valid)
+						{
+							list.Add(tags.Current);
+							tags.Next();
+						}
+
+						str = string.Join("/", list);
+
 						break;
 
 					default:

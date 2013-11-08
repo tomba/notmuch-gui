@@ -96,6 +96,14 @@ public partial class MainWindow: Gtk.Window
 		c.Resizable = true;
 		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
+
+		c = new TreeViewColumn("Tags", new Gtk.CellRendererText(), "text", 3);
+		c.Expand = false;
+		c.Sizing = TreeViewColumnSizing.Fixed;
+		c.FixedWidth = 150;
+		c.Resizable = true;
+		c.Reorderable = true;
+		treeviewList.AppendColumn(c);	
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)

@@ -23,6 +23,7 @@ namespace NotMuch
 		[DllImport("libnotmuch")]
 		public static extern Status notmuch_database_find_message(IntPtr ptr, string messageId, out IntPtr msgPtr);
 
+
 		// Query
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_query_create(IntPtr db, string queryString);
@@ -39,6 +40,7 @@ namespace NotMuch
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_query_search_threads(IntPtr query);
 
+
 		// Messages
 		[DllImport("libnotmuch")]
 		public static extern bool notmuch_messages_valid(IntPtr messages);
@@ -48,6 +50,7 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_messages_get(IntPtr messages);
+
 
 		// Message
 		[DllImport("libnotmuch")]
@@ -65,6 +68,10 @@ namespace NotMuch
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_message_get_header(IntPtr message, string header);
 
+		[DllImport("libnotmuch")]
+		public static extern IntPtr notmuch_message_get_tags(IntPtr message);
+
+
 		// Threads
 		[DllImport("libnotmuch")]
 		public static extern bool notmuch_threads_valid(IntPtr threads);
@@ -75,6 +82,16 @@ namespace NotMuch
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_threads_get(IntPtr threads);
 
+
+		// Tags
+		[DllImport("libnotmuch")]
+		public static extern bool notmuch_tags_valid(IntPtr tags);
+
+		[DllImport("libnotmuch")]
+		public static extern void notmuch_tags_move_to_next(IntPtr tags);
+
+		[DllImport("libnotmuch")]
+		public static extern IntPtr notmuch_tags_get(IntPtr tags);
 	}
 
 	public enum DatabaseMode
