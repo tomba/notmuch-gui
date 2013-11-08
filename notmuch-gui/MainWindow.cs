@@ -109,15 +109,18 @@ public partial class MainWindow: Gtk.Window
 
 		if (m_queryTask != null)
 		{
-			Console.WriteLine("cancelling");
+			if (m_queryTask.IsCompleted == false)
+			{
+				Console.WriteLine("cancelling");
 
-			m_cts.Cancel();
-			await m_queryTask;
+				m_cts.Cancel();
+				await m_queryTask;
+
+				Console.WriteLine("cancelling done");
+			}
 
 			m_cts = null;
 			m_queryTask = null;
-
-			Console.WriteLine("cancelling done");
 		}
 
 		treeviewList.Model = null;
@@ -133,10 +136,6 @@ public partial class MainWindow: Gtk.Window
 
 	async Task ProcessSearch(string queryString, CancellationToken ct)
 	{
-		Console.WriteLine("Process in thread {0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
-
-		long t1, t2, t3;
-
 		var sw = Stopwatch.StartNew();
 
 		var q = NM.Query.Create(m_db, queryString);
@@ -144,10 +143,6 @@ public partial class MainWindow: Gtk.Window
 
 		var msgs = q.SearchMessages();
 
-		t1 = sw.ElapsedMilliseconds;
-		sw.Restart();
-
-		const int max = 1000000;
 		int count = 0;
 
 		var model = new MyTreeModel(totalCount, q);
@@ -180,24 +175,14 @@ public partial class MainWindow: Gtk.Window
 				await Task.Yield();
 			}
 
-			if (count >= max)
-			{
-				Console.WriteLine("aborting search, max count reached");
-				break;
-			}
-
 			msgs.Next();
 		}
 
 		label3.Text = String.Format("{0}/{1} msgs", count.ToString(), totalCount);
 
-		t2 = sw.ElapsedMilliseconds;
-		sw.Restart();
-
-		t3 = sw.ElapsedMilliseconds;
 		sw.Stop();
 
-		Console.WriteLine("Added {0} messages in {1},{2},{3} ms", count, t1, t2, t3);
+		Console.WriteLine("Added {0} messages in {1} ms", count, sw.ElapsedMilliseconds);
 	}
 
 	protected void OnTreeviewListCursorChanged(object sender, EventArgs e)
