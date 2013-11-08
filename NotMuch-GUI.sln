@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotMuch", "NotMuch\NotMuch.csproj", "{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotMuchSharp", "NotMuchSharp\NotMuchSharp.csproj", "{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viewer", "Viewer\Viewer.csproj", "{071C5B5D-6B05-4A1B-9302-2A234CB9B43C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotMuch-GUI", "NotMuch-GUI\NotMuch-GUI.csproj", "{071C5B5D-6B05-4A1B-9302-2A234CB9B43C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,7 +21,7 @@ Global
 		{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Viewer\Viewer.csproj
+		StartupItem = NotMuchSharp\NotMuchSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.TabsToSpaces = False
