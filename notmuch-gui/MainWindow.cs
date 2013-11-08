@@ -1,16 +1,15 @@
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Gtk;
 using NotMuch;
-using System.IO;
 using WebKit;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Threading;
-using Viewer;
 
 public partial class MainWindow: Gtk.Window
 {
-	Database m_db;
+	NMDatabase m_db;
 	WebKit.WebView m_webView;
 	CancellationTokenSource m_cts;
 	Task m_queryTask;
@@ -29,7 +28,7 @@ public partial class MainWindow: Gtk.Window
 		scrolledwindowWeb.ShowAll();
 
 		var path = "/home/tomba/Maildir";
-		m_db = Database.Open(path, DatabaseMode.READ_ONLY);
+		m_db = NMDatabase.Open(path, DatabaseMode.READ_ONLY);
 
 		// select first items
 		treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
@@ -139,7 +138,7 @@ public partial class MainWindow: Gtk.Window
 
 		var sw = Stopwatch.StartNew();
 
-		var q = Query.Create(m_db, queryString);
+		var q = NMQuery.Create(m_db, queryString);
 		int totalCount = q.Count;
 
 		var msgs = q.SearchMessages();

@@ -1,7 +1,7 @@
 using System;
 using Gtk;
 
-namespace Viewer
+namespace NotMuch
 {
 	class MainClass
 	{

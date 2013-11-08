@@ -3,22 +3,21 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Gtk;
-using NotMuch;
 using System.Collections.Generic;
 
-namespace Viewer
+namespace NotMuch
 {
 	public class MyTreeModel : GLib.Object, TreeModelImplementor
 	{
 		int m_count;
-		List<Message> m_msgs;
-		Query m_query;
+		List<NMMessage> m_msgs;
+		NMQuery m_query;
 
-		public MyTreeModel(int count, Query query)
+		public MyTreeModel(int count, NMQuery query)
 		{
 			m_count = count;
 			m_query = query;
-			m_msgs = new List<Message>(count);
+			m_msgs = new List<NMMessage>(count);
 		}
 
 		~MyTreeModel()
@@ -26,7 +25,7 @@ namespace Viewer
 			m_query.Dispose();
 		}
 
-		public void Append(Message msg)
+		public void Append(NMMessage msg)
 		{
 			int idx = m_msgs.Count;
 
@@ -89,7 +88,7 @@ namespace Viewer
 			return new TreePath(new int[] { idx });
 		}
 
-		public Message? GetMessage(TreeIter iter)
+		public NMMessage? GetMessage(TreeIter iter)
 		{
 			int idx = (int)iter.UserData;
 

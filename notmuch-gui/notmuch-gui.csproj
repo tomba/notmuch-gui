@@ -8,7 +8,7 @@
     <ProjectGuid>{071C5B5D-6B05-4A1B-9302-2A234CB9B43C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>NotMuch</RootNamespace>
-    <AssemblyName>NotMuch-GUI</AssemblyName>
+    <AssemblyName>notmuch-gui</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -76,9 +76,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\NotMuchSharp\NotMuchSharp.csproj">
+    <ProjectReference Include="..\notmuch-sharp\notmuch-sharp.csproj">
       <Project>{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}</Project>
-      <Name>NotMuchSharp</Name>
+      <Name>notmuch-sharp</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public class Database : DisposableBase
+	public class NMDatabase : DisposableBase
 	{
-		public static Database Create(string path)
+		public static NMDatabase Create(string path)
 		{
 			IntPtr p;
 
@@ -16,12 +16,12 @@ namespace NotMuch
 			if (r != Status.SUCCESS)
 				throw new Exception("fail");
 
-			var db = new Database(p);
+			var db = new NMDatabase(p);
 
 			return db;
 		}
 
-		public static Database Open(string path, DatabaseMode mode)
+		public static NMDatabase Open(string path, DatabaseMode mode)
 		{
 			IntPtr p;
 
@@ -32,12 +32,12 @@ namespace NotMuch
 			if (r != Status.SUCCESS)
 				throw new Exception("fail");
 
-			var db = new Database(p);
+			var db = new NMDatabase(p);
 
 			return db;
 		}
 
-		public Message? FindMessage(string messageId)
+		public NMMessage? FindMessage(string messageId)
 		{
 			IntPtr msgPtr;
 
@@ -45,7 +45,7 @@ namespace NotMuch
 			if (r != Status.SUCCESS)
 				return null;
 
-			return new Message(msgPtr);
+			return new NMMessage(msgPtr);
 		}
 
 		protected override void DestroyHandle()
@@ -53,7 +53,7 @@ namespace NotMuch
 			Native.notmuch_database_destroy(this.Handle);
 		}
 
-		Database(IntPtr ptr)
+		NMDatabase(IntPtr ptr)
 			: base(ptr)
 		{
 		}

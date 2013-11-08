@@ -3,11 +3,11 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public struct Thread
+	public struct NMThread
 	{
 		internal IntPtr Handle;
 
-		internal Thread(IntPtr handle)
+		internal NMThread(IntPtr handle)
 		{
 			Handle = handle;
 		}

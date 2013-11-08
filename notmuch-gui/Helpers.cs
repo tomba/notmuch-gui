@@ -1,7 +1,7 @@
 using System;
 using GMime;
 
-namespace Viewer
+namespace NotMuch
 {
 	enum HtmlFilterFlags
 	{
