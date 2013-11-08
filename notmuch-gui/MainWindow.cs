@@ -74,21 +74,27 @@ public partial class MainWindow: Gtk.Window
 		TreeViewColumn c;
 
 		c = new TreeViewColumn("From", new Gtk.CellRendererText(), "text", 0);
-		//c.Expand = true;
+		c.Expand = false;
 		c.Sizing = TreeViewColumnSizing.Fixed;
-		c.FixedWidth = 150;
+		c.FixedWidth = 350;
+		c.Resizable = true;
+		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
 
 		c = new TreeViewColumn("Subject", new Gtk.CellRendererText(), "text", 1);
-		//c.Expand = true;
+		c.Expand = true;
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 150;
+		c.Resizable = true;
+		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
 
 		c = new TreeViewColumn("Date", new Gtk.CellRendererText(), "text", 2);
-		//c.Expand = false;
+		c.Expand = false;
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 150;
+		c.Resizable = true;
+		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
 	}
 

@@ -26,7 +26,10 @@ public partial class MainWindow
 		// Widget MainWindow
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString ("MainWindow");
-		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
+		this.WindowPosition = ((global::Gtk.WindowPosition)(1));
+		this.AllowShrink = true;
+		this.DefaultWidth = 1600;
+		this.DefaultHeight = 800;
 		// Container child MainWindow.Gtk.Container+ContainerChild
 		this.vbox2 = new global::Gtk.VBox ();
 		this.vbox2.Name = "vbox2";
@@ -57,6 +60,7 @@ public partial class MainWindow
 		this.treeviewList.CanFocus = true;
 		this.treeviewList.Name = "treeviewList";
 		this.treeviewList.FixedHeightMode = true;
+		this.treeviewList.Reorderable = true;
 		this.GtkScrolledWindow1.Add (this.treeviewList);
 		this.hpaned1.Add (this.GtkScrolledWindow1);
 		this.vbox2.Add (this.hpaned1);
@@ -142,8 +146,6 @@ public partial class MainWindow
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
 		}
-		this.DefaultWidth = 997;
-		this.DefaultHeight = 646;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 		this.treeviewSearch.CursorChanged += new global::System.EventHandler (this.OnTreeviewSearchCursorChanged);
