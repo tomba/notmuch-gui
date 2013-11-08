@@ -124,9 +124,8 @@ namespace NotMuchGUI
 						break;
 
 					case 2:
-						var tt = msg.Date2;
-						var dd = GLib.Marshaller.time_tToDateTime(tt);
-						str = dd.ToString("g");
+						var date = msg.Date.ToLocalTime();
+						str = date.ToString("g");
 						break;
 
 					default:

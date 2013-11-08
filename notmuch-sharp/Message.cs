@@ -34,21 +34,18 @@ namespace NotMuch
 			return Marshal.PtrToStringAnsi(sp);
 		}
 
+		static DateTime s_epoch = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+		/// <summary>
+		/// Returns the date in UTC
+		/// </summary>
 		public DateTime Date
 		{
 			get
 			{
-				var dstr = GetHeader("Date");
-				return DateTime.Parse(dstr);
-			}
-		}
-
-		public IntPtr Date2
-		{
-			get
-			{
 				long time_t = Native.notmuch_message_get_date(this.Handle);
-				return (IntPtr)time_t;
+
+				return s_epoch.AddSeconds(time_t);
 			}
 		}
 
