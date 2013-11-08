@@ -1,5 +1,6 @@
 using System;
 using GMime;
+using System.IO;
 
 namespace NotMuchGUI
 {
@@ -17,29 +18,33 @@ namespace NotMuchGUI
 
 	static class GMimeHelpers
 	{
-		public static void DumpStructure(Entity ent)
+		public static void DumpStructure(Entity ent, StringWriter sw, int indent)
 		{
+			const int step = 4;
+			string indentStr = new string(' ', indent);
+
 			if (ent is Message)
 			{
 				var msg = (Message)ent;
 
-				Console.WriteLine("{0}", ent.GetType());
+				sw.WriteLine("{0}{1}",indentStr, ent.GetType());
 
-				DumpStructure(msg.MimePart);
+				DumpStructure(msg.MimePart, sw, indent + step);
 			}
 			else if (ent is Multipart)
 			{
 				var mp = (Multipart)ent;
 
-				Console.WriteLine("{0}", ent.GetType());
+				sw.WriteLine("{0}{1}", indentStr, ent.GetType());
 
 				foreach (Entity part in mp)
-					DumpStructure(part);
+					DumpStructure(part, sw, indent + step);
 			}
 			else if (ent is Part)
 			{
 				var part = (Part)ent;
-				Console.WriteLine("{0}: {1}, {2}, {3}",
+				sw.WriteLine("{0}{1}: {2}, {3}, {4}",
+					indentStr,
 					part.GetType(), part.ContentType.ToString(), part.ContentType.GetParameter("charset"),
 					part.ContentEncoding.ToString());
 			}

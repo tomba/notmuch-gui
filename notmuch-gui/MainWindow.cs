@@ -171,7 +171,7 @@ public partial class MainWindow: Gtk.Window
 
 			count++;
 
-			//if (count % 100 == 0)
+			if (count % 100 == 0)
 			{
 				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), totalCount);
 
@@ -233,7 +233,10 @@ public partial class MainWindow: Gtk.Window
 		var p = new GMime.Parser(readStream);
 		var msg = p.ConstructMessage();
 
-		GMimeHelpers.DumpStructure(msg);
+		var sw = new StringWriter();
+		GMimeHelpers.DumpStructure(msg, sw, 0);
+		var dump = sw.ToString();
+		textviewDump.Buffer.Text = dump;
 
 		GMime.Part textpart = null;
 
@@ -261,7 +264,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		var html = PartToHtml(part);
 
-		textview1.Buffer.Text = html;
+		textviewSrc.Buffer.Text = html;
 		m_webView.LoadHtmlString(html, null);
 	}
 
