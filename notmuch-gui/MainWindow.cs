@@ -68,13 +68,33 @@ public partial class MainWindow: Gtk.Window
 		queryStore.AppendValues("");
 	}
 
+	void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+	{
+		bool unread = (bool)model.GetValue(iter, MyTreeModel.COL_UNREAD);
+
+		var c = (Gtk.CellRendererText)cell;
+		
+		if (unread)
+			c.Weight = (int)Pango.Weight.Bold;
+		else
+			c.Weight = (int)Pango.Weight.Normal;
+
+		//(cell as Gtk.CellRendererText).Text = song;
+	}
+
 	void SetupMailList()
 	{
 		treeviewList.FixedHeightMode = true;
 
-		TreeViewColumn c;
+		// colorize every other row
+		//treeviewList.RulesHint = true;
 
-		c = new TreeViewColumn("From", new Gtk.CellRendererText(), "text", 0);
+		TreeViewColumn c;
+		Gtk.CellRendererText re;
+
+		re = new Gtk.CellRendererText();
+		c = new TreeViewColumn("From", re, "text", MyTreeModel.COL_FROM);
+		c.SetCellDataFunc(re, MyCellDataFunc);
 		c.Expand = false;
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 350;
@@ -82,7 +102,9 @@ public partial class MainWindow: Gtk.Window
 		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
 
-		c = new TreeViewColumn("Subject", new Gtk.CellRendererText(), "text", 1);
+		re = new Gtk.CellRendererText();
+		c = new TreeViewColumn("Subject", re, "text", MyTreeModel.COL_SUBJECT);
+		c.SetCellDataFunc(re, MyCellDataFunc);
 		c.Expand = true;
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 150;
@@ -90,7 +112,9 @@ public partial class MainWindow: Gtk.Window
 		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
 
-		c = new TreeViewColumn("Date", new Gtk.CellRendererText(), "text", 2);
+		re = new Gtk.CellRendererText();
+		c = new TreeViewColumn("Date", re, "text", MyTreeModel.COL_DATE);
+		c.SetCellDataFunc(re, MyCellDataFunc);
 		c.Expand = false;
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 150;
@@ -98,7 +122,9 @@ public partial class MainWindow: Gtk.Window
 		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
 
-		c = new TreeViewColumn("Tags", new Gtk.CellRendererText(), "text", 3);
+		re = new Gtk.CellRendererText();
+		c = new TreeViewColumn("Tags", re, "text", MyTreeModel.COL_TAGS);
+		c.SetCellDataFunc(re, MyCellDataFunc);
 		c.Expand = false;
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 150;

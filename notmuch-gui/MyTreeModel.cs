@@ -10,6 +10,12 @@ namespace NotMuchGUI
 {
 	public class MyTreeModel : GLib.Object, TreeModelImplementor
 	{
+		public const int COL_FROM = 0;
+		public const int COL_SUBJECT = 1;
+		public const int COL_DATE = 2;
+		public const int COL_TAGS = 3;
+		public const int COL_UNREAD = 4;
+
 		int m_count;
 		List<NM.Message> m_msgs;
 		NM.Query m_query;
@@ -68,14 +74,16 @@ namespace NotMuchGUI
 		{
 			get
 			{
-				return 4;
+				return 5;
 			}
 		}
 
 		public GLib.GType GetColumnType(int col)
 		{
-			GLib.GType result = GLib.GType.String;
-			return result;
+			if (col == COL_UNREAD)
+				return GLib.GType.Boolean;
+			else
+				return GLib.GType.String;
 		}
 
 		public bool GetIter(out TreeIter iter, TreePath path)
@@ -123,28 +131,51 @@ namespace NotMuchGUI
 
 			if (idx >= m_msgs.Count)
 			{
-				str = "null";
-			}
-			else
-			{
-				var msg = m_msgs[idx];
-
 				switch (col)
 				{
-					case 0:
+					case COL_FROM:
+					case COL_SUBJECT:
+					case COL_DATE:
+					case COL_TAGS:
+						val = new GLib.Value("null");
+						break;
+
+					case COL_UNREAD:
+						val = new GLib.Value(false);
+						break;
+				}
+
+				return;
+			}
+
+			var msg = m_msgs[idx];
+
+			switch (col)
+			{
+				case COL_FROM:
+					{
 						str = msg.GetHeader("From");
-						break;
+						val = new GLib.Value(str);
+					}
+					break;
 
-					case 1:
+				case COL_SUBJECT:
+					{
 						str = msg.GetHeader("Subject");
-						break;
+						val = new GLib.Value(str);
+					}
+					break;
 
-					case 2:
+				case COL_DATE:
+					{
 						var date = msg.Date.ToLocalTime();
 						str = date.ToString("g");
-						break;
+						val = new GLib.Value(str);
+					}
+					break;
 
-					case 3:
+				case COL_TAGS:
+					{
 						var tags = msg.GetTags();
 
 						List<string> list = new List<string>();
@@ -157,14 +188,32 @@ namespace NotMuchGUI
 
 						str = string.Join("/", list);
 
-						break;
+						val = new GLib.Value(str);
+					}
+					break;
 
-					default:
-						throw new Exception();
-				}
+				case COL_UNREAD:
+					{
+						var tags = msg.GetTags();
+
+						val = new GLib.Value(false);
+
+						while (tags.Valid)
+						{
+							if (tags.Current == "unread")
+							{
+								val = new GLib.Value(true);
+								break;
+							}
+
+							tags.Next();
+						}
+					}
+					break;
+
+				default:
+					throw new Exception();
 			}
-
-			val = new GLib.Value(str);
 
 			//Console.WriteLine("getval {0} {1} {2}", idx, col, val);
 		}
