@@ -259,37 +259,48 @@ public partial class MainWindow: Gtk.Window
 
 	void AddText(GMime.Part part)
 	{
+		var html = PartToHtml(part);
+
+		textview1.Buffer.Text = html;
+		m_webView.LoadHtmlString(html, null);
+	}
+
+	string PartToHtml(GMime.Part part)
+	{
 		var memstream = new GMime.StreamMem();
 
-		var filterstream = new GMime.StreamFilter(memstream);
-
-		filterstream.Add(new GMime.FilterCRLF(false, false));
-
-		var charset = part.ContentType.GetParameter("charset");
-		if (charset != null)
-			filterstream.Add(new GMime.FilterCharset(charset, "utf-8"));
-
-		if (!part.ContentType.IsType("text", "html"))
+		using (var filterstream = new GMime.StreamFilter(memstream))
 		{
-			var flags = 0
+			filterstream.Add(new GMime.FilterCRLF(false, false));
+
+			var charset = part.ContentType.GetParameter("charset");
+			if (charset != null)
+				filterstream.Add(new GMime.FilterCharset(charset, "utf-8"));
+
+			if (!part.ContentType.IsType("text", "html"))
+			{
+				var flags = 0
 			            //| HtmlFilterFlags.PRE
-			            | GMimeHtmlFilterFlags.CONVERT_NL
-			            | GMimeHtmlFilterFlags.MARK_CITATION;
-			uint quoteColor = 0x888888;
-			filterstream.Add(new GMime.FilterHTML((uint)flags, quoteColor));
+				            | GMimeHtmlFilterFlags.CONVERT_NL
+				            | GMimeHtmlFilterFlags.MARK_CITATION;
+				uint quoteColor = 0x888888;
+				filterstream.Add(new GMime.FilterHTML((uint)flags, quoteColor));
+			}
+
+			part.ContentObject.WriteToStream(filterstream);
+
+			filterstream.Flush();
 		}
 
-		part.ContentObject.WriteToStream(filterstream);
+		memstream.Seek(0);
 
-		filterstream.Flush();
-
-		var encoding = System.Text.UTF8Encoding.UTF8;
-
+		// XXX StreamWrapper's Dispose is broken
 		var sw = new GMime.StreamWrapper(memstream);
-		sw.Position = 0;
-		var texti = new StreamReader(sw, encoding).ReadToEnd();
 
-		textview1.Buffer.Text = texti;
-		m_webView.LoadHtmlString(texti, null);
+		using (var reader = new StreamReader(sw, System.Text.UTF8Encoding.UTF8, false, 128, true))
+		{
+			var str = reader.ReadToEnd();
+			return str;
+		}
 	}
 }
