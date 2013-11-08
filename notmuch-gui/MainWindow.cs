@@ -64,6 +64,7 @@ public partial class MainWindow: Gtk.Window
 		queryStore.AppendValues("Tomi");
 		queryStore.AppendValues("from:ti.com");
 		queryStore.AppendValues("from:linkedin");
+		queryStore.AppendValues("*");
 		queryStore.AppendValues("");
 	}
 
@@ -112,14 +113,25 @@ public partial class MainWindow: Gtk.Window
 		a.RetVal = true;
 	}
 
-	protected async void OnTreeviewSearchCursorChanged(object sender, EventArgs e)
+	protected void OnTreeviewSearchCursorChanged(object sender, EventArgs e)
 	{
 		TreeSelection selection = (sender as TreeView).Selection;
 		TreeModel model;
 		TreeIter iter;
 
+		string queryString = "";
+
+		if (selection.GetSelected(out model, out iter))
+			queryString = (string)model.GetValue(iter, 0);
+
+		queryEntry.Text = queryString;
+		queryEntry.Activate();
+	}
+
+	void ExecuteQuery(string queryString)
+	{
 		if (m_cts != null && m_cts.IsCancellationRequested)
-			return;
+			throw new Exception();
 
 		if (m_queryTask != null)
 		{
@@ -128,7 +140,6 @@ public partial class MainWindow: Gtk.Window
 				Console.WriteLine("cancelling");
 
 				m_cts.Cancel();
-				await m_queryTask;
 
 				Console.WriteLine("cancelling done");
 			}
@@ -137,19 +148,18 @@ public partial class MainWindow: Gtk.Window
 			m_queryTask = null;
 		}
 
-		treeviewList.Model = null;
-
-		if (!selection.GetSelected(out model, out iter))
-			return;
-
-		var queryString = (string)model.GetValue(iter, 0);
-
 		m_cts = new CancellationTokenSource();
 		m_queryTask = ProcessSearch(queryString, m_cts.Token);
 	}
 
 	async Task ProcessSearch(string queryString, CancellationToken ct)
 	{
+		if (string.IsNullOrWhiteSpace(queryString))
+		{
+			treeviewList.Model = new TreeModelAdapter(new MyTreeModel());
+			return;
+		}
+
 		var sw = Stopwatch.StartNew();
 
 		var query = NM.Query.Create(m_db, queryString);
@@ -167,7 +177,8 @@ public partial class MainWindow: Gtk.Window
 			if (ct.IsCancellationRequested)
 			{
 				Console.WriteLine("CANCEL");
-				break;
+				sw.Stop();
+				return;
 			}
 
 			var msg = msgs.Current;
@@ -422,5 +433,23 @@ public partial class MainWindow: Gtk.Window
 		}
 
 		File.Delete(tmpFile);
+	}
+
+	protected void OnQueryEntryChanged(object sender, EventArgs e)
+	{
+		Console.WriteLine("changes");
+
+		var queryStr = queryEntry.Text;
+
+		ExecuteQuery(queryStr);
+	}
+
+	protected void OnQueryEntryActivated(object sender, EventArgs e)
+	{
+		Console.WriteLine("act");
+
+		var queryStr = queryEntry.Text;
+
+		ExecuteQuery(queryStr);
 	}
 }

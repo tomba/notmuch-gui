@@ -14,6 +14,13 @@ namespace NotMuchGUI
 		List<NM.Message> m_msgs;
 		NM.Query m_query;
 
+		public MyTreeModel()
+		{
+			m_query = null;
+			m_count = 0;
+			m_msgs = new List<NM.Message>();
+		}
+
 		public MyTreeModel(NM.Query query)
 		{
 			m_query = query;
@@ -25,7 +32,11 @@ namespace NotMuchGUI
 
 		~MyTreeModel()
 		{
-			m_query.Dispose();
+			if (m_query != null)
+			{
+				m_query.Dispose();
+				m_query = null;
+			}
 		}
 
 		public void Append(NM.Message msg)
@@ -75,6 +86,9 @@ namespace NotMuchGUI
 			iter = TreeIter.Zero;
 
 			if (path.Depth == 0)
+				return false;
+
+			if (m_count == 0)
 				return false;
 
 			int idx = path.Indices[0];
