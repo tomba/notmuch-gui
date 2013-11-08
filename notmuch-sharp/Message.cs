@@ -43,9 +43,19 @@ namespace NotMuch
 		{
 			get
 			{
-				long time_t = Native.notmuch_message_get_date(this.Handle);
+				IntPtr time_t = Native.notmuch_message_get_date(this.Handle);
 
-				return s_epoch.AddSeconds(time_t);
+				return s_epoch.AddSeconds((long)time_t);
+			}
+		}
+
+		public long DateStamp
+		{
+			get
+			{
+				IntPtr time_t = Native.notmuch_message_get_date(this.Handle);
+
+				return (long)time_t;
 			}
 		}
 
