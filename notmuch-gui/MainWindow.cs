@@ -138,14 +138,13 @@ public partial class MainWindow: Gtk.Window
 	{
 		var sw = Stopwatch.StartNew();
 
-		var q = NM.Query.Create(m_db, queryString);
-		int totalCount = q.Count;
+		var query = NM.Query.Create(m_db, queryString);
 
-		var msgs = q.SearchMessages();
+		var msgs = query.SearchMessages();
 
 		int count = 0;
 
-		var model = new MyTreeModel(totalCount, q);
+		var model = new MyTreeModel(query);
 
 		treeviewList.Model = new TreeModelAdapter(model);
 
@@ -168,7 +167,7 @@ public partial class MainWindow: Gtk.Window
 
 			if (count % 100 == 0)
 			{
-				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), totalCount);
+				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
 
 				//Console.WriteLine("yielding");
 				//await Task.Delay(100);
@@ -178,7 +177,7 @@ public partial class MainWindow: Gtk.Window
 			msgs.Next();
 		}
 
-		label3.Text = String.Format("{0}/{1} msgs", count.ToString(), totalCount);
+		label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
 
 		sw.Stop();
 

@@ -14,12 +14,14 @@ namespace NotMuchGUI
 		List<NM.Message> m_msgs;
 		NM.Query m_query;
 
-		public MyTreeModel(int count, NM.Query query)
+		public MyTreeModel(NM.Query query)
 		{
-			m_count = count;
 			m_query = query;
-			m_msgs = new List<NM.Message>(count);
+			m_count = query.Count;
+			m_msgs = new List<NM.Message>(m_count);
 		}
+
+		public int Count { get { return m_count; } }
 
 		~MyTreeModel()
 		{
