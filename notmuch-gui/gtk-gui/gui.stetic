@@ -9,17 +9,41 @@
     <widget-library name="../bin/Debug/notmuch-gui.exe" internal="true" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="997 646">
+    <action-group name="Default">
+      <action id="deleteAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">GC</property>
+        <property name="ShortLabel" translatable="yes">GC</property>
+        <property name="StockId">gtk-delete</property>
+        <property name="Tooltip" translatable="yes">GC</property>
+      </action>
+    </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
     <property name="WindowPosition">Center</property>
     <property name="AllowShrink">True</property>
-    <property name="DefaultWidth">1600</property>
+    <property name="DefaultWidth">1300</property>
     <property name="DefaultHeight">800</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
       <widget class="Gtk.VBox" id="vbox2">
         <property name="MemberName" />
         <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.Toolbar" id="toolbar1">
+            <property name="MemberName" />
+            <property name="ShowArrow">False</property>
+            <node name="__gtksharp_121_Stetic_Editor_ActionToolbar" type="Toolbar">
+              <node type="Toolitem" action="deleteAction" />
+            </node>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
         <child>
           <widget class="Gtk.HPaned" id="hpaned1">
             <property name="MemberName" />
@@ -45,6 +69,7 @@
             <child>
               <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
                 <property name="MemberName" />
+                <property name="VscrollbarPolicy">Always</property>
                 <property name="ShadowType">In</property>
                 <child>
                   <widget class="Gtk.TreeView" id="treeviewList">
@@ -60,7 +85,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">0</property>
+            <property name="Position">1</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -68,6 +93,7 @@
           <widget class="Gtk.ScrolledWindow" id="scrolledwindowWeb">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
+            <property name="VscrollbarPolicy">Always</property>
             <property name="ShadowType">In</property>
             <child>
               <widget class="Gtk.Viewport" id="GtkViewport">
@@ -80,7 +106,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">1</property>
+            <property name="Position">2</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -126,7 +152,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">2</property>
+            <property name="Position">3</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -173,7 +199,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
