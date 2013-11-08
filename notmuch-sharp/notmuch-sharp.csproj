@@ -37,12 +37,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="DisposableBase.cs" />
-    <Compile Include="NMMessage.cs" />
-    <Compile Include="NMMessages.cs" />
-    <Compile Include="NMQuery.cs" />
-    <Compile Include="NMThread.cs" />
-    <Compile Include="NMThreads.cs" />
-    <Compile Include="NMDatabase.cs" />
+    <Compile Include="Threads.cs" />
+    <Compile Include="Thread.cs" />
+    <Compile Include="Query.cs" />
+    <Compile Include="Messages.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="Database.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

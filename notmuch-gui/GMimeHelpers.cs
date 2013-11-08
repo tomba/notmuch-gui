@@ -1,9 +1,9 @@
 using System;
 using GMime;
 
-namespace NotMuch
+namespace NotMuchGUI
 {
-	enum HtmlFilterFlags
+	enum GMimeHtmlFilterFlags
 	{
 		PRE = 1 << 0,
 		CONVERT_NL = 1 << 1,
@@ -15,7 +15,7 @@ namespace NotMuch
 		CITE = 1 << 7,
 	}
 
-	static class Helpers
+	static class GMimeHelpers
 	{
 		public static void DumpStructure(Entity ent)
 		{

@@ -1,7 +1,7 @@
 using System;
 using Gtk;
 
-namespace NotMuch
+namespace NotMuchGUI
 {
 	class MainClass
 	{

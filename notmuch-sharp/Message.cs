@@ -3,11 +3,11 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public struct NMMessage
+	public struct Message
 	{
 		internal IntPtr Handle;
 
-		internal NMMessage(IntPtr handle)
+		internal Message(IntPtr handle)
 		{
 			Handle = handle;
 		}

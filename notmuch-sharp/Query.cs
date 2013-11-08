@@ -3,16 +3,16 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public class NMQuery : DisposableBase
+	public class Query : DisposableBase
 	{
-		public static NMQuery Create(NMDatabase db, string queryString)
+		public static Query Create(Database db, string queryString)
 		{
 			IntPtr query = Native.notmuch_query_create(db.Handle, queryString);
 
-			return new NMQuery(query);
+			return new Query(query);
 		}
 
-		NMQuery(IntPtr handle)
+		Query(IntPtr handle)
 			: base(handle)
 		{
 		}
@@ -25,18 +25,18 @@ namespace NotMuch
 			}
 		}
 
-		public NMMessages SearchMessages()
+		public Messages SearchMessages()
 		{
 			IntPtr msgsP = Native.notmuch_query_search_messages(this.Handle);
 
-			return new NMMessages(msgsP);
+			return new Messages(msgsP);
 		}
 
-		public NMThreads SearchThreads()
+		public Threads SearchThreads()
 		{
 			IntPtr msgsP = Native.notmuch_query_search_threads(this.Handle);
 
-			return new NMThreads(msgsP);
+			return new Threads(msgsP);
 		}
 
 		protected override void DestroyHandle()

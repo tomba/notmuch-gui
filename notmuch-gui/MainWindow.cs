@@ -4,12 +4,13 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Gtk;
-using NotMuch;
+using NotMuchGUI;
+using NM = NotMuch;
 using WebKit;
 
 public partial class MainWindow: Gtk.Window
 {
-	NMDatabase m_db;
+	NM.Database m_db;
 	WebKit.WebView m_webView;
 	CancellationTokenSource m_cts;
 	Task m_queryTask;
@@ -28,7 +29,7 @@ public partial class MainWindow: Gtk.Window
 		scrolledwindowWeb.ShowAll();
 
 		var path = "/home/tomba/Maildir";
-		m_db = NMDatabase.Open(path, DatabaseMode.READ_ONLY);
+		m_db = NM.Database.Open(path, NM.DatabaseMode.READ_ONLY);
 
 		// select first items
 		treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
@@ -138,7 +139,7 @@ public partial class MainWindow: Gtk.Window
 
 		var sw = Stopwatch.StartNew();
 
-		var q = NMQuery.Create(m_db, queryString);
+		var q = NM.Query.Create(m_db, queryString);
 		int totalCount = q.Count;
 
 		var msgs = q.SearchMessages();
@@ -232,18 +233,18 @@ public partial class MainWindow: Gtk.Window
 		var p = new GMime.Parser(readStream);
 		var msg = p.ConstructMessage();
 
-		Helpers.DumpStructure(msg);
+		GMimeHelpers.DumpStructure(msg);
 
 		GMime.Part textpart = null;
 
 		if (textpart == null)
-			textpart = Helpers.FindFirstContent(msg, new GMime.ContentType("text", "html"));
+			textpart = GMimeHelpers.FindFirstContent(msg, new GMime.ContentType("text", "html"));
 
 		if (textpart == null)
-			textpart = Helpers.FindFirstContent(msg, new GMime.ContentType("text", "plain"));
+			textpart = GMimeHelpers.FindFirstContent(msg, new GMime.ContentType("text", "plain"));
 
 		if (textpart == null)
-			textpart = Helpers.FindFirstContent(msg, new GMime.ContentType("text", "*"));
+			textpart = GMimeHelpers.FindFirstContent(msg, new GMime.ContentType("text", "*"));
 			
 		if (textpart == null)
 			throw new Exception();
@@ -272,8 +273,8 @@ public partial class MainWindow: Gtk.Window
 		{
 			var flags = 0
 			            //| HtmlFilterFlags.PRE
-			            | HtmlFilterFlags.CONVERT_NL
-			            | HtmlFilterFlags.MARK_CITATION;
+			            | GMimeHtmlFilterFlags.CONVERT_NL
+			            | GMimeHtmlFilterFlags.MARK_CITATION;
 			uint quoteColor = 0x888888;
 			filterstream.Add(new GMime.FilterHTML((uint)flags, quoteColor));
 		}

@@ -3,22 +3,22 @@ using System.Collections.Generic;
 
 namespace NotMuch
 {
-	public struct NMMessages : IEnumerable<NMMessage>
+	public struct Messages : IEnumerable<Message>
 	{
 		internal IntPtr Handle;
 
-		public NMMessages(IntPtr handle)
+		public Messages(IntPtr handle)
 		{
 			this.Handle = handle;
 		}
 
 		public bool Valid { get { return Native.notmuch_messages_valid(this.Handle); } }
 
-		public NMMessage Current
+		public Message Current
 		{ 
 			get
 			{
-				return new NMMessage(Native.notmuch_messages_get(this.Handle));
+				return new Message(Native.notmuch_messages_get(this.Handle));
 			}
 		}
 
@@ -29,7 +29,7 @@ namespace NotMuch
 
 		#region IEnumerable implementation
 
-		public IEnumerator<NMMessage> GetEnumerator()
+		public IEnumerator<Message> GetEnumerator()
 		{
 			return new MyEnumerator(this);
 		}
@@ -45,13 +45,13 @@ namespace NotMuch
 
 		#endregion
 
-		class MyEnumerator : IEnumerator<NMMessage>
+		class MyEnumerator : IEnumerator<Message>
 		{
-			NMMessages m_msgs;
+			Messages m_msgs;
 			bool m_valid;
-			NMMessage m_cur;
+			Message m_cur;
 
-			public MyEnumerator(NMMessages msgs)
+			public MyEnumerator(Messages msgs)
 			{
 				m_msgs = msgs;
 			}
@@ -78,7 +78,7 @@ namespace NotMuch
 				throw new NotImplementedException();
 			}
 
-			public NMMessage Current
+			public Message Current
 			{
 				get
 				{

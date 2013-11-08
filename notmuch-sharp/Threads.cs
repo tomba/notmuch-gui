@@ -3,22 +3,22 @@ using System.Collections.Generic;
 
 namespace NotMuch
 {
-	public struct NMThreads
+	public struct Threads
 	{
 		internal IntPtr Handle;
 
-		public NMThreads(IntPtr handle)
+		public Threads(IntPtr handle)
 		{
 			this.Handle = handle;
 		}
 
 		public bool Valid { get { return Native.notmuch_threads_valid(this.Handle); } }
 
-		public NMThread Current
+		public Thread Current
 		{ 
 			get
 			{
-				return new NMThread(Native.notmuch_threads_get(this.Handle));
+				return new Thread(Native.notmuch_threads_get(this.Handle));
 			}
 		}
 
