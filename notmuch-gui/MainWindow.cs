@@ -296,4 +296,123 @@ public partial class MainWindow: Gtk.Window
 			return str;
 		}
 	}
+
+	NM.Message? GetCurrentMessage()
+	{
+		TreeSelection selection = treeviewList.Selection;
+		TreeModel model;
+		TreeIter iter;
+
+		if (!selection.GetSelected(out model, out iter))
+			return null;
+
+		var adap = (TreeModelAdapter)model;
+		var myModel = (MyTreeModel)adap.Implementor;
+
+		var msgN = myModel.GetMessage(iter);
+
+		if (msgN == null)
+			throw new Exception();
+
+		var msg = msgN.Value;
+
+		return msg;
+	}
+
+	protected void OnGcActionActivated(object sender, EventArgs e)
+	{
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+	}
+
+	protected void OnReplyAllActionActivated(object sender, EventArgs e)
+	{
+		Reply(true);
+	}
+
+	protected void OnReplyActionActivated(object sender, EventArgs e)
+	{
+		Reply(false);
+	}
+
+	static Task RunProcessAsync(Process process)
+	{
+		var tcs = new TaskCompletionSource<bool>();
+
+		process.EnableRaisingEvents = true;
+
+		process.Exited += (sender, args) =>
+		{
+			tcs.SetResult(true);
+			process.Dispose();
+		};
+
+		process.Start();
+
+		return tcs.Task;
+	}
+
+	async void Reply(bool replyAll)
+	{
+		var nmMsg = GetCurrentMessage();
+
+		if (nmMsg.HasValue == false)
+			return;
+
+		var msgId = nmMsg.Value.Id;
+
+		string replyText;
+
+		using (var process = new Process())
+		{
+			var si = process.StartInfo;
+			si.FileName = "notmuch";
+			si.Arguments = String.Format("reply --reply-to={0} id:{1}", replyAll ? "all" : "sender", msgId);
+			si.UseShellExecute = false;
+			si.CreateNoWindow = true;
+			si.RedirectStandardOutput = true;
+
+			process.Start();
+
+			var reader = process.StandardOutput;
+
+			replyText = reader.ReadToEnd();
+
+			process.WaitForExit();
+		}
+
+		var tmpFile = System.IO.Path.GetTempFileName();
+
+		File.WriteAllText(tmpFile, replyText);
+
+		const string editorCmd = "gvim";
+		const string editorArgs = "-f \"+set filetype=mail\" +6 {0}";
+
+		using (var process = new Process())
+		{
+			var si = process.StartInfo;
+			si.FileName = editorCmd;
+			si.Arguments = String.Format(editorArgs, tmpFile);
+			si.UseShellExecute = false;
+			si.CreateNoWindow = true;
+
+			var task = RunProcessAsync(process);
+
+			var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Cancel, "Waiting for editor");
+
+			dlg.Response += (o, args) =>
+			{
+				Console.WriteLine("Killing editor process");
+				process.Kill();
+			};
+
+			dlg.ShowNow();
+
+			await task;
+
+			dlg.Destroy();
+		}
+
+		File.Delete(tmpFile);
+	}
 }

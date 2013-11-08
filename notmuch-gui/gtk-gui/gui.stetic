@@ -10,12 +10,27 @@
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="997 646">
     <action-group name="Default">
-      <action id="deleteAction">
+      <action id="dialogWarningAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">GC</property>
         <property name="ShortLabel" translatable="yes">GC</property>
-        <property name="StockId">gtk-delete</property>
-        <property name="Tooltip" translatable="yes">GC</property>
+        <property name="StockId">gtk-dialog-warning</property>
+        <property name="Tooltip" translatable="yes" />
+        <signal name="Activated" handler="OnGcActionActivated" />
+      </action>
+      <action id="editAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Reply</property>
+        <property name="ShortLabel" translatable="yes">Reply</property>
+        <property name="StockId">gtk-edit</property>
+        <signal name="Activated" handler="OnReplyActionActivated" />
+      </action>
+      <action id="replyAllAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Reply All</property>
+        <property name="ShortLabel" translatable="yes">Reply All</property>
+        <property name="StockId">gtk-edit</property>
+        <signal name="Activated" handler="OnReplyAllActionActivated" />
       </action>
     </action-group>
     <property name="MemberName" />
@@ -33,8 +48,11 @@
           <widget class="Gtk.Toolbar" id="toolbar1">
             <property name="MemberName" />
             <property name="ShowArrow">False</property>
+            <property name="ButtonStyle">Both</property>
             <node name="__gtksharp_121_Stetic_Editor_ActionToolbar" type="Toolbar">
-              <node type="Toolitem" action="deleteAction" />
+              <node type="Toolitem" action="dialogWarningAction" />
+              <node type="Toolitem" action="editAction" />
+              <node type="Toolitem" action="replyAllAction" />
             </node>
           </widget>
           <packing>

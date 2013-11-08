@@ -4,7 +4,9 @@
 public partial class MainWindow
 {
 	private global::Gtk.UIManager UIManager;
-	private global::Gtk.Action deleteAction;
+	private global::Gtk.Action dialogWarningAction;
+	private global::Gtk.Action editAction;
+	private global::Gtk.Action replyAllAction;
 	private global::Gtk.VBox vbox2;
 	private global::Gtk.Toolbar toolbar1;
 	private global::Gtk.HPaned hpaned1;
@@ -29,9 +31,15 @@ public partial class MainWindow
 		// Widget MainWindow
 		this.UIManager = new global::Gtk.UIManager ();
 		global::Gtk.ActionGroup w1 = new global::Gtk.ActionGroup ("Default");
-		this.deleteAction = new global::Gtk.Action ("deleteAction", global::Mono.Unix.Catalog.GetString ("GC"), global::Mono.Unix.Catalog.GetString ("GC"), "gtk-delete");
-		this.deleteAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("GC");
-		w1.Add (this.deleteAction, null);
+		this.dialogWarningAction = new global::Gtk.Action ("dialogWarningAction", global::Mono.Unix.Catalog.GetString ("GC"), "", "gtk-dialog-warning");
+		this.dialogWarningAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("GC");
+		w1.Add (this.dialogWarningAction, null);
+		this.editAction = new global::Gtk.Action ("editAction", global::Mono.Unix.Catalog.GetString ("Reply"), null, "gtk-edit");
+		this.editAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Reply");
+		w1.Add (this.editAction, null);
+		this.replyAllAction = new global::Gtk.Action ("replyAllAction", global::Mono.Unix.Catalog.GetString ("Reply All"), null, "gtk-edit");
+		this.replyAllAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Reply All");
+		w1.Add (this.replyAllAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -45,10 +53,11 @@ public partial class MainWindow
 		this.vbox2.Name = "vbox2";
 		this.vbox2.Spacing = 6;
 		// Container child vbox2.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='deleteAction' action='deleteAction'/></toolbar></ui>");
+		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/></toolbar></ui>");
 		this.toolbar1 = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/toolbar1")));
 		this.toolbar1.Name = "toolbar1";
 		this.toolbar1.ShowArrow = false;
+		this.toolbar1.ToolbarStyle = ((global::Gtk.ToolbarStyle)(2));
 		this.vbox2.Add (this.toolbar1);
 		global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.toolbar1]));
 		w2.Position = 0;
@@ -170,6 +179,9 @@ public partial class MainWindow
 		}
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
+		this.dialogWarningAction.Activated += new global::System.EventHandler (this.OnGcActionActivated);
+		this.editAction.Activated += new global::System.EventHandler (this.OnReplyActionActivated);
+		this.replyAllAction.Activated += new global::System.EventHandler (this.OnReplyAllActionActivated);
 		this.treeviewSearch.CursorChanged += new global::System.EventHandler (this.OnTreeviewSearchCursorChanged);
 		this.treeviewList.CursorChanged += new global::System.EventHandler (this.OnTreeviewListCursorChanged);
 	}
