@@ -89,6 +89,16 @@ namespace Viewer
 			return new TreePath(new int[] { idx });
 		}
 
+		public Message? GetMessage(TreeIter iter)
+		{
+			int idx = (int)iter.UserData;
+
+			if (idx >= m_msgs.Count)
+				return null;
+
+			return m_msgs[idx];
+		}
+
 		public void GetValue(TreeIter iter, int col, ref GLib.Value val)
 		{
 			int idx = (int)iter.UserData;
@@ -106,15 +116,17 @@ namespace Viewer
 				switch (col)
 				{
 					case 0:
-						str = msg.Id;
-						break;
-
-					case 1:
 						str = msg.GetHeader("From");
 						break;
 
-					case 2:
+					case 1:
 						str = msg.GetHeader("Subject");
+						break;
+
+					case 2:
+						var tt = msg.Date2;
+						var dd = GLib.Marshaller.time_tToDateTime(tt);
+						str = dd.ToString("g");
 						break;
 
 					default:

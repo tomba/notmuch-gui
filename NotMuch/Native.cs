@@ -57,6 +57,9 @@ namespace NotMuch
 		public static extern IntPtr notmuch_message_get_message_id(IntPtr message);
 
 		[DllImport("libnotmuch")]
+		public static extern long notmuch_message_get_date(IntPtr message);
+
+		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_message_get_filename(IntPtr message);
 
 		[DllImport("libnotmuch")]

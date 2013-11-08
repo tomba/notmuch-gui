@@ -34,6 +34,24 @@ namespace NotMuch
 			return Marshal.PtrToStringAnsi(sp);
 		}
 
+		public DateTime Date
+		{
+			get
+			{
+				var dstr = GetHeader("Date");
+				return DateTime.Parse(dstr);
+			}
+		}
+
+		public IntPtr Date2
+		{
+			get
+			{
+				long time_t = Native.notmuch_message_get_date(this.Handle);
+				return (IntPtr)time_t;
+			}
+		}
+
 		public string Id
 		{
 			get

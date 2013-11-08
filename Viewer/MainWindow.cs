@@ -73,19 +73,19 @@ public partial class MainWindow: Gtk.Window
 
 		TreeViewColumn c;
 
-		c = new TreeViewColumn("Id", new Gtk.CellRendererText(), "text", 0);
+		c = new TreeViewColumn("From", new Gtk.CellRendererText(), "text", 0);
 		//c.Expand = true;
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 150;
 		treeviewList.AppendColumn(c);
 
-		c = new TreeViewColumn("From", new Gtk.CellRendererText(), "text", 1);
+		c = new TreeViewColumn("Subject", new Gtk.CellRendererText(), "text", 1);
 		//c.Expand = true;
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 150;
 		treeviewList.AppendColumn(c);
 
-		c = new TreeViewColumn("Subject", new Gtk.CellRendererText(), "text", 2);
+		c = new TreeViewColumn("Date", new Gtk.CellRendererText(), "text", 2);
 		//c.Expand = false;
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 150;
@@ -209,9 +209,10 @@ public partial class MainWindow: Gtk.Window
 		if (!selection.GetSelected(out model, out iter))
 			return;
 
-		var id = (string)model.GetValue(iter, 0);
+		var adap = (TreeModelAdapter)model;
+		var myModel = (MyTreeModel)adap.Implementor;
 
-		var msgN = m_db.FindMessage(id);
+		var msgN = myModel.GetMessage(iter);
 
 		if (msgN == null)
 			throw new Exception();
@@ -221,8 +222,6 @@ public partial class MainWindow: Gtk.Window
 		var filename = msg.FileName;
 
 		ShowEmail(filename);
-
-		msg.DestroyHandle();
 	}
 
 	void ShowEmail(string filename)
