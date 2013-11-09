@@ -6,22 +6,22 @@ namespace NotMuch
 	unsafe static class Native
 	{
 		[DllImport("libnotmuch")]
-		public static extern Status notmuch_database_create(string path, out IntPtr dbPtr);
+		public static extern Status notmuch_database_create(string path, out IntPtr db);
 
 		[DllImport("libnotmuch")]
-		public static extern Status notmuch_database_open(string path, DatabaseMode mode, out IntPtr dbPtr);
+		public static extern Status notmuch_database_open(string path, DatabaseMode mode, out IntPtr db);
 
 		[DllImport("libnotmuch")]
-		public static extern void notmuch_database_destroy(IntPtr ptr);
+		public static extern void notmuch_database_destroy(IntPtr db);
 
 		[DllImport("libnotmuch")]
-		public static extern void notmuch_database_close(IntPtr ptr);
+		public static extern void notmuch_database_close(IntPtr db);
 
 		[DllImport("libnotmuch")]
-		public static extern IntPtr notmuch_database_get_path(IntPtr ptr);
+		public static extern IntPtr notmuch_database_get_path(IntPtr db);
 
 		[DllImport("libnotmuch")]
-		public static extern Status notmuch_database_find_message(IntPtr ptr, string messageId, out IntPtr msgPtr);
+		public static extern Status notmuch_database_find_message(IntPtr db, string messageId, out IntPtr msg);
 
 
 		// Query
