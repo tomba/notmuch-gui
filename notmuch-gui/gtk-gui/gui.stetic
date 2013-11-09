@@ -48,7 +48,7 @@
           <widget class="Gtk.Toolbar" id="toolbar1">
             <property name="MemberName" />
             <property name="ShowArrow">False</property>
-            <property name="ButtonStyle">Both</property>
+            <property name="ButtonStyle">Text</property>
             <node name="toolbar1" type="Toolbar">
               <node type="Toolitem" action="dialogWarningAction" />
               <node type="Toolitem" action="editAction" />
