@@ -191,7 +191,11 @@ public partial class MainWindow: Gtk.Window
 
 		var query = NM.Query.Create(m_db, queryString);
 
+		long t1 = sw.ElapsedMilliseconds;
+
 		var msgs = query.SearchMessages();
+
+		long t2 = sw.ElapsedMilliseconds;
 
 		int count = 0;
 
@@ -231,9 +235,11 @@ public partial class MainWindow: Gtk.Window
 
 		label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
 
+		long t3 = sw.ElapsedMilliseconds;
+
 		sw.Stop();
 
-		Console.WriteLine("Added {0} messages in {1} ms", count, sw.ElapsedMilliseconds);
+		Console.WriteLine("Added {0} messages in {1}, {2}, {3} = {4} ms", count, t1, t2 - t1, t3 - t2, t3);
 	}
 
 	protected void OnTreeviewListCursorChanged(object sender, EventArgs e)
@@ -468,7 +474,7 @@ public partial class MainWindow: Gtk.Window
 
 		var queryStr = queryEntry.Text;
 
-		ExecuteQuery(queryStr);
+		//ExecuteQuery(queryStr);
 	}
 
 	protected void OnQueryEntryActivated(object sender, EventArgs e)
