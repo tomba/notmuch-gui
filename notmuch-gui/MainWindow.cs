@@ -261,35 +261,42 @@ public partial class MainWindow: Gtk.Window
 
 		var msg = msgN.Value;
 
-		var filename = msg.FileName;
-
-		ShowEmail(filename);
+		ShowEmail(msg);
 	}
 
-	void ShowEmail(string filename)
+	void ShowEmail(NM.Message msg)
 	{
+		labelFrom.Text = msg.GetHeader("From");
+		labelTo.Text = msg.GetHeader("To");
+		labelCc.Text = msg.GetHeader("Cc");
+		labelSubject.Text = msg.GetHeader("Subject");
+		labelDate.Text = msg.Date.ToLocalTime().ToString("g");
+		//labelTags.Text = msg.ta
+
+		var filename = msg.FileName;
+
 		int fd = Mono.Unix.Native.Syscall.open(filename, Mono.Unix.Native.OpenFlags.O_RDONLY);
 
 		var readStream = new GMime.StreamFs(fd);
 
 		var p = new GMime.Parser(readStream);
-		var msg = p.ConstructMessage();
+		var gmsg = p.ConstructMessage();
 
 		var sw = new StringWriter();
-		GMimeHelpers.DumpStructure(msg, sw, 0);
+		GMimeHelpers.DumpStructure(gmsg, sw, 0);
 		var dump = sw.ToString();
 		textviewDump.Buffer.Text = dump;
 
 		GMime.Part textpart = null;
 
 		if (textpart == null)
-			textpart = GMimeHelpers.FindFirstContent(msg, new GMime.ContentType("text", "html"));
+			textpart = GMimeHelpers.FindFirstContent(gmsg, new GMime.ContentType("text", "html"));
 
 		if (textpart == null)
-			textpart = GMimeHelpers.FindFirstContent(msg, new GMime.ContentType("text", "plain"));
+			textpart = GMimeHelpers.FindFirstContent(gmsg, new GMime.ContentType("text", "plain"));
 
 		if (textpart == null)
-			textpart = GMimeHelpers.FindFirstContent(msg, new GMime.ContentType("text", "*"));
+			textpart = GMimeHelpers.FindFirstContent(gmsg, new GMime.ContentType("text", "*"));
 			
 		if (textpart == null)
 			throw new Exception();
