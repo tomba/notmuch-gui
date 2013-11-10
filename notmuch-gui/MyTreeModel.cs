@@ -113,12 +113,12 @@ namespace NotMuchGUI
 			return new TreePath(new int[] { idx });
 		}
 
-		public NM.Message? GetMessage(TreeIter iter)
+		public NM.Message GetMessage(TreeIter iter)
 		{
 			int idx = (int)iter.UserData;
 
 			if (idx >= m_msgs.Count)
-				return null;
+				return NM.Message.NullMessage;
 
 			return m_msgs[idx];
 		}

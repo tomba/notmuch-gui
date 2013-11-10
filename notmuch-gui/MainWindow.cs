@@ -263,12 +263,10 @@ public partial class MainWindow: Gtk.Window
 		var adap = (TreeModelAdapter)model;
 		var myModel = (MyTreeModel)adap.Implementor;
 
-		var msgN = myModel.GetMessage(iter);
+		var msg = myModel.GetMessage(iter);
 
-		if (msgN == null)
+		if (msg.IsNull)
 			throw new Exception();
-
-		var msg = msgN.Value;
 
 		tagsWidget.UpdateTagsView(msg, m_allTags);
 
@@ -304,24 +302,22 @@ public partial class MainWindow: Gtk.Window
 		}
 	}
 
-	NM.Message? GetCurrentMessage()
+	NM.Message GetCurrentMessage()
 	{
 		TreeSelection selection = treeviewList.Selection;
 		TreeModel model;
 		TreeIter iter;
 
 		if (!selection.GetSelected(out model, out iter))
-			return null;
+			return NM.Message.NullMessage;
 
 		var adap = (TreeModelAdapter)model;
 		var myModel = (MyTreeModel)adap.Implementor;
 
-		var msgN = myModel.GetMessage(iter);
+		var msg = myModel.GetMessage(iter);
 
-		if (msgN == null)
+		if (msg.IsNull)
 			throw new Exception();
-
-		var msg = msgN.Value;
 
 		return msg;
 	}
@@ -363,10 +359,10 @@ public partial class MainWindow: Gtk.Window
 	{
 		var nmMsg = GetCurrentMessage();
 
-		if (nmMsg.HasValue == false)
+		if (nmMsg.IsNull)
 			return;
 
-		var msgId = nmMsg.Value.Id;
+		var msgId = nmMsg.Id;
 
 		string replyText;
 
