@@ -272,7 +272,36 @@ public partial class MainWindow: Gtk.Window
 
 		tagsWidget.UpdateTagsView(msg, m_allTags);
 
-		messagewidget1.ShowEmail(msg);
+
+		var filename = msg.FileName;
+
+		int fd = Mono.Unix.Native.Syscall.open(filename, Mono.Unix.Native.OpenFlags.O_RDONLY);
+
+		using (var readStream = new GMime.StreamFs(fd))
+		{
+			readStream.Owner = true;
+
+			var p = new GMime.Parser(readStream);
+			var gmsg = p.ConstructMessage();
+
+			if (m_dbgWnd != null)
+			{
+				var sw = new StringWriter();
+				GMimeHelpers.DumpStructure(gmsg, sw, 0);
+				var dump = sw.ToString();
+				m_dbgWnd.SetDump(dump);
+			}
+
+			messagewidget1.ShowEmail(msg, gmsg);
+
+			if (m_dbgWnd != null)
+			{
+				m_dbgWnd.SetSrc(messagewidget1.HtmlContent);
+			}
+
+			// GMime.StreamFs is buggy. Dispose doesn't close the fd.
+			readStream.Close();
+		}
 	}
 
 	NM.Message? GetCurrentMessage()

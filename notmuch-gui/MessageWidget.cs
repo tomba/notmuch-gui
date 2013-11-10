@@ -20,31 +20,13 @@ namespace NotMuchGUI
 			scrolledwindowWeb.ShowAll();
 		}
 
-		public void ShowEmail(NM.Message msg)
+		public void ShowEmail(NM.Message msg, GMime.Message gmsg)
 		{
 			labelFrom.Text = msg.GetHeader("From");
 			labelTo.Text = msg.GetHeader("To");
 			labelCc.Text = msg.GetHeader("Cc");
 			labelSubject.Text = msg.GetHeader("Subject");
 			labelDate.Text = msg.Date.ToLocalTime().ToString("g");
-			//labelTags.Text = msg.ta
-
-			var filename = msg.FileName;
-
-			int fd = Mono.Unix.Native.Syscall.open(filename, Mono.Unix.Native.OpenFlags.O_RDONLY);
-
-			var readStream = new GMime.StreamFs(fd);
-
-			var p = new GMime.Parser(readStream);
-			var gmsg = p.ConstructMessage();
-			/*
-			if (m_dbgWnd != null)
-			{
-				var sw = new StringWriter();
-				GMimeHelpers.DumpStructure(gmsg, sw, 0);
-				var dump = sw.ToString();
-				m_dbgWnd.SetDump(dump);
-			}*/
 
 			GMime.Part textpart = null;
 
@@ -60,23 +42,17 @@ namespace NotMuchGUI
 			if (textpart == null)
 				throw new Exception();
 
-			AddText(textpart);
+			var html = PartToHtml(textpart);
 
-			//label1.Text = textpart.ContentType.ToString();
-			//label2.Text = textpart.ContentType.GetParameter("charset");
+			labelContentType.Text = textpart.ContentType.ToString();
+			labelCharset.Text = textpart.ContentType.GetParameter("charset");
 
-			Mono.Unix.Native.Syscall.close(fd);
-		}
+			this.HtmlContent = html;
 
-		void AddText(GMime.Part part)
-		{
-			var html = PartToHtml(part);
-			/*
-			if (m_dbgWnd != null)
-				m_dbgWnd.SetSrc(html);
-*/
 			m_webView.LoadHtmlString(html, null);
 		}
+
+		public string HtmlContent { get; private set; }
 
 		string PartToHtml(GMime.Part part)
 		{
@@ -93,9 +69,9 @@ namespace NotMuchGUI
 				if (!part.ContentType.IsType("text", "html"))
 				{
 					var flags = 0
-					        //| HtmlFilterFlags.PRE
-					        | GMimeHtmlFilterFlags.CONVERT_NL
-					        | GMimeHtmlFilterFlags.MARK_CITATION;
+					            //| GMimeHtmlFilterFlags.PRE
+					            | GMimeHtmlFilterFlags.CONVERT_NL
+					            | GMimeHtmlFilterFlags.MARK_CITATION;
 					uint quoteColor = 0x888888;
 					filterstream.Add(new GMime.FilterHTML((uint)flags, quoteColor));
 				}
@@ -115,6 +91,12 @@ namespace NotMuchGUI
 				var str = reader.ReadToEnd();
 				return str;
 			}
+		}
+
+		protected void OnTogglebutton1Toggled(object sender, EventArgs e)
+		{
+			m_webView.ViewSourceMode = togglebutton1.Active;
+			m_webView.LoadHtmlString(this.HtmlContent, null);
 		}
 	}
 }

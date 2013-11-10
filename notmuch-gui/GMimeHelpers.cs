@@ -27,7 +27,7 @@ namespace NotMuchGUI
 			{
 				var msg = (Message)ent;
 
-				sw.WriteLine("{0}{1}",indentStr, ent.GetType());
+				sw.WriteLine("{0}{1}", indentStr, ent.GetType());
 
 				DumpStructure(msg.MimePart, sw, indent + step);
 			}

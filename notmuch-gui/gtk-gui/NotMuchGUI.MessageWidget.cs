@@ -11,12 +11,13 @@ namespace NotMuchGUI
 		private global::Gtk.Label label6;
 		private global::Gtk.Label label9;
 		private global::Gtk.Label labelCc;
+		private global::Gtk.Label labelCharset;
+		private global::Gtk.Label labelContentType;
 		private global::Gtk.Label labelDate;
 		private global::Gtk.Label labelFrom;
 		private global::Gtk.Label labelSubject;
-		private global::Gtk.Label labelTags;
-		private global::Gtk.Label labelTags1;
 		private global::Gtk.Label labelTo;
+		private global::Gtk.ToggleButton togglebutton1;
 		private global::Gtk.ScrolledWindow scrolledwindowWeb;
 
 		protected virtual void Build ()
@@ -92,15 +93,39 @@ namespace NotMuchGUI
 			w5.XOptions = ((global::Gtk.AttachOptions)(4));
 			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.labelDate = new global::Gtk.Label ();
-			this.labelDate.Name = "labelDate";
-			this.labelDate.LabelProp = global::Mono.Unix.Catalog.GetString ("label7");
-			this.table1.Add (this.labelDate);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelDate]));
+			this.labelCharset = new global::Gtk.Label ();
+			this.labelCharset.Name = "labelCharset";
+			this.labelCharset.LabelProp = global::Mono.Unix.Catalog.GetString ("label8");
+			this.table1.Add (this.labelCharset);
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelCharset]));
+			w6.TopAttach = ((uint)(2));
+			w6.BottomAttach = ((uint)(3));
 			w6.LeftAttach = ((uint)(2));
 			w6.RightAttach = ((uint)(3));
 			w6.XOptions = ((global::Gtk.AttachOptions)(4));
 			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.labelContentType = new global::Gtk.Label ();
+			this.labelContentType.Name = "labelContentType";
+			this.labelContentType.LabelProp = global::Mono.Unix.Catalog.GetString ("label8");
+			this.table1.Add (this.labelContentType);
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelContentType]));
+			w7.TopAttach = ((uint)(1));
+			w7.BottomAttach = ((uint)(2));
+			w7.LeftAttach = ((uint)(2));
+			w7.RightAttach = ((uint)(3));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.labelDate = new global::Gtk.Label ();
+			this.labelDate.Name = "labelDate";
+			this.labelDate.LabelProp = global::Mono.Unix.Catalog.GetString ("label7");
+			this.table1.Add (this.labelDate);
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelDate]));
+			w8.LeftAttach = ((uint)(2));
+			w8.RightAttach = ((uint)(3));
+			w8.XOptions = ((global::Gtk.AttachOptions)(4));
+			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.labelFrom = new global::Gtk.Label ();
 			this.labelFrom.Name = "labelFrom";
@@ -108,10 +133,10 @@ namespace NotMuchGUI
 			this.labelFrom.LabelProp = global::Mono.Unix.Catalog.GetString ("labelFrom");
 			this.labelFrom.Selectable = true;
 			this.table1.Add (this.labelFrom);
-			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelFrom]));
-			w7.LeftAttach = ((uint)(1));
-			w7.RightAttach = ((uint)(2));
-			w7.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelFrom]));
+			w9.LeftAttach = ((uint)(1));
+			w9.RightAttach = ((uint)(2));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.labelSubject = new global::Gtk.Label ();
 			this.labelSubject.Name = "labelSubject";
@@ -119,35 +144,11 @@ namespace NotMuchGUI
 			this.labelSubject.LabelProp = global::Mono.Unix.Catalog.GetString ("labelSubject");
 			this.labelSubject.Selectable = true;
 			this.table1.Add (this.labelSubject);
-			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelSubject]));
-			w8.TopAttach = ((uint)(1));
-			w8.BottomAttach = ((uint)(2));
-			w8.LeftAttach = ((uint)(1));
-			w8.RightAttach = ((uint)(2));
-			w8.XOptions = ((global::Gtk.AttachOptions)(4));
-			w8.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
-			this.labelTags = new global::Gtk.Label ();
-			this.labelTags.Name = "labelTags";
-			this.labelTags.LabelProp = global::Mono.Unix.Catalog.GetString ("label8");
-			this.table1.Add (this.labelTags);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelTags]));
-			w9.TopAttach = ((uint)(1));
-			w9.BottomAttach = ((uint)(2));
-			w9.LeftAttach = ((uint)(2));
-			w9.RightAttach = ((uint)(3));
-			w9.XOptions = ((global::Gtk.AttachOptions)(4));
-			w9.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
-			this.labelTags1 = new global::Gtk.Label ();
-			this.labelTags1.Name = "labelTags1";
-			this.labelTags1.LabelProp = global::Mono.Unix.Catalog.GetString ("label8");
-			this.table1.Add (this.labelTags1);
-			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelTags1]));
-			w10.TopAttach = ((uint)(2));
-			w10.BottomAttach = ((uint)(3));
-			w10.LeftAttach = ((uint)(2));
-			w10.RightAttach = ((uint)(3));
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelSubject]));
+			w10.TopAttach = ((uint)(1));
+			w10.BottomAttach = ((uint)(2));
+			w10.LeftAttach = ((uint)(1));
+			w10.RightAttach = ((uint)(2));
 			w10.XOptions = ((global::Gtk.AttachOptions)(4));
 			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -164,11 +165,25 @@ namespace NotMuchGUI
 			w11.RightAttach = ((uint)(2));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.togglebutton1 = new global::Gtk.ToggleButton ();
+			this.togglebutton1.CanFocus = true;
+			this.togglebutton1.Name = "togglebutton1";
+			this.togglebutton1.UseUnderline = true;
+			this.togglebutton1.Label = global::Mono.Unix.Catalog.GetString ("Src");
+			this.table1.Add (this.togglebutton1);
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1 [this.togglebutton1]));
+			w12.TopAttach = ((uint)(3));
+			w12.BottomAttach = ((uint)(4));
+			w12.LeftAttach = ((uint)(2));
+			w12.RightAttach = ((uint)(3));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.vbox3.Add (this.table1);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.table1]));
-			w12.Position = 0;
-			w12.Expand = false;
-			w12.Fill = false;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.table1]));
+			w13.Position = 0;
+			w13.Expand = false;
+			w13.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.scrolledwindowWeb = new global::Gtk.ScrolledWindow ();
 			this.scrolledwindowWeb.CanFocus = true;
@@ -176,13 +191,14 @@ namespace NotMuchGUI
 			this.scrolledwindowWeb.VscrollbarPolicy = ((global::Gtk.PolicyType)(0));
 			this.scrolledwindowWeb.ShadowType = ((global::Gtk.ShadowType)(1));
 			this.vbox3.Add (this.scrolledwindowWeb);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.scrolledwindowWeb]));
-			w13.Position = 1;
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.scrolledwindowWeb]));
+			w14.Position = 1;
 			this.Add (this.vbox3);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
 			this.Hide ();
+			this.togglebutton1.Toggled += new global::System.EventHandler (this.OnTogglebutton1Toggled);
 		}
 	}
 }
