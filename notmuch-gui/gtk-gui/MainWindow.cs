@@ -27,9 +27,10 @@ public partial class MainWindow
 	private global::Gtk.Label labelSubject;
 	private global::Gtk.Label labelTags;
 	private global::Gtk.Label labelTags1;
-	private global::Gtk.Label labelTags2;
 	private global::Gtk.Label labelTo;
 	private global::Gtk.ScrolledWindow scrolledwindowWeb;
+	private global::Gtk.ScrolledWindow GtkScrolledWindow2;
+	private global::Gtk.TreeView treeviewTags;
 	private global::Gtk.Statusbar statusbar2;
 	private global::Gtk.Label label1;
 	private global::Gtk.Label label2;
@@ -242,36 +243,24 @@ public partial class MainWindow
 		w18.XOptions = ((global::Gtk.AttachOptions)(4));
 		w18.YOptions = ((global::Gtk.AttachOptions)(4));
 		// Container child table1.Gtk.Table+TableChild
-		this.labelTags2 = new global::Gtk.Label ();
-		this.labelTags2.Name = "labelTags2";
-		this.labelTags2.LabelProp = global::Mono.Unix.Catalog.GetString ("label8");
-		this.table1.Add (this.labelTags2);
-		global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelTags2]));
-		w19.TopAttach = ((uint)(3));
-		w19.BottomAttach = ((uint)(4));
-		w19.LeftAttach = ((uint)(2));
-		w19.RightAttach = ((uint)(3));
-		w19.XOptions = ((global::Gtk.AttachOptions)(4));
-		w19.YOptions = ((global::Gtk.AttachOptions)(4));
-		// Container child table1.Gtk.Table+TableChild
 		this.labelTo = new global::Gtk.Label ();
 		this.labelTo.Name = "labelTo";
 		this.labelTo.Xalign = 0F;
 		this.labelTo.LabelProp = global::Mono.Unix.Catalog.GetString ("label6");
 		this.labelTo.Selectable = true;
 		this.table1.Add (this.labelTo);
-		global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelTo]));
-		w20.TopAttach = ((uint)(2));
-		w20.BottomAttach = ((uint)(3));
-		w20.LeftAttach = ((uint)(1));
-		w20.RightAttach = ((uint)(2));
-		w20.XOptions = ((global::Gtk.AttachOptions)(4));
-		w20.YOptions = ((global::Gtk.AttachOptions)(4));
+		global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelTo]));
+		w19.TopAttach = ((uint)(2));
+		w19.BottomAttach = ((uint)(3));
+		w19.LeftAttach = ((uint)(1));
+		w19.RightAttach = ((uint)(2));
+		w19.XOptions = ((global::Gtk.AttachOptions)(4));
+		w19.YOptions = ((global::Gtk.AttachOptions)(4));
 		this.vbox2.Add (this.table1);
-		global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.table1]));
-		w21.Position = 3;
-		w21.Expand = false;
-		w21.Fill = false;
+		global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.table1]));
+		w20.Position = 3;
+		w20.Expand = false;
+		w20.Fill = false;
 		// Container child vbox2.Gtk.Box+BoxChild
 		this.scrolledwindowWeb = new global::Gtk.ScrolledWindow ();
 		this.scrolledwindowWeb.CanFocus = true;
@@ -279,8 +268,20 @@ public partial class MainWindow
 		this.scrolledwindowWeb.VscrollbarPolicy = ((global::Gtk.PolicyType)(0));
 		this.scrolledwindowWeb.ShadowType = ((global::Gtk.ShadowType)(1));
 		this.vbox2.Add (this.scrolledwindowWeb);
-		global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.scrolledwindowWeb]));
-		w22.Position = 4;
+		global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.scrolledwindowWeb]));
+		w21.Position = 4;
+		// Container child vbox2.Gtk.Box+BoxChild
+		this.GtkScrolledWindow2 = new global::Gtk.ScrolledWindow ();
+		this.GtkScrolledWindow2.Name = "GtkScrolledWindow2";
+		this.GtkScrolledWindow2.ShadowType = ((global::Gtk.ShadowType)(1));
+		// Container child GtkScrolledWindow2.Gtk.Container+ContainerChild
+		this.treeviewTags = new global::Gtk.TreeView ();
+		this.treeviewTags.CanFocus = true;
+		this.treeviewTags.Name = "treeviewTags";
+		this.GtkScrolledWindow2.Add (this.treeviewTags);
+		this.vbox2.Add (this.GtkScrolledWindow2);
+		global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.GtkScrolledWindow2]));
+		w23.Position = 5;
 		// Container child vbox2.Gtk.Box+BoxChild
 		this.statusbar2 = new global::Gtk.Statusbar ();
 		this.statusbar2.Name = "statusbar2";
@@ -290,34 +291,35 @@ public partial class MainWindow
 		this.label1.Name = "label1";
 		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
 		this.statusbar2.Add (this.label1);
-		global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label1]));
-		w23.Position = 1;
-		w23.Expand = false;
-		w23.Fill = false;
+		global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label1]));
+		w24.Position = 1;
+		w24.Expand = false;
+		w24.Fill = false;
 		// Container child statusbar2.Gtk.Box+BoxChild
 		this.label2 = new global::Gtk.Label ();
 		this.label2.Name = "label2";
 		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString ("label2");
 		this.statusbar2.Add (this.label2);
-		global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label2]));
-		w24.Position = 2;
-		w24.Expand = false;
-		w24.Fill = false;
+		global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label2]));
+		w25.Position = 2;
+		w25.Expand = false;
+		w25.Fill = false;
 		// Container child statusbar2.Gtk.Box+BoxChild
 		this.label3 = new global::Gtk.Label ();
 		this.label3.Name = "label3";
 		this.label3.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
 		this.statusbar2.Add (this.label3);
-		global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label3]));
-		w25.PackType = ((global::Gtk.PackType)(1));
-		w25.Position = 3;
-		w25.Expand = false;
-		w25.Fill = false;
-		this.vbox2.Add (this.statusbar2);
-		global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar2]));
-		w26.Position = 5;
+		global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label3]));
+		w26.PackType = ((global::Gtk.PackType)(1));
+		w26.Position = 3;
 		w26.Expand = false;
 		w26.Fill = false;
+		this.vbox2.Add (this.statusbar2);
+		global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar2]));
+		w27.PackType = ((global::Gtk.PackType)(1));
+		w27.Position = 6;
+		w27.Expand = false;
+		w27.Fill = false;
 		this.Add (this.vbox2);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();

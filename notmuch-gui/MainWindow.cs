@@ -7,6 +7,8 @@ using Gtk;
 using NotMuchGUI;
 using NM = NotMuch;
 using WebKit;
+using System.Collections.Generic;
+using System.Linq;
 
 public partial class MainWindow: Gtk.Window
 {
@@ -14,8 +16,10 @@ public partial class MainWindow: Gtk.Window
 	WebKit.WebView m_webView;
 	CancellationTokenSource m_cts;
 	Task m_queryTask;
-	Gtk.ListStore m_queryStore;
+	ListStore m_queryStore;
 	DebugWindow m_dbgWnd;
+	ListStore m_tagStore;
+	List<string> m_allTags = new List<string>();
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -23,6 +27,7 @@ public partial class MainWindow: Gtk.Window
 
 		SetupQueryList();
 		SetupMailList();
+		CreateTagsView();
 
 		m_webView = new WebKit.WebView();
 		m_webView.Editable = false;
@@ -37,6 +42,7 @@ public partial class MainWindow: Gtk.Window
 
 		while (tags.Valid)
 		{
+			m_allTags.Add(tags.Current);
 			m_queryStore.AppendValues(String.Format("tag:{0}", tags.Current));
 			tags.Next();
 		}
@@ -51,6 +57,27 @@ public partial class MainWindow: Gtk.Window
 
 		m_db.Dispose();
 		m_db = null;
+	}
+
+	void CreateTagsView()
+	{
+		var c = new TreeViewColumn();
+		c.Title = "Tags";
+
+		var crToggle = new Gtk.CellRendererToggle();
+		crToggle.Toggled += TagToggled; // (o, a) => Console.WriteLine("Toggle");
+		c.PackStart(crToggle, false);
+		c.AddAttribute(crToggle, "active", 1);
+
+		var crText = new CellRendererText();
+		crText.Mode = CellRendererMode.Activatable;
+		c.PackStart(crText, false);
+		c.AddAttribute(crText, "text", 0);
+
+		treeviewTags.AppendColumn(c);
+
+		m_tagStore = new ListStore(typeof(string), typeof(bool));
+		treeviewTags.Model = m_tagStore;
 	}
 
 	void SetupQueryList()
@@ -273,7 +300,40 @@ public partial class MainWindow: Gtk.Window
 
 		var msg = msgN.Value;
 
+		UpdateTagsView(msg);
 		ShowEmail(msg);
+	}
+
+	void TagToggled(object sender, ToggledArgs args)
+	{
+		TreeIter iter;
+
+		if (m_tagStore.GetIter(out iter, new TreePath(args.Path)))
+		{
+			bool old = (bool)m_tagStore.GetValue(iter, 1);
+			m_tagStore.SetValue(iter, 1, !old);
+		}
+	}
+
+	void UpdateTagsView(NM.Message msg)
+	{
+		m_tagStore.Clear();
+
+		var tags = msg.GetTags();
+
+		List<string> selList = new List<string>();
+
+		while (tags.Valid)
+		{
+			selList.Add(tags.Current);
+			tags.Next();
+		}
+
+		foreach (var t in selList)
+			m_tagStore.AppendValues(t, true);
+			
+		foreach (var t in m_allTags.Except(selList))
+			m_tagStore.AppendValues(t, false);
 	}
 
 	void ShowEmail(NM.Message msg)

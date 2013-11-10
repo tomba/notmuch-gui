@@ -6,7 +6,7 @@
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../../../../../usr/lib/cli/webkit-sharp-1.1/webkit-sharp.dll" />
-    <widget-library name="../bin/Debug/notmuch-gui.exe" internal="true" />
+    <widget-library name="../bin/Release/notmuch-gui.exe" internal="true" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="997 646">
     <action-group name="Default">
@@ -140,6 +140,9 @@
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">10</property>
             <property name="BorderWidth">4</property>
+            <child>
+              <placeholder />
+            </child>
             <child>
               <widget class="Gtk.Label" id="label4">
                 <property name="MemberName" />
@@ -346,27 +349,6 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="labelTags2">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">label8</property>
-              </widget>
-              <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
-                <property name="LeftAttach">2</property>
-                <property name="RightAttach">3</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
               <widget class="Gtk.Label" id="labelTo">
                 <property name="MemberName" />
                 <property name="Xalign">0</property>
@@ -419,6 +401,23 @@
           </packing>
         </child>
         <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow2">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gtk.TreeView" id="treeviewTags">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">5</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gtk.Statusbar" id="statusbar2">
             <property name="MemberName" />
             <property name="Spacing">6</property>
@@ -461,7 +460,8 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">5</property>
+            <property name="PackType">End</property>
+            <property name="Position">6</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
