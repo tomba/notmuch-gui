@@ -15,6 +15,7 @@ public partial class MainWindow: Gtk.Window
 	CancellationTokenSource m_cts;
 	Task m_queryTask;
 	Gtk.ListStore m_queryStore;
+	DebugWindow m_dbgWnd;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -293,10 +294,13 @@ public partial class MainWindow: Gtk.Window
 		var p = new GMime.Parser(readStream);
 		var gmsg = p.ConstructMessage();
 
-		var sw = new StringWriter();
-		GMimeHelpers.DumpStructure(gmsg, sw, 0);
-		var dump = sw.ToString();
-		textviewDump.Buffer.Text = dump;
+		if (m_dbgWnd != null)
+		{
+			var sw = new StringWriter();
+			GMimeHelpers.DumpStructure(gmsg, sw, 0);
+			var dump = sw.ToString();
+			m_dbgWnd.SetDump(dump);
+		}
 
 		GMime.Part textpart = null;
 
@@ -324,7 +328,9 @@ public partial class MainWindow: Gtk.Window
 	{
 		var html = PartToHtml(part);
 
-		textviewSrc.Buffer.Text = html;
+		if (m_dbgWnd != null)
+			m_dbgWnd.SetSrc(html);
+
 		m_webView.LoadHtmlString(html, null);
 	}
 
@@ -502,5 +508,20 @@ public partial class MainWindow: Gtk.Window
 		var queryStr = queryEntry.Text;
 
 		ExecuteQuery(queryStr);
+	}
+
+	protected void OnDbgActionActivated(object sender, EventArgs e)
+	{
+		if (m_dbgWnd != null)
+		{
+			m_dbgWnd.Destroy();
+			m_dbgWnd = null;
+		}
+
+		if (dbgAction.Active)
+		{
+			m_dbgWnd = new DebugWindow();
+			m_dbgWnd.ShowAll();
+		}
 	}
 }

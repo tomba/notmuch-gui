@@ -78,6 +78,8 @@
     <Compile Include="GLibSynchronizationContext.cs" />
     <Compile Include="MyTreeModel.cs" />
     <Compile Include="GMimeHelpers.cs" />
+    <Compile Include="DebugWindow.cs" />
+    <Compile Include="gtk-gui\NotMuchGUI.DebugWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
