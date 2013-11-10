@@ -66,5 +66,14 @@ namespace NotMuch
 				return Marshal.PtrToStringAnsi(p);
 			}
 		}
+
+		public Tags AllTags
+		{
+			get
+			{
+				IntPtr p = Native.notmuch_database_get_all_tags(this.Handle);
+				return new Tags(p);
+			}
+		}
 	}
 }

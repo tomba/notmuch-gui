@@ -23,6 +23,9 @@ namespace NotMuch
 		[DllImport("libnotmuch")]
 		public static extern Status notmuch_database_find_message(IntPtr db, string messageId, out IntPtr msg);
 
+		[DllImport("libnotmuch")]
+		public static extern IntPtr notmuch_database_get_all_tags(IntPtr db);
+
 
 		// Query
 		[DllImport("libnotmuch")]

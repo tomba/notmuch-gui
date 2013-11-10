@@ -14,6 +14,7 @@ public partial class MainWindow: Gtk.Window
 	WebKit.WebView m_webView;
 	CancellationTokenSource m_cts;
 	Task m_queryTask;
+	Gtk.ListStore m_queryStore;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -30,6 +31,14 @@ public partial class MainWindow: Gtk.Window
 
 		var path = "/home/tomba/Maildir";
 		m_db = NM.Database.Open(path, NM.DatabaseMode.READ_ONLY);
+
+		var tags = m_db.AllTags;
+
+		while (tags.Valid)
+		{
+			m_queryStore.AppendValues(String.Format("tag:{0}", tags.Current));
+			tags.Next();
+		}
 
 		// select first items
 		treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
@@ -67,6 +76,8 @@ public partial class MainWindow: Gtk.Window
 		queryStore.AppendValues("to:linux-kernel@vger.kernel.org");
 		queryStore.AppendValues("*");
 		queryStore.AppendValues("");
+
+		m_queryStore = queryStore;
 	}
 
 	void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
