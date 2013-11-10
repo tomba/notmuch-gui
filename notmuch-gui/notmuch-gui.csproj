@@ -80,6 +80,8 @@
     <Compile Include="GMimeHelpers.cs" />
     <Compile Include="DebugWindow.cs" />
     <Compile Include="gtk-gui\NotMuchGUI.DebugWindow.cs" />
+    <Compile Include="TagsWidget.cs" />
+    <Compile Include="gtk-gui\NotMuchGUI.TagsWidget.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
