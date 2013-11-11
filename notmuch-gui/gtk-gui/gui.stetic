@@ -40,6 +40,14 @@
         <property name="Active">False</property>
         <signal name="Activated" handler="OnDbgActionActivated" />
       </action>
+      <action id="threadedAction">
+        <property name="Type">Toggle</property>
+        <property name="Label" translatable="yes">Threaded</property>
+        <property name="ShortLabel" translatable="yes">Threaded</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <signal name="Activated" handler="OnThreadedActionActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
@@ -62,6 +70,7 @@
               <node type="Toolitem" action="editAction" />
               <node type="Toolitem" action="replyAllAction" />
               <node type="Toolitem" action="dbgAction" />
+              <node type="Toolitem" action="threadedAction" />
             </node>
           </widget>
           <packing>

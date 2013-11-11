@@ -8,6 +8,7 @@ public partial class MainWindow
 	private global::Gtk.Action editAction;
 	private global::Gtk.Action replyAllAction;
 	private global::Gtk.ToggleAction dbgAction;
+	private global::Gtk.ToggleAction threadedAction;
 	private global::Gtk.VBox vbox2;
 	private global::Gtk.Toolbar toolbar1;
 	private global::Gtk.HBox hbox2;
@@ -45,6 +46,9 @@ public partial class MainWindow
 		this.dbgAction = new global::Gtk.ToggleAction ("dbgAction", global::Mono.Unix.Catalog.GetString ("Dbg"), null, null);
 		this.dbgAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Dbg");
 		w1.Add (this.dbgAction, null);
+		this.threadedAction = new global::Gtk.ToggleAction ("threadedAction", global::Mono.Unix.Catalog.GetString ("Threaded"), null, null);
+		this.threadedAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Threaded");
+		w1.Add (this.threadedAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -58,7 +62,7 @@ public partial class MainWindow
 		this.vbox2.Name = "vbox2";
 		this.vbox2.Spacing = 6;
 		// Container child vbox2.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/><toolitem name='dbgAction' action='dbgAction'/></toolbar></ui>");
+		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/><toolitem name='dbgAction' action='dbgAction'/><toolitem name='threadedAction' action='threadedAction'/></toolbar></ui>");
 		this.toolbar1 = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/toolbar1")));
 		this.toolbar1.Name = "toolbar1";
 		this.toolbar1.ShowArrow = false;
@@ -209,6 +213,7 @@ public partial class MainWindow
 		this.editAction.Activated += new global::System.EventHandler (this.OnReplyActionActivated);
 		this.replyAllAction.Activated += new global::System.EventHandler (this.OnReplyAllActionActivated);
 		this.dbgAction.Activated += new global::System.EventHandler (this.OnDbgActionActivated);
+		this.threadedAction.Activated += new global::System.EventHandler (this.OnThreadedActionActivated);
 		this.queryEntry.Changed += new global::System.EventHandler (this.OnQueryEntryChanged);
 		this.queryEntry.Activated += new global::System.EventHandler (this.OnQueryEntryActivated);
 		this.dateSearchEntry.Activated += new global::System.EventHandler (this.OnDateSearchEntryActivated);

@@ -18,10 +18,13 @@ public partial class MainWindow: Gtk.Window
 	ListStore m_queryStore;
 	DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
+	bool m_threadedView = false;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
 		Build();
+
+		threadedAction.Active = m_threadedView;
 
 		SetupQueryList();
 		SetupMailList();
@@ -160,7 +163,7 @@ public partial class MainWindow: Gtk.Window
 		queryEntry.Activate();
 	}
 
-	void ExecuteQuery(string queryString)
+	void ExecuteQuery()
 	{
 		if (m_cts != null && m_cts.IsCancellationRequested)
 			throw new Exception();
@@ -180,10 +183,10 @@ public partial class MainWindow: Gtk.Window
 			m_queryTask = null;
 		}
 
+		var queryString = queryEntry.Text;
+
 		if (string.IsNullOrWhiteSpace(dateSearchEntry.Text) == false)
-		{
 			queryString = queryString + String.Format(" date:{0}", dateSearchEntry.Text);
-		}
 
 		m_cts = new CancellationTokenSource();
 		m_queryTask = ProcessSearch(queryString, m_cts.Token);
@@ -213,88 +216,90 @@ public partial class MainWindow: Gtk.Window
 
 		long t2 = sw.ElapsedMilliseconds;
 
-		#if asd
-		var msgs = query.SearchMessages();
-
-		treeviewList.Model = new TreeModelAdapter(model);
-
-		while (msgs.Valid)
+		if (!m_threadedView)
 		{
-			if (ct.IsCancellationRequested)
-			{
-				Console.WriteLine("CANCEL");
-				sw.Stop();
-				return;
-			}
+			var msgs = query.SearchMessages();
 
-			var msg = msgs.Current;
-
-			model.Append(msg, 0);
-
-			if (count == 0)
-				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
-
-			count++;
-
-			if (count % 100 == 0)
-			{
-				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
-
-				//Console.WriteLine("yielding");
-				//await Task.Delay(100);
-				await Task.Yield();
-			}
-
-			msgs.Next();
-		}
-		#else
-
-		var threads = query.SearchThreads();
-		int lastYield = 0;
-
-		while (threads.Valid)
-		{
-			if (ct.IsCancellationRequested)
-			{
-				Console.WriteLine("CANCEL");
-				sw.Stop();
-				return;
-			}
-
-			var thread = threads.Current;
-
-			//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
-
-			var msgs = thread.GetToplevelMessages();
-
-			bool firstLoop = count == 0;
+			treeviewList.Model = new TreeModelAdapter(model);
 
 			while (msgs.Valid)
 			{
+				if (ct.IsCancellationRequested)
+				{
+					Console.WriteLine("CANCEL");
+					sw.Stop();
+					return;
+				}
+
 				var msg = msgs.Current;
 
-				AddMsgsRecursive(model, msg, 0, ref count);
+				model.Append(msg, 0);
+
+				if (count == 0)
+					treeviewList.SetCursor(TreePath.NewFirst(), null, false);
+
+				count++;
+
+				if (count % 100 == 0)
+				{
+					label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
+
+					//Console.WriteLine("yielding");
+					//await Task.Delay(100);
+					await Task.Yield();
+				}
 
 				msgs.Next();
 			}
-
-			if (firstLoop)
-				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
-
-			if (count - lastYield > 500)
-			{
-				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
-
-				//Console.WriteLine("yielding");
-				//await Task.Delay(1000);
-				await Task.Yield();
-
-				lastYield = count;
-			}
-
-			threads.Next();
 		}
-		#endif
+		else
+		{
+			var threads = query.SearchThreads();
+			int lastYield = 0;
+
+			while (threads.Valid)
+			{
+				if (ct.IsCancellationRequested)
+				{
+					Console.WriteLine("CANCEL");
+					sw.Stop();
+					return;
+				}
+
+				var thread = threads.Current;
+
+				//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
+
+				var msgs = thread.GetToplevelMessages();
+
+				bool firstLoop = count == 0;
+
+				while (msgs.Valid)
+				{
+					var msg = msgs.Current;
+
+					AddMsgsRecursive(model, msg, 0, ref count);
+
+					msgs.Next();
+				}
+
+				if (firstLoop)
+					treeviewList.SetCursor(TreePath.NewFirst(), null, false);
+
+				if (count - lastYield > 500)
+				{
+					label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
+
+					//Console.WriteLine("yielding");
+					//await Task.Delay(1000);
+					await Task.Yield();
+
+					lastYield = count;
+				}
+
+				threads.Next();
+			}
+		}
 
 		long t3 = sw.ElapsedMilliseconds;
 
@@ -512,16 +517,12 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnQueryEntryActivated(object sender, EventArgs e)
 	{
-		var queryStr = queryEntry.Text;
-
-		ExecuteQuery(queryStr);
+		ExecuteQuery();
 	}
 
-	protected void OnDateSearchEntryActivated (object sender, EventArgs e)
+	protected void OnDateSearchEntryActivated(object sender, EventArgs e)
 	{
-		var queryStr = queryEntry.Text;
-
-		ExecuteQuery(queryStr);
+		ExecuteQuery();
 	}
 
 	protected void OnDbgActionActivated(object sender, EventArgs e)
@@ -537,5 +538,14 @@ public partial class MainWindow: Gtk.Window
 			m_dbgWnd = new DebugWindow();
 			m_dbgWnd.ShowAll();
 		}
+	}
+
+	protected void OnThreadedActionActivated(object sender, EventArgs e)
+	{
+		var b = (ToggleAction)sender;
+
+		m_threadedView = b.Active;
+
+		ExecuteQuery();
 	}
 }
