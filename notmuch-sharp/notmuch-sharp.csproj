@@ -45,6 +45,7 @@
     <Compile Include="Tags.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="DatabaseMode.cs" />
+    <Compile Include="SortOrder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

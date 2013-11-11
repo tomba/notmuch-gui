@@ -206,6 +206,8 @@ public partial class MainWindow: Gtk.Window
 
 		var query = NM.Query.Create(m_db, queryString);
 
+		query.Sort = NM.SortOrder.OLDEST_FIRST;
+
 		long t1 = sw.ElapsedMilliseconds;
 
 		int count = 0;

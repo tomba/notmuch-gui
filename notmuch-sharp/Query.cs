@@ -44,6 +44,12 @@ namespace NotMuch
 			notmuch_query_destroy(this.Handle);
 		}
 
+		public SortOrder Sort
+		{
+			get { return (SortOrder)notmuch_query_get_sort(this.Handle); }
+			set { notmuch_query_set_sort(this.Handle, (int)value); }
+		}
+
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_query_create(IntPtr db, string queryString);
 
@@ -58,5 +64,11 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_query_search_threads(IntPtr query);
+
+		[DllImport("libnotmuch")]
+		static extern void notmuch_query_set_sort(IntPtr query, int sort);
+
+		[DllImport("libnotmuch")]
+		static extern int notmuch_query_get_sort(IntPtr query);
 	}
 }

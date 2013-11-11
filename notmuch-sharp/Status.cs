@@ -18,4 +18,3 @@ namespace NotMuch
 		LAST_STATUS
 	}
 }
-
