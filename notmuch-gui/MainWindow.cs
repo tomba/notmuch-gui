@@ -180,6 +180,11 @@ public partial class MainWindow: Gtk.Window
 			m_queryTask = null;
 		}
 
+		if (string.IsNullOrWhiteSpace(dateSearchEntry.Text) == false)
+		{
+			queryString = queryString + String.Format(" date:{0}", dateSearchEntry.Text);
+		}
+
 		m_cts = new CancellationTokenSource();
 		m_queryTask = ProcessSearch(queryString, m_cts.Token);
 	}
@@ -193,6 +198,8 @@ public partial class MainWindow: Gtk.Window
 		}
 
 		var sw = Stopwatch.StartNew();
+
+		Console.WriteLine("Query({0})", queryString);
 
 		var query = NM.Query.Create(m_db, queryString);
 
@@ -499,6 +506,13 @@ public partial class MainWindow: Gtk.Window
 	}
 
 	protected void OnQueryEntryActivated(object sender, EventArgs e)
+	{
+		var queryStr = queryEntry.Text;
+
+		ExecuteQuery(queryStr);
+	}
+
+	protected void OnDateSearchEntryActivated (object sender, EventArgs e)
 	{
 		var queryStr = queryEntry.Text;
 
