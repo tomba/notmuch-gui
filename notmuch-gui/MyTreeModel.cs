@@ -14,7 +14,6 @@ namespace NotMuchGUI
 		{
 			public NM.Message Msg;
 			public int Depth;
-			public int Num;
 		}
 
 		public const int COL_FROM = 0;
@@ -25,7 +24,6 @@ namespace NotMuchGUI
 		public const int COL_DEPTH = 5;
 		public const int COL_MSG_NUM = 6;
 		public const int COL_NUM_COLUMNS = 7;
-
 		int m_count;
 		List<Entry> m_entries;
 		NM.Query m_query;
@@ -55,7 +53,7 @@ namespace NotMuchGUI
 			}
 		}
 
-		public void Append(NM.Message msg, int depth, int num)
+		public void Append(NM.Message msg, int depth)
 		{
 			int idx = m_entries.Count;
 
@@ -63,7 +61,6 @@ namespace NotMuchGUI
 			{
 				Msg = msg,
 				Depth = depth,
-				Num = num,
 			};
 
 			m_entries.Add(entry);
@@ -77,6 +74,45 @@ namespace NotMuchGUI
 
 			adapter.EmitRowChanged(path, iter);
 			*/
+		}
+
+		public void FinishAdding()
+		{
+			if (m_entries.Count == m_count)
+				return;
+
+			Console.WriteLine("ADJUST {0} -> {1}", m_count, m_entries.Count);
+
+			TreeModelAdapter adapter = new TreeModelAdapter(this);
+
+			var arr = new int[1];
+
+			if (m_count < m_entries.Count)
+			{
+				for (int i = m_count; i < m_entries.Count; ++i)
+				{
+					var iter = TreeIter.Zero;
+					iter.UserData = (IntPtr)i;
+
+					arr[0] = i;
+
+					var path = new TreePath(arr);
+
+					adapter.EmitRowInserted(path, iter);
+				}
+			}
+			else
+			{
+				for (int i = m_count; i >= m_entries.Count; --i)
+				{
+					arr[0] = i;
+
+					var path = new TreePath(arr);
+					adapter.EmitRowDeleted(path);
+				}
+			}
+
+			m_count = m_entries.Count;
 		}
 
 		public TreeModelFlags Flags { get { return TreeModelFlags.ListOnly; } }
@@ -140,6 +176,12 @@ namespace NotMuchGUI
 		{
 			int idx = (int)iter.UserData;
 
+			if (col == COL_MSG_NUM)
+			{
+				val = new GLib.Value(idx);
+				return;
+			}
+
 			string str;
 
 			if (idx >= m_entries.Count)
@@ -158,7 +200,6 @@ namespace NotMuchGUI
 						break;
 
 					case COL_DEPTH:
-					case COL_MSG_NUM:
 						val = new GLib.Value(0);
 						break;
 				}
@@ -233,10 +274,6 @@ namespace NotMuchGUI
 
 				case COL_DEPTH:
 					val = new GLib.Value(entry.Depth);
-					break;
-
-				case COL_MSG_NUM:
-					val = new GLib.Value(entry.Num);
 					break;
 
 				default:

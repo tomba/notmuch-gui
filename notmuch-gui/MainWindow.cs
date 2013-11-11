@@ -284,20 +284,24 @@ public partial class MainWindow: Gtk.Window
 		}
 		#endif
 
+		long t3 = sw.ElapsedMilliseconds;
+
+		model.FinishAdding();
+
 		label3.Text = String.Format("{0}/{1} msgs", count, model.Count);
 
-		long t3 = sw.ElapsedMilliseconds;
+		long t4 = sw.ElapsedMilliseconds;
 
 		sw.Stop();
 
-		Console.WriteLine("Added {0} messages in {1}, {2}, {3} = {4} ms", count, t1, t2 - t1, t3 - t2, t3);
+		Console.WriteLine("Added {0} messages in {1}, {2}, {3}, {4} = {5} ms", count, t1, t2 - t1, t3 - t2, t4 - t3, t4);
 	}
 
 	void AddMsgsRecursive(MyTreeModel model, NM.Message msg, int depth, ref int count)
 	{
 		//Console.WriteLine("append {0}", msg.Id);
 
-		model.Append(msg, depth, count);
+		model.Append(msg, depth);
 
 		count++;
 
@@ -386,8 +390,14 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnGcActionActivated(object sender, EventArgs e)
 	{
+		var sw = Stopwatch.StartNew();
+
 		GC.Collect();
 		GC.WaitForPendingFinalizers();
+
+		sw.Stop();
+
+		Console.WriteLine("GC in {0} ms", sw.ElapsedMilliseconds);
 	}
 
 	protected void OnReplyAllActionActivated(object sender, EventArgs e)
