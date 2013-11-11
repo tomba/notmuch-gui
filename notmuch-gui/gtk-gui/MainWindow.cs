@@ -19,6 +19,7 @@ public partial class MainWindow
 	private global::Gtk.TreeView treeviewSearch;
 	private global::Gtk.ScrolledWindow GtkScrolledWindow1;
 	private global::Gtk.TreeView treeviewList;
+	private global::Gtk.HBox hbox3;
 	private global::NotMuchGUI.MessageWidget messagewidget1;
 	private global::NotMuchGUI.TagsWidget tagsWidget;
 	private global::Gtk.Statusbar statusbar2;
@@ -137,19 +138,29 @@ public partial class MainWindow
 		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hpaned1]));
 		w11.Position = 2;
 		// Container child vbox2.Gtk.Box+BoxChild
+		this.hbox3 = new global::Gtk.HBox ();
+		this.hbox3.Name = "hbox3";
+		this.hbox3.Spacing = 6;
+		// Container child hbox3.Gtk.Box+BoxChild
 		this.messagewidget1 = new global::NotMuchGUI.MessageWidget ();
 		this.messagewidget1.Events = ((global::Gdk.EventMask)(256));
 		this.messagewidget1.Name = "messagewidget1";
-		this.vbox2.Add (this.messagewidget1);
-		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.messagewidget1]));
-		w12.Position = 3;
-		// Container child vbox2.Gtk.Box+BoxChild
+		this.hbox3.Add (this.messagewidget1);
+		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.messagewidget1]));
+		w12.Position = 0;
+		// Container child hbox3.Gtk.Box+BoxChild
 		this.tagsWidget = new global::NotMuchGUI.TagsWidget ();
 		this.tagsWidget.Events = ((global::Gdk.EventMask)(256));
 		this.tagsWidget.Name = "tagsWidget";
-		this.vbox2.Add (this.tagsWidget);
-		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.tagsWidget]));
-		w13.Position = 4;
+		this.hbox3.Add (this.tagsWidget);
+		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.tagsWidget]));
+		w13.PackType = ((global::Gtk.PackType)(1));
+		w13.Position = 1;
+		w13.Expand = false;
+		w13.Fill = false;
+		this.vbox2.Add (this.hbox3);
+		global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox3]));
+		w14.Position = 3;
 		// Container child vbox2.Gtk.Box+BoxChild
 		this.statusbar2 = new global::Gtk.Statusbar ();
 		this.statusbar2.Name = "statusbar2";
@@ -159,35 +170,35 @@ public partial class MainWindow
 		this.label1.Name = "label1";
 		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
 		this.statusbar2.Add (this.label1);
-		global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label1]));
-		w14.Position = 1;
-		w14.Expand = false;
-		w14.Fill = false;
+		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label1]));
+		w15.Position = 1;
+		w15.Expand = false;
+		w15.Fill = false;
 		// Container child statusbar2.Gtk.Box+BoxChild
 		this.label2 = new global::Gtk.Label ();
 		this.label2.Name = "label2";
 		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString ("label2");
 		this.statusbar2.Add (this.label2);
-		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label2]));
-		w15.Position = 2;
-		w15.Expand = false;
-		w15.Fill = false;
+		global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label2]));
+		w16.Position = 2;
+		w16.Expand = false;
+		w16.Fill = false;
 		// Container child statusbar2.Gtk.Box+BoxChild
 		this.label3 = new global::Gtk.Label ();
 		this.label3.Name = "label3";
 		this.label3.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
 		this.statusbar2.Add (this.label3);
-		global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label3]));
-		w16.PackType = ((global::Gtk.PackType)(1));
-		w16.Position = 3;
-		w16.Expand = false;
-		w16.Fill = false;
-		this.vbox2.Add (this.statusbar2);
-		global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar2]));
+		global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label3]));
 		w17.PackType = ((global::Gtk.PackType)(1));
-		w17.Position = 5;
+		w17.Position = 3;
 		w17.Expand = false;
 		w17.Fill = false;
+		this.vbox2.Add (this.statusbar2);
+		global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar2]));
+		w18.PackType = ((global::Gtk.PackType)(1));
+		w18.Position = 4;
+		w18.Expand = false;
+		w18.Fill = false;
 		this.Add (this.vbox2);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();

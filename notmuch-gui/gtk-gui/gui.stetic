@@ -168,22 +168,35 @@
           </packing>
         </child>
         <child>
-          <widget class="NotMuchGUI.MessageWidget" id="messagewidget1">
+          <widget class="Gtk.HBox" id="hbox3">
             <property name="MemberName" />
-            <property name="Events">ButtonPressMask</property>
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="NotMuchGUI.MessageWidget" id="messagewidget1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="NotMuchGUI.TagsWidget" id="tagsWidget">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="Position">3</property>
-            <property name="AutoSize">True</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="NotMuchGUI.TagsWidget" id="tagsWidget">
-            <property name="MemberName" />
-            <property name="Events">ButtonPressMask</property>
-          </widget>
-          <packing>
-            <property name="Position">4</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -231,7 +244,7 @@
           </widget>
           <packing>
             <property name="PackType">End</property>
-            <property name="Position">5</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>

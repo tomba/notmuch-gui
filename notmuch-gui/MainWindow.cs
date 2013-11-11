@@ -266,6 +266,8 @@ public partial class MainWindow: Gtk.Window
 
 			var msgs = thread.GetToplevelMessages();
 
+			bool setCursor = count == 0;
+
 			while (msgs.Valid)
 			{
 				var msg = msgs.Current;
@@ -275,7 +277,7 @@ public partial class MainWindow: Gtk.Window
 				msgs.Next();
 			}
 
-			if (count == 0)
+			if (setCursor)
 				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
 
 			if (count % 100 == 0)
