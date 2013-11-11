@@ -96,9 +96,8 @@ namespace NotMuchGUI
 
 					arr[0] = i;
 
-					var path = new TreePath(arr);
-
-					adapter.EmitRowInserted(path, iter);
+					using (var path = new TreePath(arr))
+						adapter.EmitRowInserted(path, iter);
 				}
 			}
 			else
@@ -107,8 +106,8 @@ namespace NotMuchGUI
 				{
 					arr[0] = i;
 
-					var path = new TreePath(arr);
-					adapter.EmitRowDeleted(path);
+					using (var path = new TreePath(arr))
+						adapter.EmitRowDeleted(path);
 				}
 			}
 
