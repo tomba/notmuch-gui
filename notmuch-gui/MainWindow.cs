@@ -250,6 +250,7 @@ public partial class MainWindow: Gtk.Window
 		#else
 
 		var threads = query.SearchThreads();
+		int lastYield = 0;
 
 		while (threads.Valid)
 		{
@@ -266,7 +267,7 @@ public partial class MainWindow: Gtk.Window
 
 			var msgs = thread.GetToplevelMessages();
 
-			bool setCursor = count == 0;
+			bool firstLoop = count == 0;
 
 			while (msgs.Valid)
 			{
@@ -277,16 +278,18 @@ public partial class MainWindow: Gtk.Window
 				msgs.Next();
 			}
 
-			if (setCursor)
+			if (firstLoop)
 				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
 
-			if (count % 100 == 0)
+			if (count - lastYield > 500)
 			{
 				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
 
 				//Console.WriteLine("yielding");
-				//await Task.Delay(100);
+				//await Task.Delay(1000);
 				await Task.Yield();
+
+				lastYield = count;
 			}
 
 			threads.Next();
