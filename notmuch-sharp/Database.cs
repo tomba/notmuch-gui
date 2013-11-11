@@ -9,7 +9,7 @@ namespace NotMuch
 		{
 			IntPtr p;
 
-			Status r = Native.notmuch_database_create(path, out p);
+			Status r = notmuch_database_create(path, out p);
 
 			Console.WriteLine("db_create: {0}, {1}", r, p);
 
@@ -25,7 +25,7 @@ namespace NotMuch
 		{
 			IntPtr p;
 
-			Status r = Native.notmuch_database_open(path, mode, out p);
+			Status r = notmuch_database_open(path, mode, out p);
 
 			Console.WriteLine("db_open: {0}, {1}", r, p);
 
@@ -41,7 +41,7 @@ namespace NotMuch
 		{
 			IntPtr msgPtr;
 
-			Status r= Native.notmuch_database_find_message(this.Handle, messageId, out msgPtr);
+			Status r = notmuch_database_find_message(this.Handle, messageId, out msgPtr);
 			if (r != Status.SUCCESS)
 				return null;
 
@@ -50,7 +50,7 @@ namespace NotMuch
 
 		protected override void DestroyHandle()
 		{
-			Native.notmuch_database_destroy(this.Handle);
+			notmuch_database_destroy(this.Handle);
 		}
 
 		Database(IntPtr ptr)
@@ -62,7 +62,7 @@ namespace NotMuch
 		{
 			get
 			{
-				IntPtr p = Native.notmuch_database_get_path(this.Handle);
+				IntPtr p = notmuch_database_get_path(this.Handle);
 				return Marshal.PtrToStringAnsi(p);
 			}
 		}
@@ -71,9 +71,30 @@ namespace NotMuch
 		{
 			get
 			{
-				IntPtr p = Native.notmuch_database_get_all_tags(this.Handle);
+				IntPtr p = notmuch_database_get_all_tags(this.Handle);
 				return new Tags(p);
 			}
 		}
+
+		[DllImport("libnotmuch")]
+		static extern Status notmuch_database_create(string path, out IntPtr db);
+
+		[DllImport("libnotmuch")]
+		static extern Status notmuch_database_open(string path, DatabaseMode mode, out IntPtr db);
+
+		[DllImport("libnotmuch")]
+		static extern void notmuch_database_destroy(IntPtr db);
+
+		[DllImport("libnotmuch")]
+		static extern void notmuch_database_close(IntPtr db);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_database_get_path(IntPtr db);
+
+		[DllImport("libnotmuch")]
+		static extern Status notmuch_database_find_message(IntPtr db, string messageId, out IntPtr msg);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_database_get_all_tags(IntPtr db);
 	}
 }

@@ -17,7 +17,7 @@ namespace NotMuch
 		public void DestroyHandle()
 		{
 			Debug.Assert(this.Handle != IntPtr.Zero);
-			Native.notmuch_message_destroy(this.Handle);
+			notmuch_message_destroy(this.Handle);
 		}
 
 		public bool IsNull { get { return this.Handle == IntPtr.Zero; } }
@@ -28,7 +28,7 @@ namespace NotMuch
 			{
 				Debug.Assert(this.Handle != IntPtr.Zero);
 
-				IntPtr sp = Native.notmuch_message_get_filename(this.Handle);
+				IntPtr sp = notmuch_message_get_filename(this.Handle);
 
 				return Marshal.PtrToStringAnsi(sp);
 			}
@@ -38,7 +38,7 @@ namespace NotMuch
 		{
 			Debug.Assert(this.Handle != IntPtr.Zero);
 
-			IntPtr tags = Native.notmuch_message_get_tags(this.Handle);
+			IntPtr tags = notmuch_message_get_tags(this.Handle);
 
 			return new Tags(tags);
 		}
@@ -47,7 +47,7 @@ namespace NotMuch
 		{
 			Debug.Assert(this.Handle != IntPtr.Zero);
 
-			IntPtr sp = Native.notmuch_message_get_header(this.Handle, name);
+			IntPtr sp = notmuch_message_get_header(this.Handle, name);
 
 			return Marshal.PtrToStringAnsi(sp);
 		}
@@ -63,7 +63,7 @@ namespace NotMuch
 			{
 				Debug.Assert(this.Handle != IntPtr.Zero);
 
-				IntPtr time_t = Native.notmuch_message_get_date(this.Handle);
+				IntPtr time_t = notmuch_message_get_date(this.Handle);
 
 				return s_epoch.AddSeconds((long)time_t);
 			}
@@ -75,7 +75,7 @@ namespace NotMuch
 			{
 				Debug.Assert(this.Handle != IntPtr.Zero);
 
-				IntPtr time_t = Native.notmuch_message_get_date(this.Handle);
+				IntPtr time_t = notmuch_message_get_date(this.Handle);
 
 				return (long)time_t;
 			}
@@ -87,7 +87,7 @@ namespace NotMuch
 			{
 				Debug.Assert(this.Handle != IntPtr.Zero);
 
-				IntPtr sp = Native.notmuch_message_get_message_id(this.Handle);
+				IntPtr sp = notmuch_message_get_message_id(this.Handle);
 
 				return Marshal.PtrToStringAnsi(sp);
 			}
@@ -95,9 +95,30 @@ namespace NotMuch
 
 		public Messages GetReplies()
 		{
-			IntPtr msgsP = Native.notmuch_message_get_replies(this.Handle);
+			IntPtr msgsP = notmuch_message_get_replies(this.Handle);
 
 			return new Messages(msgsP);
 		}
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_message_destroy(IntPtr message);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_message_get_message_id(IntPtr message);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_message_get_date(IntPtr message);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_message_get_filename(IntPtr message);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_message_get_header(IntPtr message, string header);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_message_get_tags(IntPtr message);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_message_get_replies(IntPtr threads);
 	}
 }

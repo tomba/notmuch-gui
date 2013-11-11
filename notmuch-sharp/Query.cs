@@ -7,7 +7,7 @@ namespace NotMuch
 	{
 		public static Query Create(Database db, string queryString)
 		{
-			IntPtr query = Native.notmuch_query_create(db.Handle, queryString);
+			IntPtr query = notmuch_query_create(db.Handle, queryString);
 
 			return new Query(query);
 		}
@@ -21,27 +21,42 @@ namespace NotMuch
 		{
 			get
 			{
-				return (int)Native.notmuch_query_count_messages(this.Handle);
+				return (int)notmuch_query_count_messages(this.Handle);
 			}
 		}
 
 		public Messages SearchMessages()
 		{
-			IntPtr msgsP = Native.notmuch_query_search_messages(this.Handle);
+			IntPtr msgsP = notmuch_query_search_messages(this.Handle);
 
 			return new Messages(msgsP);
 		}
 
 		public Threads SearchThreads()
 		{
-			IntPtr msgsP = Native.notmuch_query_search_threads(this.Handle);
+			IntPtr msgsP = notmuch_query_search_threads(this.Handle);
 
 			return new Threads(msgsP);
 		}
 
 		protected override void DestroyHandle()
 		{
-			Native.notmuch_query_destroy(this.Handle);
+			notmuch_query_destroy(this.Handle);
 		}
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_query_create(IntPtr db, string queryString);
+
+		[DllImport("libnotmuch")]
+		static extern void notmuch_query_destroy(IntPtr query);
+
+		[DllImport("libnotmuch")]
+		static extern uint notmuch_query_count_messages(IntPtr query);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_query_search_messages(IntPtr query);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_query_search_threads(IntPtr query);
 	}
 }

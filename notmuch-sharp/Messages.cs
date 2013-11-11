@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
@@ -12,19 +13,19 @@ namespace NotMuch
 			this.Handle = handle;
 		}
 
-		public bool Valid { get { return Native.notmuch_messages_valid(this.Handle); } }
+		public bool Valid { get { return notmuch_messages_valid(this.Handle); } }
 
 		public Message Current
 		{ 
 			get
 			{
-				return new Message(Native.notmuch_messages_get(this.Handle));
+				return new Message(notmuch_messages_get(this.Handle));
 			}
 		}
 
 		public void Next()
 		{
-			Native.notmuch_messages_move_to_next(this.Handle);
+			notmuch_messages_move_to_next(this.Handle);
 		}
 
 		#region IEnumerable implementation
@@ -107,6 +108,15 @@ namespace NotMuch
 				}
 			}
 		}
+
+		[DllImport("libnotmuch")]
+		static extern bool notmuch_messages_valid(IntPtr messages);
+
+		[DllImport("libnotmuch")]
+		static extern void notmuch_messages_move_to_next(IntPtr messages);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_messages_get(IntPtr messages);
 	}
 }
 

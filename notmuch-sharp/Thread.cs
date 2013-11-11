@@ -16,7 +16,7 @@ namespace NotMuch
 		{
 			get
 			{
-				IntPtr p = Native.notmuch_thread_get_thread_id(this.Handle);
+				IntPtr p = notmuch_thread_get_thread_id(this.Handle);
 				return Marshal.PtrToStringAnsi(p);
 			}
 		}
@@ -25,16 +25,25 @@ namespace NotMuch
 		{
 			get
 			{
-				return Native.notmuch_thread_get_total_messages(this.Handle);
+				return notmuch_thread_get_total_messages(this.Handle);
 			}
 		}
 
 		public Messages GetToplevelMessages()
 		{
-			IntPtr msgsP = Native.notmuch_thread_get_toplevel_messages(this.Handle);
+			IntPtr msgsP = notmuch_thread_get_toplevel_messages(this.Handle);
 
 			return new Messages(msgsP);
 		}
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_thread_get_thread_id(IntPtr query);
+
+		[DllImport("libnotmuch")]
+		static extern int notmuch_thread_get_total_messages(IntPtr thread);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_thread_get_toplevel_messages(IntPtr query);
 	}
 }
 
