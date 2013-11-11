@@ -8,8 +8,8 @@ namespace NotMuchGUI
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 		private global::Gtk.TreeView tagsTreeview;
 		private global::Gtk.HBox hbox1;
-		private global::Gtk.Button button1;
 		private global::Gtk.Button button2;
+		private global::Gtk.Button button1;
 
 		protected virtual void Build ()
 		{
@@ -38,25 +38,27 @@ namespace NotMuchGUI
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.button1 = new global::Gtk.Button ();
-			this.button1.CanFocus = true;
-			this.button1.Name = "button1";
-			this.button1.UseUnderline = true;
-			this.button1.Label = global::Mono.Unix.Catalog.GetString ("Apply");
-			this.hbox1.Add (this.button1);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.button1]));
-			w3.Position = 1;
-			w3.Expand = false;
-			w3.Fill = false;
-			// Container child hbox1.Gtk.Box+BoxChild
 			this.button2 = new global::Gtk.Button ();
 			this.button2.CanFocus = true;
 			this.button2.Name = "button2";
 			this.button2.UseUnderline = true;
 			this.button2.Label = global::Mono.Unix.Catalog.GetString ("Reset");
 			this.hbox1.Add (this.button2);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.button2]));
-			w4.Position = 2;
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.button2]));
+			w3.PackType = ((global::Gtk.PackType)(1));
+			w3.Position = 0;
+			w3.Expand = false;
+			w3.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.button1 = new global::Gtk.Button ();
+			this.button1.CanFocus = true;
+			this.button1.Name = "button1";
+			this.button1.UseUnderline = true;
+			this.button1.Label = global::Mono.Unix.Catalog.GetString ("Apply");
+			this.hbox1.Add (this.button1);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.button1]));
+			w4.PackType = ((global::Gtk.PackType)(1));
+			w4.Position = 1;
 			w4.Expand = false;
 			w4.Fill = false;
 			this.vbox2.Add (this.hbox1);
