@@ -223,7 +223,10 @@ namespace NotMuchGUI
 				case COL_SUBJECT:
 					{
 						str = msg.GetHeader("Subject");
-						val = new GLib.Value(new String(' ', entry.Depth) + str);
+
+						str = new String('→', entry.Depth) + str;
+
+						val = new GLib.Value(str);
 					}
 					break;
 
