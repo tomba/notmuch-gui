@@ -98,57 +98,45 @@ public partial class MainWindow: Gtk.Window
 		//treeviewList.RulesHint = true;
 
 		TreeViewColumn c;
-		Gtk.CellRendererText re;
 
-		re = new Gtk.CellRendererText();
-		c = new TreeViewColumn("From", re, "text", MyTreeModel.COL_FROM);
-		c.SetCellDataFunc(re, MyCellDataFunc);
-		c.Expand = false;
-		c.Sizing = TreeViewColumnSizing.Fixed;
+		c = CreateTreeViewColumn("From", MyTreeModel.COL_FROM);
 		c.FixedWidth = 350;
-		c.Resizable = true;
-		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
 
-		re = new Gtk.CellRendererText();
-		c = new TreeViewColumn("Subject", re, "text", MyTreeModel.COL_SUBJECT);
-		c.SetCellDataFunc(re, MyCellDataFunc);
+		c = CreateTreeViewColumn("Subject", MyTreeModel.COL_SUBJECT);
 		c.Expand = true;
-		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 150;
-		c.Resizable = true;
-		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
 
-		re = new Gtk.CellRendererText();
-		c = new TreeViewColumn("Date", re, "text", MyTreeModel.COL_DATE);
-		c.SetCellDataFunc(re, MyCellDataFunc);
-		c.Expand = false;
-		c.Sizing = TreeViewColumnSizing.Fixed;
+		c = CreateTreeViewColumn("Date", MyTreeModel.COL_DATE);
 		c.FixedWidth = 150;
-		c.Resizable = true;
-		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
 
-		re = new Gtk.CellRendererText();
-		c = new TreeViewColumn("Tags", re, "text", MyTreeModel.COL_TAGS);
-		c.SetCellDataFunc(re, MyCellDataFunc);
-		c.Expand = false;
-		c.Sizing = TreeViewColumnSizing.Fixed;
+		c = CreateTreeViewColumn("Tags", MyTreeModel.COL_TAGS);
 		c.FixedWidth = 150;
-		c.Resizable = true;
-		c.Reorderable = true;
 		treeviewList.AppendColumn(c);
 
-		re = new Gtk.CellRendererText();
-		c = new TreeViewColumn("D", re, "text", MyTreeModel.COL_DEPTH);
+		c = CreateTreeViewColumn("D", MyTreeModel.COL_DEPTH);
+		c.FixedWidth = 50;
+		treeviewList.AppendColumn(c);
+
+		c = CreateTreeViewColumn("N", MyTreeModel.COL_MSG_NUM);
+		c.FixedWidth = 50;
+		treeviewList.AppendColumn(c);
+	}
+
+	TreeViewColumn CreateTreeViewColumn(string name, int col)
+	{
+		var re = new Gtk.CellRendererText();
+		var c = new TreeViewColumn(name, re, "text", col);
 		c.SetCellDataFunc(re, MyCellDataFunc);
 		c.Expand = false;
 		c.Sizing = TreeViewColumnSizing.Fixed;
 		c.FixedWidth = 50;
 		c.Resizable = true;
 		c.Reorderable = true;
-		treeviewList.AppendColumn(c);
+
+		return c;
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -210,14 +198,16 @@ public partial class MainWindow: Gtk.Window
 
 		long t1 = sw.ElapsedMilliseconds;
 
-		#if asd
-		var msgs = query.SearchMessages();
-
-		long t2 = sw.ElapsedMilliseconds;
-
 		int count = 0;
 
 		var model = new MyTreeModel(query);
+
+		treeviewList.Model = new TreeModelAdapter(model);
+
+		long t2 = sw.ElapsedMilliseconds;
+
+		#if asd
+		var msgs = query.SearchMessages();
 
 		treeviewList.Model = new TreeModelAdapter(model);
 
@@ -232,7 +222,7 @@ public partial class MainWindow: Gtk.Window
 
 			var msg = msgs.Current;
 
-			model.Append(msg);
+			model.Append(msg, 0);
 
 			if (count == 0)
 				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
@@ -251,15 +241,8 @@ public partial class MainWindow: Gtk.Window
 			msgs.Next();
 		}
 		#else
+
 		var threads = query.SearchThreads();
-
-		long t2 = sw.ElapsedMilliseconds;
-
-		int count = 0;
-
-		var model = new MyTreeModel(query);
-
-		treeviewList.Model = new TreeModelAdapter(model);
 
 		while (threads.Valid)
 		{
@@ -280,15 +263,13 @@ public partial class MainWindow: Gtk.Window
 			{
 				var msg = msgs.Current;
 
-				AddMsgs(model, msg, 0);
+				AddMsgsRecursive(model, msg, 0, ref count);
 
 				msgs.Next();
 			}
 
 			if (count == 0)
 				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
-
-			count++;
 
 			if (count % 100 == 0)
 			{
@@ -303,7 +284,7 @@ public partial class MainWindow: Gtk.Window
 		}
 		#endif
 
-		label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
+		label3.Text = String.Format("{0}/{1} msgs", count, model.Count);
 
 		long t3 = sw.ElapsedMilliseconds;
 
@@ -312,11 +293,13 @@ public partial class MainWindow: Gtk.Window
 		Console.WriteLine("Added {0} messages in {1}, {2}, {3} = {4} ms", count, t1, t2 - t1, t3 - t2, t3);
 	}
 
-	void AddMsgs(MyTreeModel model, NM.Message msg, int depth)
+	void AddMsgsRecursive(MyTreeModel model, NM.Message msg, int depth, ref int count)
 	{
 		//Console.WriteLine("append {0}", msg.Id);
 
-		model.Append(msg, depth);
+		model.Append(msg, depth, count);
+
+		count++;
 
 		var replies = msg.GetReplies();
 
@@ -324,7 +307,7 @@ public partial class MainWindow: Gtk.Window
 		{
 			var reply = replies.Current;
 
-			AddMsgs(model, reply, depth + 1);
+			AddMsgsRecursive(model, reply, depth + 1, ref count);
 
 			replies.Next();
 		}
@@ -500,17 +483,13 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnQueryEntryChanged(object sender, EventArgs e)
 	{
-		Console.WriteLine("changes");
-
-		var queryStr = queryEntry.Text;
+		//var queryStr = queryEntry.Text;
 
 		//ExecuteQuery(queryStr);
 	}
 
 	protected void OnQueryEntryActivated(object sender, EventArgs e)
 	{
-		Console.WriteLine("act");
-
 		var queryStr = queryEntry.Text;
 
 		ExecuteQuery(queryStr);

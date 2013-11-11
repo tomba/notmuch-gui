@@ -14,6 +14,7 @@ namespace NotMuchGUI
 		{
 			public NM.Message Msg;
 			public int Depth;
+			public int Num;
 		}
 
 		public const int COL_FROM = 0;
@@ -22,7 +23,8 @@ namespace NotMuchGUI
 		public const int COL_TAGS = 3;
 		public const int COL_UNREAD = 4;
 		public const int COL_DEPTH = 5;
-		public const int COL_NUM_COLUMNS = 6;
+		public const int COL_MSG_NUM = 6;
+		public const int COL_NUM_COLUMNS = 7;
 
 		int m_count;
 		List<Entry> m_entries;
@@ -53,7 +55,7 @@ namespace NotMuchGUI
 			}
 		}
 
-		public void Append(NM.Message msg, int depth)
+		public void Append(NM.Message msg, int depth, int num)
 		{
 			int idx = m_entries.Count;
 
@@ -61,6 +63,7 @@ namespace NotMuchGUI
 			{
 				Msg = msg,
 				Depth = depth,
+				Num = num,
 			};
 
 			m_entries.Add(entry);
@@ -85,6 +88,7 @@ namespace NotMuchGUI
 			switch (col)
 			{
 				case COL_DEPTH:
+				case COL_MSG_NUM:
 					return GLib.GType.Int;
 
 				case COL_UNREAD:
@@ -154,6 +158,7 @@ namespace NotMuchGUI
 						break;
 
 					case COL_DEPTH:
+					case COL_MSG_NUM:
 						val = new GLib.Value(0);
 						break;
 				}
@@ -228,6 +233,10 @@ namespace NotMuchGUI
 
 				case COL_DEPTH:
 					val = new GLib.Value(entry.Depth);
+					break;
+
+				case COL_MSG_NUM:
+					val = new GLib.Value(entry.Num);
 					break;
 
 				default:
