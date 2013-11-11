@@ -83,13 +83,11 @@ public partial class MainWindow: Gtk.Window
 		bool unread = (bool)model.GetValue(iter, MyTreeModel.COL_UNREAD);
 
 		var c = (Gtk.CellRendererText)cell;
-		
+
 		if (unread)
 			c.Weight = (int)Pango.Weight.Bold;
 		else
 			c.Weight = (int)Pango.Weight.Normal;
-
-		//(cell as Gtk.CellRendererText).Text = song;
 	}
 
 	void SetupMailList()
@@ -140,7 +138,17 @@ public partial class MainWindow: Gtk.Window
 		c.FixedWidth = 150;
 		c.Resizable = true;
 		c.Reorderable = true;
-		treeviewList.AppendColumn(c);	
+		treeviewList.AppendColumn(c);
+
+		re = new Gtk.CellRendererText();
+		c = new TreeViewColumn("D", re, "text", MyTreeModel.COL_DEPTH);
+		c.SetCellDataFunc(re, MyCellDataFunc);
+		c.Expand = false;
+		c.Sizing = TreeViewColumnSizing.Fixed;
+		c.FixedWidth = 50;
+		c.Resizable = true;
+		c.Reorderable = true;
+		treeviewList.AppendColumn(c);
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -202,6 +210,7 @@ public partial class MainWindow: Gtk.Window
 
 		long t1 = sw.ElapsedMilliseconds;
 
+		#if asd
 		var msgs = query.SearchMessages();
 
 		long t2 = sw.ElapsedMilliseconds;
@@ -241,6 +250,58 @@ public partial class MainWindow: Gtk.Window
 
 			msgs.Next();
 		}
+		#else
+		var threads = query.SearchThreads();
+
+		long t2 = sw.ElapsedMilliseconds;
+
+		int count = 0;
+
+		var model = new MyTreeModel(query);
+
+		treeviewList.Model = new TreeModelAdapter(model);
+
+		while (threads.Valid)
+		{
+			if (ct.IsCancellationRequested)
+			{
+				Console.WriteLine("CANCEL");
+				sw.Stop();
+				return;
+			}
+
+			var thread = threads.Current;
+
+			//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
+
+			var msgs = thread.GetToplevelMessages();
+
+			while (msgs.Valid)
+			{
+				var msg = msgs.Current;
+
+				AddMsgs(model, msg, 0);
+
+				msgs.Next();
+			}
+
+			if (count == 0)
+				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
+
+			count++;
+
+			if (count % 100 == 0)
+			{
+				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
+
+				//Console.WriteLine("yielding");
+				//await Task.Delay(100);
+				await Task.Yield();
+			}
+
+			threads.Next();
+		}
+		#endif
 
 		label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
 
@@ -249,6 +310,24 @@ public partial class MainWindow: Gtk.Window
 		sw.Stop();
 
 		Console.WriteLine("Added {0} messages in {1}, {2}, {3} = {4} ms", count, t1, t2 - t1, t3 - t2, t3);
+	}
+
+	void AddMsgs(MyTreeModel model, NM.Message msg, int depth)
+	{
+		//Console.WriteLine("append {0}", msg.Id);
+
+		model.Append(msg, depth);
+
+		var replies = msg.GetReplies();
+
+		while (replies.Valid)
+		{
+			var reply = replies.Current;
+
+			AddMsgs(model, reply, depth + 1);
+
+			replies.Next();
+		}
 	}
 
 	protected void OnTreeviewListCursorChanged(object sender, EventArgs e)
@@ -266,7 +345,7 @@ public partial class MainWindow: Gtk.Window
 		var msg = myModel.GetMessage(iter);
 
 		if (msg.IsNull)
-			throw new Exception();
+			return;
 
 		tagsWidget.UpdateTagsView(msg, m_allTags);
 

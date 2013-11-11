@@ -74,6 +74,9 @@ namespace NotMuch
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_message_get_tags(IntPtr message);
 
+		[DllImport("libnotmuch")]
+		public static extern IntPtr notmuch_message_get_replies(IntPtr threads);
+
 
 		// Threads
 		[DllImport("libnotmuch")]
@@ -84,6 +87,17 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		public static extern IntPtr notmuch_threads_get(IntPtr threads);
+
+
+		// Thread
+		[DllImport("libnotmuch")]
+		public static extern IntPtr notmuch_thread_get_thread_id(IntPtr query);
+
+		[DllImport("libnotmuch")]
+		public static extern int notmuch_thread_get_total_messages(IntPtr thread);
+
+		[DllImport("libnotmuch")]
+		public static extern IntPtr notmuch_thread_get_toplevel_messages(IntPtr query);
 
 
 		// Tags

@@ -92,5 +92,12 @@ namespace NotMuch
 				return Marshal.PtrToStringAnsi(sp);
 			}
 		}
+
+		public Messages GetReplies()
+		{
+			IntPtr msgsP = Native.notmuch_message_get_replies(this.Handle);
+
+			return new Messages(msgsP);
+		}
 	}
 }

@@ -10,28 +10,36 @@ namespace NotMuchGUI
 {
 	public class MyTreeModel : GLib.Object, TreeModelImplementor
 	{
+		struct Entry
+		{
+			public NM.Message Msg;
+			public int Depth;
+		}
+
 		public const int COL_FROM = 0;
 		public const int COL_SUBJECT = 1;
 		public const int COL_DATE = 2;
 		public const int COL_TAGS = 3;
 		public const int COL_UNREAD = 4;
+		public const int COL_DEPTH = 5;
+		public const int COL_NUM_COLUMNS = 6;
 
 		int m_count;
-		List<NM.Message> m_msgs;
+		List<Entry> m_entries;
 		NM.Query m_query;
 
 		public MyTreeModel()
 		{
 			m_query = null;
 			m_count = 0;
-			m_msgs = new List<NM.Message>();
+			m_entries = new List<Entry>();
 		}
 
 		public MyTreeModel(NM.Query query)
 		{
 			m_query = query;
 			m_count = query.Count;
-			m_msgs = new List<NM.Message>(m_count);
+			m_entries = new List<Entry>(m_count);
 		}
 
 		public int Count { get { return m_count; } }
@@ -45,11 +53,17 @@ namespace NotMuchGUI
 			}
 		}
 
-		public void Append(NM.Message msg)
+		public void Append(NM.Message msg, int depth)
 		{
-			int idx = m_msgs.Count;
+			int idx = m_entries.Count;
 
-			m_msgs.Add(msg);
+			var entry = new Entry()
+			{
+				Msg = msg,
+				Depth = depth,
+			};
+
+			m_entries.Add(entry);
 			/*
 			TreeModelAdapter adapter = new TreeModelAdapter(this);
 
@@ -62,28 +76,23 @@ namespace NotMuchGUI
 			*/
 		}
 
-		public TreeModelFlags Flags
-		{
-			get
-			{
-				return TreeModelFlags.ListOnly;
-			}
-		}
+		public TreeModelFlags Flags { get { return TreeModelFlags.ListOnly; } }
 
-		public int NColumns
-		{
-			get
-			{
-				return 5;
-			}
-		}
+		public int NColumns { get { return COL_NUM_COLUMNS; } }
 
 		public GLib.GType GetColumnType(int col)
 		{
-			if (col == COL_UNREAD)
-				return GLib.GType.Boolean;
-			else
-				return GLib.GType.String;
+			switch (col)
+			{
+				case COL_DEPTH:
+					return GLib.GType.Int;
+
+				case COL_UNREAD:
+					return GLib.GType.Boolean;
+
+				default:
+					return GLib.GType.String;
+			}
 		}
 
 		public bool GetIter(out TreeIter iter, TreePath path)
@@ -117,10 +126,10 @@ namespace NotMuchGUI
 		{
 			int idx = (int)iter.UserData;
 
-			if (idx >= m_msgs.Count)
+			if (idx >= m_entries.Count)
 				return NM.Message.NullMessage;
 
-			return m_msgs[idx];
+			return m_entries[idx].Msg;
 		}
 
 		public void GetValue(TreeIter iter, int col, ref GLib.Value val)
@@ -129,7 +138,7 @@ namespace NotMuchGUI
 
 			string str;
 
-			if (idx >= m_msgs.Count)
+			if (idx >= m_entries.Count)
 			{
 				switch (col)
 				{
@@ -143,12 +152,18 @@ namespace NotMuchGUI
 					case COL_UNREAD:
 						val = new GLib.Value(false);
 						break;
+
+					case COL_DEPTH:
+						val = new GLib.Value(0);
+						break;
 				}
 
 				return;
 			}
 
-			var msg = m_msgs[idx];
+			var entry = m_entries[idx];
+
+			var msg = entry.Msg;
 
 			switch (col)
 			{
@@ -162,7 +177,7 @@ namespace NotMuchGUI
 				case COL_SUBJECT:
 					{
 						str = msg.GetHeader("Subject");
-						val = new GLib.Value(str);
+						val = new GLib.Value(new String(' ', entry.Depth) + str);
 					}
 					break;
 
@@ -209,6 +224,10 @@ namespace NotMuchGUI
 							tags.Next();
 						}
 					}
+					break;
+
+				case COL_DEPTH:
+					val = new GLib.Value(entry.Depth);
 					break;
 
 				default:
