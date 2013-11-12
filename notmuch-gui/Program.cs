@@ -12,7 +12,7 @@ namespace NotMuchGUI
 		{
 			string path;
 
-			if (args.Length > 1)
+			if (args.Length >= 1)
 				path = args[0];
 			else
 				path = "/home/tomba/Maildir";
