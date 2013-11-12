@@ -374,7 +374,15 @@ public partial class MainWindow: Gtk.Window
 
 			if (gmsg == null)
 			{
-				throw new Exception(String.Format("Unable to parse message: {0}", filename));
+				var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok,
+					          "Failed to parse message from '{0}'", filename);
+
+				dlg.Run();
+
+				dlg.Destroy();
+
+				readStream.Close();
+				return;
 			}
 
 			if (m_dbgWnd != null)
@@ -472,7 +480,7 @@ public partial class MainWindow: Gtk.Window
 			si.CreateNoWindow = true;
 
 			var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Cancel,
-				"Editing.\n\nEditor command {0}\n\nPress cancel to kill the editor.", si.Arguments);
+				          "Editing.\n\nEditor command {0}\n\nPress cancel to kill the editor.", si.Arguments);
 
 			process.EnableRaisingEvents = true;
 

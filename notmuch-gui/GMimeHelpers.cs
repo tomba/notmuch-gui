@@ -40,6 +40,14 @@ namespace NotMuchGUI
 				foreach (Entity part in mp)
 					DumpStructure(part, sw, indent + step);
 			}
+			else if (ent is MessagePart)
+			{
+				var msg = (MessagePart)ent;
+
+				sw.WriteLine("{0}{1}", indentStr, ent.GetType());
+
+				DumpStructure(msg.Message, sw, indent + step);
+			}
 			else if (ent is Part)
 			{
 				var part = (Part)ent;
@@ -56,6 +64,9 @@ namespace NotMuchGUI
 
 		public static Part FindFirstContent(Entity ent, ContentType ct)
 		{
+			if (ent == null)
+				throw new NullReferenceException();
+
 			if (ent is Message)
 			{
 				var msg = (Message)ent;
@@ -75,6 +86,12 @@ namespace NotMuchGUI
 
 				return null;
 			}
+			else if (ent is MessagePart)
+			{
+				var msg = (MessagePart)ent;
+
+				return FindFirstContent(msg.Message, ct);
+			}
 			else if (ent is Part)
 			{
 				var part = (Part)ent;
@@ -86,7 +103,7 @@ namespace NotMuchGUI
 			}
 			else
 			{
-				throw new Exception();
+				throw new Exception(String.Format("Bad part {0}", ent.GetType().Name));
 			}
 		}
 	}
