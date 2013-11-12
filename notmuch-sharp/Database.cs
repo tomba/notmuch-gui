@@ -11,8 +11,6 @@ namespace NotMuch
 
 			Status r = notmuch_database_create(path, out p);
 
-			Console.WriteLine("db_create: {0}, {1}", r, p);
-
 			if (r != Status.SUCCESS)
 				throw new Exception("fail");
 
@@ -21,20 +19,16 @@ namespace NotMuch
 			return db;
 		}
 
-		public static Database Open(string path, DatabaseMode mode)
+		public static Database Open(string path, DatabaseMode mode, out Status status)
 		{
 			IntPtr p;
 
-			Status r = notmuch_database_open(path, mode, out p);
+			status = notmuch_database_open(path, mode, out p);
 
-			Console.WriteLine("db_open: {0}, {1}", r, p);
+			if (status != Status.SUCCESS)
+				return null;
 
-			if (r != Status.SUCCESS)
-				throw new Exception("fail");
-
-			var db = new Database(p);
-
-			return db;
+			return new Database(p);
 		}
 
 		public Message? FindMessage(string messageId)

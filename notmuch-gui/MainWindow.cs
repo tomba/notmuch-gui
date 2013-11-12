@@ -24,13 +24,12 @@ public partial class MainWindow: Gtk.Window
 	{
 		Build();
 
+		m_db = MainClass.Database;
+
 		threadedAction.Active = m_threadedView;
 
 		SetupQueryList();
 		SetupMailList();
-
-		var path = "/home/tomba/Maildir";
-		m_db = NM.Database.Open(path, NM.DatabaseMode.READ_ONLY);
 
 		var tags = m_db.AllTags;
 
