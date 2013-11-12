@@ -56,8 +56,9 @@ namespace NotMuchGUI
 
 		string PartToHtml(GMime.Part part)
 		{
-			var memstream = new GMime.StreamMem();
+			byte[] buf;
 
+			using (var memstream = new GMime.StreamMem())
 			using (var filterstream = new GMime.StreamFilter(memstream))
 			{
 				filterstream.Add(new GMime.FilterCRLF(false, false));
@@ -69,9 +70,9 @@ namespace NotMuchGUI
 				if (!part.ContentType.IsType("text", "html"))
 				{
 					var flags = 0
-					            //| GMimeHtmlFilterFlags.PRE
-					            | GMimeHtmlFilterFlags.CONVERT_NL
-					            | GMimeHtmlFilterFlags.MARK_CITATION;
+				            //| GMimeHtmlFilterFlags.PRE
+					           | GMimeHtmlFilterFlags.CONVERT_NL
+					           | GMimeHtmlFilterFlags.MARK_CITATION;
 					uint quoteColor = 0x888888;
 					filterstream.Add(new GMime.FilterHTML((uint)flags, quoteColor));
 				}
@@ -79,14 +80,20 @@ namespace NotMuchGUI
 				part.ContentObject.WriteToStream(filterstream);
 
 				filterstream.Flush();
+
+				memstream.Seek(0);
+
+				buf = new byte[memstream.Length];
+
+				int l = memstream.Read(buf, (uint)buf.Length);
+				if (l != buf.Length)
+					throw new Exception();
+
+				filterstream.Close();
+				memstream.Close();
 			}
 
-			memstream.Seek(0);
-
-			// XXX StreamWrapper's Dispose is broken
-			var sw = new GMime.StreamWrapper(memstream);
-
-			using (var reader = new StreamReader(sw, System.Text.UTF8Encoding.UTF8, false, 128, true))
+			using (var reader = new StreamReader(new MemoryStream(buf), System.Text.UTF8Encoding.UTF8))
 			{
 				var str = reader.ReadToEnd();
 				return str;

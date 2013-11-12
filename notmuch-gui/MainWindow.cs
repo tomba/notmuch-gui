@@ -13,12 +13,12 @@ using System.Linq;
 public partial class MainWindow: Gtk.Window
 {
 	NM.Database m_db;
-	CancellationTokenSource m_cts;
-	Task m_queryTask;
 	ListStore m_queryStore;
 	DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
 	bool m_threadedView = false;
+	bool m_cancelProcessing;
+	bool m_processing;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -165,22 +165,13 @@ public partial class MainWindow: Gtk.Window
 
 	void ExecuteQuery()
 	{
-		if (m_cts != null && m_cts.IsCancellationRequested)
-			throw new Exception();
-
-		if (m_queryTask != null)
+		if (m_processing)
 		{
-			if (m_queryTask.IsCompleted == false)
-			{
-				Console.WriteLine("cancelling");
+			Console.WriteLine("cancelling");
 
-				m_cts.Cancel();
+			m_cancelProcessing = true;
 
-				Console.WriteLine("cancelling done");
-			}
-
-			m_cts = null;
-			m_queryTask = null;
+			Console.WriteLine("cancelling done");
 		}
 
 		var queryString = queryEntry.Text;
@@ -188,17 +179,24 @@ public partial class MainWindow: Gtk.Window
 		if (string.IsNullOrWhiteSpace(dateSearchEntry.Text) == false)
 			queryString = queryString + String.Format(" date:{0}", dateSearchEntry.Text);
 
-		m_cts = new CancellationTokenSource();
-		m_queryTask = ProcessSearch(queryString, m_cts.Token);
+		ProcessSearch(queryString);
 	}
 
-	async Task ProcessSearch(string queryString, CancellationToken ct)
+	void ProcessSearch(string queryString)
 	{
 		if (string.IsNullOrWhiteSpace(queryString))
 		{
 			treeviewList.Model = new TreeModelAdapter(new MyTreeModel());
 			return;
 		}
+
+		if (m_processing)
+		{
+			Console.WriteLine("ProcessSearch already running");
+			return;
+		}
+
+		m_processing = true;
 
 		var sw = Stopwatch.StartNew();
 
@@ -226,10 +224,12 @@ public partial class MainWindow: Gtk.Window
 
 			while (msgs.Valid)
 			{
-				if (ct.IsCancellationRequested)
+				if (m_cancelProcessing)
 				{
 					Console.WriteLine("CANCEL");
 					sw.Stop();
+					m_processing = false;
+					m_cancelProcessing = false;
 					return;
 				}
 
@@ -248,7 +248,8 @@ public partial class MainWindow: Gtk.Window
 
 					//Console.WriteLine("yielding");
 					//await Task.Delay(100);
-					await Task.Yield();
+					Application.RunIteration();
+					//await Task.Yield();
 				}
 
 				msgs.Next();
@@ -261,10 +262,12 @@ public partial class MainWindow: Gtk.Window
 
 			while (threads.Valid)
 			{
-				if (ct.IsCancellationRequested)
+				if (m_cancelProcessing)
 				{
 					Console.WriteLine("CANCEL");
 					sw.Stop();
+					m_processing = false;
+					m_cancelProcessing = false;
 					return;
 				}
 
@@ -294,7 +297,8 @@ public partial class MainWindow: Gtk.Window
 
 					//Console.WriteLine("yielding");
 					//await Task.Delay(1000);
-					await Task.Yield();
+					//await Task.Yield();
+					Application.RunIteration();
 
 					lastYield = count;
 				}
@@ -314,6 +318,8 @@ public partial class MainWindow: Gtk.Window
 		sw.Stop();
 
 		Console.WriteLine("Added {0} messages in {1}, {2}, {3}, {4} = {5} ms", count, t1, t2 - t1, t3 - t2, t4 - t3, t4);
+	
+		m_processing = false;
 	}
 
 	void AddMsgsRecursive(MyTreeModel model, NM.Message msg, int depth, ref int count)
@@ -451,7 +457,7 @@ public partial class MainWindow: Gtk.Window
 		return tcs.Task;
 	}
 
-	async void Reply(bool replyAll)
+	void Reply(bool replyAll)
 	{
 		var nmMsg = GetCurrentMessage();
 
@@ -507,7 +513,9 @@ public partial class MainWindow: Gtk.Window
 
 			dlg.ShowNow();
 
-			await task;
+			//await task;
+			while (!task.IsCompleted)
+				Application.RunIteration();
 
 			dlg.Destroy();
 		}
