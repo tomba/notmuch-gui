@@ -83,6 +83,7 @@
     <Compile Include="gtk-gui\NotMuchGUI.TagsWidget.cs" />
     <Compile Include="MessageWidget.cs" />
     <Compile Include="gtk-gui\NotMuchGUI.MessageWidget.cs" />
+    <Compile Include="CmdHelpers.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

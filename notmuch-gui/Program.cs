@@ -11,11 +11,18 @@ namespace NotMuchGUI
 		public static void Main(string[] args)
 		{
 			string path;
+			string output;
 
-			if (args.Length >= 1)
-				path = args[0];
-			else
-				path = "/home/tomba/Maildir";
+			if (CmdHelpers.RunNotmuch("config get database.path", out output) == false)
+			{
+				output = output.Trim();
+				Console.WriteLine("Failed to get database path: {0}", output);
+				return;
+			}
+
+			output = output.Trim();
+
+			path = output;
 
 			NM.Status status;
 
@@ -26,6 +33,8 @@ namespace NotMuchGUI
 				Console.WriteLine("Failed to open database '{0}': {1}", path, status);
 				return;
 			}
+
+			Console.WriteLine("Opened database '{0}'", path);
 
 			Application.Init();
 

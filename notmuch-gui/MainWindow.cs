@@ -467,22 +467,10 @@ public partial class MainWindow: Gtk.Window
 
 		string replyText;
 
-		using (var process = new Process())
+		if (CmdHelpers.RunNotmuch(String.Format("reply --reply-to={0} id:{1}", replyAll ? "all" : "sender", msgId), out replyText) == false)
 		{
-			var si = process.StartInfo;
-			si.FileName = "notmuch";
-			si.Arguments = String.Format("reply --reply-to={0} id:{1}", replyAll ? "all" : "sender", msgId);
-			si.UseShellExecute = false;
-			si.CreateNoWindow = true;
-			si.RedirectStandardOutput = true;
-
-			process.Start();
-
-			var reader = process.StandardOutput;
-
-			replyText = reader.ReadToEnd();
-
-			process.WaitForExit();
+			Console.WriteLine("Failed to construct reply with notmuch: {0}", replyText);
+			return;
 		}
 
 		var tmpFile = System.IO.Path.GetTempFileName();
@@ -513,6 +501,7 @@ public partial class MainWindow: Gtk.Window
 			dlg.ShowNow();
 
 			//await task;
+			// XXX
 			while (!task.IsCompleted)
 				Application.RunIteration();
 
