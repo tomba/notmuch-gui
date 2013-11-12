@@ -367,6 +367,11 @@ public partial class MainWindow: Gtk.Window
 			var p = new GMime.Parser(readStream);
 			var gmsg = p.ConstructMessage();
 
+			if (gmsg == null)
+			{
+				throw new Exception(String.Format("Unable to parse message: {0}", filename));
+			}
+
 			if (m_dbgWnd != null)
 			{
 				var sw = new StringWriter();
