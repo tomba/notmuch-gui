@@ -439,23 +439,6 @@ public partial class MainWindow: Gtk.Window
 		Reply(false);
 	}
 
-	static Task RunProcessAsync(Process process)
-	{
-		var tcs = new TaskCompletionSource<bool>();
-
-		process.EnableRaisingEvents = true;
-
-		process.Exited += (sender, args) =>
-		{
-			tcs.SetResult(true);
-			process.Dispose();
-		};
-
-		process.Start();
-
-		return tcs.Task;
-	}
-
 	void Reply(bool replyAll)
 	{
 		var nmMsg = GetCurrentMessage();
@@ -478,7 +461,7 @@ public partial class MainWindow: Gtk.Window
 		File.WriteAllText(tmpFile, replyText);
 
 		const string editorCmd = "gvim";
-		const string editorArgs = "-f \"+set filetype=mail\" +6 {0}";
+		const string editorArgs = "-f \"+set columns=100\" \"+set lines=50\" \"+set filetype=mail\" +6 {0}";
 
 		using (var process = new Process())
 		{
@@ -488,24 +471,32 @@ public partial class MainWindow: Gtk.Window
 			si.UseShellExecute = false;
 			si.CreateNoWindow = true;
 
-			var task = RunProcessAsync(process);
+			var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Cancel,
+				"Editing.\n\nEditor command {0}\n\nPress cancel to kill the editor.", si.Arguments);
 
-			var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Cancel, "Waiting for editor");
+			process.EnableRaisingEvents = true;
+
+			process.Exited += (sender, args) =>
+			{
+				Application.Invoke((s, e) =>
+				{
+					dlg.Destroy();
+				});
+			};
 
 			dlg.Response += (o, args) =>
 			{
-				Console.WriteLine("Killing editor process");
 				process.Kill();
 			};
 
-			dlg.ShowNow();
+			process.Start();
 
-			//await task;
-			// XXX
-			while (!task.IsCompleted)
-				Application.RunIteration();
+			dlg.Run();
 
-			dlg.Destroy();
+			process.WaitForExit();
+
+			if (process.ExitCode != 0)
+				Console.WriteLine("Failed to edit reply");
 		}
 
 		File.Delete(tmpFile);
