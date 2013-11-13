@@ -5,14 +5,7 @@ namespace NotMuch
 {
 	public class Query : DisposableBase
 	{
-		public static Query Create(Database db, string queryString)
-		{
-			IntPtr query = notmuch_query_create(db.Handle, queryString);
-
-			return new Query(query);
-		}
-
-		Query(IntPtr handle)
+		internal Query(IntPtr handle)
 			: base(handle)
 		{
 		}
@@ -49,9 +42,6 @@ namespace NotMuch
 			get { return (SortOrder)notmuch_query_get_sort(this.Handle); }
 			set { notmuch_query_set_sort(this.Handle, (int)value); }
 		}
-
-		[DllImport("libnotmuch")]
-		static extern IntPtr notmuch_query_create(IntPtr db, string queryString);
 
 		[DllImport("libnotmuch")]
 		static extern void notmuch_query_destroy(IntPtr query);

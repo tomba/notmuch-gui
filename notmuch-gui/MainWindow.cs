@@ -201,7 +201,7 @@ public partial class MainWindow: Gtk.Window
 
 		Console.WriteLine("Query({0})", queryString);
 
-		var query = NM.Query.Create(m_db, queryString);
+		var query = m_db.CreateQuery(queryString);
 
 		query.Sort = NM.SortOrder.OLDEST_FIRST;
 

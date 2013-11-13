@@ -6,9 +6,9 @@ namespace NotMuch
 {
 	public struct Tags
 	{
-		internal IntPtr Handle;
+		IntPtr Handle;
 
-		public Tags(IntPtr handle)
+		internal Tags(IntPtr handle)
 		{
 			this.Handle = handle;
 		}

@@ -5,7 +5,7 @@ namespace NotMuch
 {
 	public struct Thread
 	{
-		internal IntPtr Handle;
+		IntPtr Handle;
 
 		internal Thread(IntPtr handle)
 		{

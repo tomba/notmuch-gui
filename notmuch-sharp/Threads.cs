@@ -6,9 +6,9 @@ namespace NotMuch
 {
 	public struct Threads
 	{
-		internal IntPtr Handle;
+		IntPtr Handle;
 
-		public Threads(IntPtr handle)
+		internal Threads(IntPtr handle)
 		{
 			this.Handle = handle;
 		}

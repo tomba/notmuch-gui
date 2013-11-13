@@ -29,15 +29,9 @@ namespace NotMuch
 			return new Database(p);
 		}
 
-		public Message? FindMessage(string messageId)
+		Database(IntPtr ptr)
+			: base(ptr)
 		{
-			IntPtr msgPtr;
-
-			Status r = notmuch_database_find_message(this.Handle, messageId, out msgPtr);
-			if (r != Status.SUCCESS)
-				return null;
-
-			return new Message(msgPtr);
 		}
 
 		protected override void DestroyHandle()
@@ -45,9 +39,15 @@ namespace NotMuch
 			notmuch_database_destroy(this.Handle);
 		}
 
-		Database(IntPtr ptr)
-			: base(ptr)
+		public Message FindMessage(string messageId)
 		{
+			IntPtr msgPtr;
+
+			Status r = notmuch_database_find_message(this.Handle, messageId, out msgPtr);
+			if (r != Status.SUCCESS)
+				return Message.NullMessage;
+
+			return new Message(msgPtr);
 		}
 
 		public string Path
@@ -66,6 +66,13 @@ namespace NotMuch
 				IntPtr p = notmuch_database_get_all_tags(this.Handle);
 				return new Tags(p);
 			}
+		}
+
+		public Query CreateQuery(string queryString)
+		{
+			IntPtr query = notmuch_query_create(this.Handle, queryString);
+
+			return new Query(query);
 		}
 
 		[DllImport("libnotmuch")]
@@ -88,5 +95,8 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_database_get_all_tags(IntPtr db);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_query_create(IntPtr db, string queryString);
 	}
 }

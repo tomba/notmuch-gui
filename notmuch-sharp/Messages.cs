@@ -6,9 +6,9 @@ namespace NotMuch
 {
 	public struct Messages : IEnumerable<Message>
 	{
-		internal IntPtr Handle;
+		IntPtr Handle;
 
-		public Messages(IntPtr handle)
+		internal Messages(IntPtr handle)
 		{
 			this.Handle = handle;
 		}

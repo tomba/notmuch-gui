@@ -6,7 +6,7 @@ namespace NotMuch
 {
 	public struct Message
 	{
-		internal IntPtr Handle;
+		IntPtr Handle;
 		public static Message NullMessage = new Message(IntPtr.Zero);
 
 		internal Message(IntPtr handle)
