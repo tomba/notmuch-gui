@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 mails=(`notmuch config get user.primary_email`)
 mails+=(`notmuch config get user.other_email`)
 
