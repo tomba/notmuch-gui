@@ -13,6 +13,7 @@ using System.Linq;
 public partial class MainWindow: Gtk.Window
 {
 	NM.Database m_db;
+	NM.Query m_query;
 	ListStore m_queryStore;
 	DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
@@ -183,33 +184,44 @@ public partial class MainWindow: Gtk.Window
 
 	void ProcessSearch(string queryString)
 	{
-		if (string.IsNullOrWhiteSpace(queryString))
-		{
-			treeviewList.Model = new TreeModelAdapter(new MyTreeModel());
-			return;
-		}
-
 		if (m_processing)
 		{
 			Console.WriteLine("ProcessSearch already running");
 			return;
 		}
 
+		if (string.IsNullOrWhiteSpace(queryString))
+		{
+			if (m_query != null)
+			{
+				treeviewList.Model = new TreeModelAdapter(new MyTreeModel());
+				m_query.Dispose();
+				m_query = null;
+			}
+			return;
+		}
+
 		m_processing = true;
+
+		if (m_query != null)
+		{
+			m_query.Dispose();
+			m_query = null;
+		}
 
 		var sw = Stopwatch.StartNew();
 
 		Console.WriteLine("Query({0})", queryString);
 
-		var query = m_db.CreateQuery(queryString);
+		m_query = m_db.CreateQuery(queryString);
 
-		query.Sort = NM.SortOrder.OLDEST_FIRST;
+		m_query.Sort = NM.SortOrder.OLDEST_FIRST;
 
 		long t1 = sw.ElapsedMilliseconds;
 
 		int count = 0;
 
-		var model = new MyTreeModel(query);
+		var model = new MyTreeModel(m_query.Count);
 
 		treeviewList.Model = new TreeModelAdapter(model);
 
@@ -217,9 +229,7 @@ public partial class MainWindow: Gtk.Window
 
 		if (!m_threadedView)
 		{
-			var msgs = query.SearchMessages();
-
-			treeviewList.Model = new TreeModelAdapter(model);
+			var msgs = m_query.SearchMessages();
 
 			while (msgs.Valid)
 			{
@@ -256,7 +266,7 @@ public partial class MainWindow: Gtk.Window
 		}
 		else
 		{
-			var threads = query.SearchThreads();
+			var threads = m_query.SearchThreads();
 			int lastYield = 0;
 
 			while (threads.Valid)
@@ -411,7 +421,6 @@ public partial class MainWindow: Gtk.Window
 			readStream.Close();
 		}
 	}
-
 	#if MBOX_PARSE_HACK
 	GMime.Message TryParseMboxMessage(GMime.StreamFs readStream)
 	{
@@ -442,7 +451,6 @@ public partial class MainWindow: Gtk.Window
 		return gmsg;
 	}
 	#endif
-
 	NM.Message GetCurrentMessage()
 	{
 		TreeSelection selection = treeviewList.Selection;

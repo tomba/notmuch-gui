@@ -1,5 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace NotMuch
 {
@@ -30,6 +32,7 @@ namespace NotMuch
 		}
 
 		IntPtr m_handle;
+		List<WeakReference> m_queries = new List<WeakReference>();
 
 		Database(IntPtr ptr)
 		{
@@ -38,6 +41,8 @@ namespace NotMuch
 
 		~Database ()
 		{
+			Debug.WriteLine("~Database");
+
 			Dispose(false);
 		}
 
@@ -51,6 +56,15 @@ namespace NotMuch
 		{
 			if (m_handle != IntPtr.Zero)
 			{
+				while (m_queries.Count > 0)
+				{
+					var wr = m_queries[0];
+					if (wr.IsAlive)
+						((Query)wr.Target).Dispose();
+					else
+						m_queries.RemoveAt(0);
+				}
+
 				notmuch_database_destroy(m_handle);
 				m_handle = IntPtr.Zero;
 			}
@@ -59,6 +73,8 @@ namespace NotMuch
 		public Message FindMessage(string messageId)
 		{
 			IntPtr msgPtr;
+
+			Debug.Assert(m_handle != IntPtr.Zero);
 
 			Status r = notmuch_database_find_message(m_handle, messageId, out msgPtr);
 			if (r != Status.SUCCESS)
@@ -71,6 +87,8 @@ namespace NotMuch
 		{
 			get
 			{
+				Debug.Assert(m_handle != IntPtr.Zero);
+
 				IntPtr p = notmuch_database_get_path(m_handle);
 				return Marshal.PtrToStringAnsi(p);
 			}
@@ -80,6 +98,8 @@ namespace NotMuch
 		{
 			get
 			{
+				Debug.Assert(m_handle != IntPtr.Zero);
+
 				IntPtr p = notmuch_database_get_all_tags(m_handle);
 				return new Tags(p);
 			}
@@ -87,9 +107,18 @@ namespace NotMuch
 
 		public Query CreateQuery(string queryString)
 		{
-			IntPtr query = notmuch_query_create(m_handle, queryString);
+			Debug.Assert(m_handle != IntPtr.Zero);
 
-			return new Query(query);
+			var query = new Query(this, notmuch_query_create(m_handle, queryString));
+
+			m_queries.Add(new WeakReference(query));
+
+			return query;
+		}
+
+		internal void OnQueryDisposed(Query query)
+		{
+			Debug.Assert(m_queries.RemoveAll(wr => wr.Target == query) == 1);
 		}
 
 		[DllImport("libnotmuch")]

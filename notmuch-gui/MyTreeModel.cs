@@ -26,32 +26,20 @@ namespace NotMuchGUI
 		public const int COL_NUM_COLUMNS = 7;
 		int m_count;
 		List<Entry> m_entries;
-		NM.Query m_query;
 
 		public MyTreeModel()
 		{
-			m_query = null;
 			m_count = 0;
 			m_entries = new List<Entry>();
 		}
 
-		public MyTreeModel(NM.Query query)
+		public MyTreeModel(int estimatedCount)
 		{
-			m_query = query;
-			m_count = query.Count;
+			m_count = estimatedCount;
 			m_entries = new List<Entry>(m_count);
 		}
 
 		public int Count { get { return m_count; } }
-
-		~MyTreeModel()
-		{
-			if (m_query != null)
-			{
-				m_query.Dispose();
-				m_query = null;
-			}
-		}
 
 		public void Append(NM.Message msg, int depth)
 		{

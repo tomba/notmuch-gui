@@ -55,6 +55,9 @@ namespace NotMuchGUI
 			win.Show();
 
 			Application.Run();
+
+			MainClass.Database.Dispose();
+			MainClass.Database = null;
 		}
 
 		static void ParseConfig()

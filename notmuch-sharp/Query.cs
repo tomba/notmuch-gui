@@ -1,24 +1,30 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace NotMuch
 {
 	public class Query : IDisposable
 	{
+		Database m_db;
 		IntPtr m_handle;
 
-		internal Query(IntPtr handle)
+		internal Query(Database db, IntPtr handle)
 		{
+			m_db = db;
 			m_handle = handle;
 		}
 
-		~Query ()
+		~Query()
 		{
+			Debug.WriteLine("~Query");
+
 			Dispose(false);
 		}
 
 		public void Dispose()
 		{
+			m_db.OnQueryDisposed(this);
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
@@ -36,12 +42,16 @@ namespace NotMuch
 		{
 			get
 			{
+				Debug.Assert(m_handle != IntPtr.Zero);
+
 				return (int)notmuch_query_count_messages(m_handle);
 			}
 		}
 
 		public Messages SearchMessages()
 		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
 			IntPtr msgsP = notmuch_query_search_messages(m_handle);
 
 			return new Messages(msgsP);
@@ -49,6 +59,8 @@ namespace NotMuch
 
 		public Threads SearchThreads()
 		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
 			IntPtr msgsP = notmuch_query_search_threads(m_handle);
 
 			return new Threads(msgsP);
