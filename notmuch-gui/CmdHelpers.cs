@@ -123,7 +123,7 @@ namespace NotMuchGUI
 			int ret;
 			string err;
 
-			if (RunCmd("notmuch", args, out stdout, out stderr, out ret, out err) == false)
+			if (RunCmd(MainClass.NotmuchExe, args, out stdout, out stderr, out ret, out err) == false)
 			{
 				output = err;
 				return false;

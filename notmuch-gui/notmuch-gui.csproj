@@ -62,6 +62,9 @@
     <Reference Include="gmime-sharp">
       <HintPath>..\..\..\..\usr\lib\cli\gmime-sharp-2.6\gmime-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="gkeyfile-sharp">
+      <HintPath>..\..\..\..\usr\lib\cli\gkeyfile-sharp-1.0\gkeyfile-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">

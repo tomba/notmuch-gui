@@ -1,15 +1,19 @@
 using System;
 using Gtk;
 using NM = NotMuch;
+using System.IO;
 
 namespace NotMuchGUI
 {
 	static class MainClass
 	{
 		public static NM.Database Database { get; private set; }
+		public static string NotmuchExe { get; private set; }
 
 		public static void Main(string[] args)
 		{
+			ParseConfig();
+
 			string path;
 			string output;
 
@@ -44,6 +48,22 @@ namespace NotMuchGUI
 			win.Show();
 
 			Application.Run();
+		}
+
+		static void ParseConfig()
+		{
+			MainClass.NotmuchExe = "notmuch";
+
+			var home = Environment.GetEnvironmentVariable("HOME");
+
+			var filename = Path.Combine(home, ".notmuch-gui-config");
+
+			if (File.Exists(filename) == false)
+				return;
+
+			var keyfile = new KeyFile.GKeyFile(filename);
+
+			MainClass.NotmuchExe = keyfile.GetString("notmuch", "executable");
 		}
 	}
 }
