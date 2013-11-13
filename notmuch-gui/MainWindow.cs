@@ -381,23 +381,13 @@ public partial class MainWindow: Gtk.Window
 				gmsg = TryParseMboxMessage(readStream);
 
 				if (gmsg != null)
-				{
-					var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Warning, ButtonsType.Ok, "Parsed old style mbox message '{0}'", filename);
-					dlg.Run();
-					dlg.Destroy();
-				}
+					DialogHelpers.ShowDialog(this, MessageType.Warning, "Parsed old style mbox message", "Parsed old style mbox message '{0}'", filename);
 			}
 			#endif
 
 			if (gmsg == null)
 			{
-				var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok,
-					          "Failed to parse message from '{0}'", filename);
-
-				dlg.Run();
-
-				dlg.Destroy();
-
+				DialogHelpers.ShowDialog(this, MessageType.Error, "Failed to parse message", "Failed to parse message from '{0}'", filename);
 				readStream.Close();
 				return;
 			}

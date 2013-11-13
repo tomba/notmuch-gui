@@ -2,17 +2,29 @@ using System;
 using Gtk;
 using NM = NotMuch;
 using System.IO;
+using System.Diagnostics;
 
 namespace NotMuchGUI
 {
 	static class MainClass
 	{
 		public static NM.Database Database { get; private set; }
+
 		public static string NotmuchExe { get; private set; }
 
 		public static void Main(string[] args)
 		{
-			ParseConfig();
+			Application.Init();
+
+			try
+			{
+				ParseConfig();
+			}
+			catch (Exception e)
+			{
+				DialogHelpers.ShowDialog(null, MessageType.Error, "Failed to parse config", "Failed to parse config file:\n\n{0}", e.Message);
+				return;
+			}
 
 			string path;
 			string output;
@@ -20,7 +32,7 @@ namespace NotMuchGUI
 			if (CmdHelpers.RunNotmuch("config get database.path", out output) == false)
 			{
 				output = output.Trim();
-				Console.WriteLine("Failed to get database path: {0}", output);
+				DialogHelpers.ShowDialog(null, MessageType.Error, "Failed to get database path", "Failed to get database path:\n\n{0}", output);
 				return;
 			}
 
@@ -34,13 +46,11 @@ namespace NotMuchGUI
 
 			if (MainClass.Database == null)
 			{
-				Console.WriteLine("Failed to open database '{0}': {1}", path, status);
+				DialogHelpers.ShowDialog(null, MessageType.Error, "Failed to open database", "Failed to open database\n'{0}':\n\n{1}", path, status);
 				return;
 			}
 
-			Console.WriteLine("Opened database '{0}'", path);
-
-			Application.Init();
+			Debug.WriteLine("Opened database '{0}'", path);
 
 			System.Threading.SynchronizationContext.SetSynchronizationContext(new GLib.GLibSynchronizationContext());
 
