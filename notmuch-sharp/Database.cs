@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public class Database : DisposableBase
+	public class Database : IDisposable
 	{
 		public static Database Create(string path, out Status status)
 		{
@@ -29,21 +29,38 @@ namespace NotMuch
 			return new Database(p);
 		}
 
+		IntPtr m_handle;
+
 		Database(IntPtr ptr)
-			: base(ptr)
 		{
+			m_handle = ptr;
 		}
 
-		protected override void DestroyHandle()
+		~Database ()
 		{
-			notmuch_database_destroy(this.Handle);
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		void Dispose(bool disposing)
+		{
+			if (m_handle != IntPtr.Zero)
+			{
+				notmuch_database_destroy(m_handle);
+				m_handle = IntPtr.Zero;
+			}
 		}
 
 		public Message FindMessage(string messageId)
 		{
 			IntPtr msgPtr;
 
-			Status r = notmuch_database_find_message(this.Handle, messageId, out msgPtr);
+			Status r = notmuch_database_find_message(m_handle, messageId, out msgPtr);
 			if (r != Status.SUCCESS)
 				return Message.NullMessage;
 
@@ -54,7 +71,7 @@ namespace NotMuch
 		{
 			get
 			{
-				IntPtr p = notmuch_database_get_path(this.Handle);
+				IntPtr p = notmuch_database_get_path(m_handle);
 				return Marshal.PtrToStringAnsi(p);
 			}
 		}
@@ -63,14 +80,14 @@ namespace NotMuch
 		{
 			get
 			{
-				IntPtr p = notmuch_database_get_all_tags(this.Handle);
+				IntPtr p = notmuch_database_get_all_tags(m_handle);
 				return new Tags(p);
 			}
 		}
 
 		public Query CreateQuery(string queryString)
 		{
-			IntPtr query = notmuch_query_create(this.Handle, queryString);
+			IntPtr query = notmuch_query_create(m_handle, queryString);
 
 			return new Query(query);
 		}

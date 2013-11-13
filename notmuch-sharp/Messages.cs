@@ -6,26 +6,26 @@ namespace NotMuch
 {
 	public struct Messages : IEnumerable<Message>
 	{
-		IntPtr Handle;
+		IntPtr m_handle;
 
 		internal Messages(IntPtr handle)
 		{
-			this.Handle = handle;
+			m_handle = handle;
 		}
 
-		public bool Valid { get { return notmuch_messages_valid(this.Handle); } }
+		public bool Valid { get { return notmuch_messages_valid(m_handle); } }
 
 		public Message Current
 		{ 
 			get
 			{
-				return new Message(notmuch_messages_get(this.Handle));
+				return new Message(notmuch_messages_get(m_handle));
 			}
 		}
 
 		public void Next()
 		{
-			notmuch_messages_move_to_next(this.Handle);
+			notmuch_messages_move_to_next(m_handle);
 		}
 
 		#region IEnumerable implementation
@@ -108,6 +108,9 @@ namespace NotMuch
 				}
 			}
 		}
+
+		[DllImport("libnotmuch")]
+		static extern bool notmuch_messages_destroy(IntPtr messages);
 
 		[DllImport("libnotmuch")]
 		static extern bool notmuch_messages_valid(IntPtr messages);

@@ -3,44 +3,61 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public class Query : DisposableBase
+	public class Query : IDisposable
 	{
+		IntPtr m_handle;
+
 		internal Query(IntPtr handle)
-			: base(handle)
 		{
+			m_handle = handle;
+		}
+
+		~Query ()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		void Dispose(bool disposing)
+		{
+			if (m_handle != IntPtr.Zero)
+			{
+				notmuch_query_destroy(m_handle);
+				m_handle = IntPtr.Zero;
+			}
 		}
 
 		public int Count
 		{
 			get
 			{
-				return (int)notmuch_query_count_messages(this.Handle);
+				return (int)notmuch_query_count_messages(m_handle);
 			}
 		}
 
 		public Messages SearchMessages()
 		{
-			IntPtr msgsP = notmuch_query_search_messages(this.Handle);
+			IntPtr msgsP = notmuch_query_search_messages(m_handle);
 
 			return new Messages(msgsP);
 		}
 
 		public Threads SearchThreads()
 		{
-			IntPtr msgsP = notmuch_query_search_threads(this.Handle);
+			IntPtr msgsP = notmuch_query_search_threads(m_handle);
 
 			return new Threads(msgsP);
 		}
 
-		protected override void DestroyHandle()
-		{
-			notmuch_query_destroy(this.Handle);
-		}
-
 		public SortOrder Sort
 		{
-			get { return (SortOrder)notmuch_query_get_sort(this.Handle); }
-			set { notmuch_query_set_sort(this.Handle, (int)value); }
+			get { return (SortOrder)notmuch_query_get_sort(m_handle); }
+			set { notmuch_query_set_sort(m_handle, (int)value); }
 		}
 
 		[DllImport("libnotmuch")]

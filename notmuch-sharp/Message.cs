@@ -6,29 +6,29 @@ namespace NotMuch
 {
 	public struct Message
 	{
-		IntPtr Handle;
+		IntPtr m_handle;
 		public static Message NullMessage = new Message(IntPtr.Zero);
 
 		internal Message(IntPtr handle)
 		{
-			Handle = handle;
+			m_handle = handle;
 		}
 
 		public void DestroyHandle()
 		{
-			Debug.Assert(this.Handle != IntPtr.Zero);
-			notmuch_message_destroy(this.Handle);
+			Debug.Assert(m_handle != IntPtr.Zero);
+			notmuch_message_destroy(m_handle);
 		}
 
-		public bool IsNull { get { return this.Handle == IntPtr.Zero; } }
+		public bool IsNull { get { return m_handle == IntPtr.Zero; } }
 
 		public string FileName
 		{
 			get
 			{
-				Debug.Assert(this.Handle != IntPtr.Zero);
+				Debug.Assert(m_handle != IntPtr.Zero);
 
-				IntPtr sp = notmuch_message_get_filename(this.Handle);
+				IntPtr sp = notmuch_message_get_filename(m_handle);
 
 				return Marshal.PtrToStringAnsi(sp);
 			}
@@ -36,18 +36,18 @@ namespace NotMuch
 
 		public Tags GetTags()
 		{
-			Debug.Assert(this.Handle != IntPtr.Zero);
+			Debug.Assert(m_handle != IntPtr.Zero);
 
-			IntPtr tags = notmuch_message_get_tags(this.Handle);
+			IntPtr tags = notmuch_message_get_tags(m_handle);
 
 			return new Tags(tags);
 		}
 
 		public string GetHeader(string name)
 		{
-			Debug.Assert(this.Handle != IntPtr.Zero);
+			Debug.Assert(m_handle != IntPtr.Zero);
 
-			IntPtr sp = notmuch_message_get_header(this.Handle, name);
+			IntPtr sp = notmuch_message_get_header(m_handle, name);
 
 			return Marshal.PtrToStringAnsi(sp);
 		}
@@ -61,9 +61,9 @@ namespace NotMuch
 		{
 			get
 			{
-				Debug.Assert(this.Handle != IntPtr.Zero);
+				Debug.Assert(m_handle != IntPtr.Zero);
 
-				IntPtr time_t = notmuch_message_get_date(this.Handle);
+				IntPtr time_t = notmuch_message_get_date(m_handle);
 
 				return s_epoch.AddSeconds((long)time_t);
 			}
@@ -73,9 +73,9 @@ namespace NotMuch
 		{
 			get
 			{
-				Debug.Assert(this.Handle != IntPtr.Zero);
+				Debug.Assert(m_handle != IntPtr.Zero);
 
-				IntPtr time_t = notmuch_message_get_date(this.Handle);
+				IntPtr time_t = notmuch_message_get_date(m_handle);
 
 				return (long)time_t;
 			}
@@ -85,9 +85,9 @@ namespace NotMuch
 		{
 			get
 			{
-				Debug.Assert(this.Handle != IntPtr.Zero);
+				Debug.Assert(m_handle != IntPtr.Zero);
 
-				IntPtr sp = notmuch_message_get_message_id(this.Handle);
+				IntPtr sp = notmuch_message_get_message_id(m_handle);
 
 				return Marshal.PtrToStringAnsi(sp);
 			}
@@ -95,7 +95,7 @@ namespace NotMuch
 
 		public Messages GetReplies()
 		{
-			IntPtr msgsP = notmuch_message_get_replies(this.Handle);
+			IntPtr msgsP = notmuch_message_get_replies(m_handle);
 
 			return new Messages(msgsP);
 		}
@@ -119,6 +119,6 @@ namespace NotMuch
 		static extern IntPtr notmuch_message_get_tags(IntPtr message);
 
 		[DllImport("libnotmuch")]
-		static extern IntPtr notmuch_message_get_replies(IntPtr threads);
+		static extern IntPtr notmuch_message_get_replies(IntPtr message);
 	}
 }
