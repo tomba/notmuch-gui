@@ -5,18 +5,16 @@ namespace NotMuch
 {
 	public class Database : DisposableBase
 	{
-		public static Database Create(string path)
+		public static Database Create(string path, out Status status)
 		{
 			IntPtr p;
 
-			Status r = notmuch_database_create(path, out p);
+			status = notmuch_database_create(path, out p);
 
-			if (r != Status.SUCCESS)
-				throw new Exception("fail");
+			if (status != Status.SUCCESS)
+				return null;
 
-			var db = new Database(p);
-
-			return db;
+			return new Database(p);
 		}
 
 		public static Database Open(string path, DatabaseMode mode, out Status status)

@@ -26,7 +26,6 @@ namespace NotMuchGUI
 				return;
 			}
 
-			string path;
 			string output;
 
 			if (CmdHelpers.RunNotmuch("config get database.path", out output) == false)
@@ -36,21 +35,19 @@ namespace NotMuchGUI
 				return;
 			}
 
-			output = output.Trim();
-
-			path = output;
+			string dbPath = output.Trim();
 
 			NM.Status status;
 
-			MainClass.Database = NM.Database.Open(path, NM.DatabaseMode.READ_ONLY, out status);
+			MainClass.Database = NM.Database.Open(dbPath, NM.DatabaseMode.READ_ONLY, out status);
 
 			if (MainClass.Database == null)
 			{
-				DialogHelpers.ShowDialog(null, MessageType.Error, "Failed to open database", "Failed to open database\n'{0}':\n\n{1}", path, status);
+				DialogHelpers.ShowDialog(null, MessageType.Error, "Failed to open database", "Failed to open database\n'{0}':\n\n{1}", dbPath, status);
 				return;
 			}
 
-			Debug.WriteLine("Opened database '{0}'", path);
+			Debug.WriteLine("Opened database '{0}'", dbPath);
 
 			System.Threading.SynchronizationContext.SetSynchronizationContext(new GLib.GLibSynchronizationContext());
 
