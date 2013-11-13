@@ -372,6 +372,23 @@ public partial class MainWindow: Gtk.Window
 			var p = new GMime.Parser(readStream);
 			var gmsg = p.ConstructMessage();
 
+			#if MBOX_PARSE_HACK
+			// HACK: try skipping >From: line
+			if (gmsg == null)
+			{
+				p.Dispose();
+
+				gmsg = TryParseMboxMessage(readStream);
+
+				if (gmsg != null)
+				{
+					var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Warning, ButtonsType.Ok, "Parsed old style mbox message '{0}'", filename);
+					dlg.Run();
+					dlg.Destroy();
+				}
+			}
+			#endif
+
 			if (gmsg == null)
 			{
 				var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok,
@@ -404,6 +421,37 @@ public partial class MainWindow: Gtk.Window
 			readStream.Close();
 		}
 	}
+
+	#if MBOX_PARSE_HACK
+	GMime.Message TryParseMboxMessage(GMime.StreamFs readStream)
+	{
+		readStream.Seek(0);
+
+		var buf = new byte[1];
+
+		if (readStream.Read(buf, 1) != 1)
+			return null;
+
+		if (buf[0] != (byte)'>')
+			return null;
+
+		while (buf[0] != (byte)'\n')
+		{
+			if (readStream.Read(buf, 1) != 1)
+				return null;
+		}
+
+		var start = readStream.Tell();
+		var end = readStream.Length;
+
+		readStream.SetBounds(start, end);
+
+		var p = new GMime.Parser(readStream);
+		var gmsg = p.ConstructMessage();
+
+		return gmsg;
+	}
+	#endif
 
 	NM.Message GetCurrentMessage()
 	{
