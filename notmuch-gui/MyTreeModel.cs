@@ -186,8 +186,10 @@ namespace NotMuchGUI
 
 			var entry = m_entries[idx];
 
-			using (var db = MainClass.OpenDB())
+			using (var cdb = new CachedDB())
 			{
+				var db = cdb.Database;
+
 				var msg = db.FindMessage(entry.Id);
 
 				switch (col)

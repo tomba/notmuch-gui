@@ -28,8 +28,10 @@ public partial class MainWindow: Gtk.Window
 		SetupQueryList();
 		SetupMailList();
 
-		using (var db = MainClass.OpenDB())
+		using (var cdb = new CachedDB())
 		{
+			var db = cdb.Database;
+
 			var tags = db.AllTags;
 
 			while (tags.Valid)
@@ -186,8 +188,10 @@ public partial class MainWindow: Gtk.Window
 
 		Console.WriteLine("Query({0})", queryString);
 
-		using (var db = MainClass.OpenDB())
+		using (var cdb = new CachedDB())
 		{
+			var db = cdb.Database;
+
 			RunQuery(db, queryString);
 		}
 	}
@@ -357,8 +361,10 @@ public partial class MainWindow: Gtk.Window
 		if (id == null)
 			return;
 
-		using (var db = MainClass.OpenDB())
+		using (var cdb = new CachedDB())
 		{
+			var db = cdb.Database;
+		
 			var msg = db.FindMessage(id);
 
 			tagsWidget.UpdateTagsView(msg, m_allTags);
