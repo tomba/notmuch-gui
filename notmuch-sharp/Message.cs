@@ -43,6 +43,20 @@ namespace NotMuch
 			return new Tags(tags);
 		}
 
+		public Status AddTag(string tag)
+		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
+			return notmuch_message_add_tag(m_handle, tag);
+		}
+
+		public Status RemoveTag(string tag)
+		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
+			return notmuch_message_remove_tag(m_handle, tag);
+		}
+
 		public string GetHeader(string name)
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
@@ -117,6 +131,12 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_message_get_tags(IntPtr message);
+
+		[DllImport("libnotmuch")]
+		static extern Status notmuch_message_add_tag(IntPtr message, string tag);
+
+		[DllImport("libnotmuch")]
+		static extern Status notmuch_message_remove_tag(IntPtr message, string tag);
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_message_get_replies(IntPtr message);

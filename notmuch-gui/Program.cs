@@ -8,6 +8,7 @@ namespace NotMuchGUI
 {
 	static class MainClass
 	{
+		public static string DatabasePath { get; private set; }
 		public static NM.Database Database { get; private set; }
 
 		public static string NotmuchExe { get; private set; }
@@ -35,19 +36,20 @@ namespace NotMuchGUI
 				return;
 			}
 
-			string dbPath = output.Trim();
+			MainClass.DatabasePath = output.Trim();
 
 			NM.Status status;
 
-			MainClass.Database = NM.Database.Open(dbPath, NM.DatabaseMode.READ_ONLY, out status);
+			MainClass.Database = NM.Database.Open(MainClass.DatabasePath, NM.DatabaseMode.READ_ONLY, out status);
 
 			if (MainClass.Database == null)
 			{
-				DialogHelpers.ShowDialog(null, MessageType.Error, "Failed to open database", "Failed to open database\n'{0}':\n\n{1}", dbPath, status);
+				DialogHelpers.ShowDialog(null, MessageType.Error, "Failed to open database", "Failed to open database\n'{0}':\n\n{1}",
+					MainClass.DatabasePath, status);
 				return;
 			}
 
-			Debug.WriteLine("Opened database '{0}'", dbPath);
+			Debug.WriteLine("Opened database '{0}'", MainClass.DatabasePath);
 
 			System.Threading.SynchronizationContext.SetSynchronizationContext(new GLib.GLibSynchronizationContext());
 

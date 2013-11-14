@@ -10,6 +10,7 @@ namespace NotMuchGUI
 	public partial class TagsWidget : Gtk.Bin
 	{
 		ListStore m_tagStore;
+		NM.Message m_msg;
 
 		public TagsWidget()
 		{
@@ -45,25 +46,77 @@ namespace NotMuchGUI
 			}
 		}
 
+		List<string> m_tags = new List<string>();
+
 		public void UpdateTagsView(NM.Message msg, List<string> allTags)
 		{
-			m_tagStore.Clear();
+			m_msg = msg;
+
+			m_tags.Clear();
 
 			var tags = msg.GetTags();
 
-			List<string> selList = new List<string>();
-
 			while (tags.Valid)
 			{
-				selList.Add(tags.Current);
+				m_tags.Add(tags.Current);
 				tags.Next();
 			}
 
-			foreach (var t in selList)
+			m_tagStore.Clear();
+
+			foreach (var t in m_tags)
 				m_tagStore.AppendValues(t, true);
 
-			foreach (var t in allTags.Except(selList))
+			foreach (var t in allTags.Except(m_tags))
 				m_tagStore.AppendValues(t, false);
+		}
+
+		protected void OnApplyButtonClicked(object sender, EventArgs e)
+		{
+			var selectedList = new List<string>();
+
+			foreach (object[] item in m_tagStore)
+			{
+				bool selected = (bool)item[1];
+
+				if (selected)
+				{
+					string tag = (string)item[0];
+					selectedList.Add(tag);
+				}
+			}
+
+			var addTags = selectedList.Except(m_tags);
+			var rmTags = m_tags.Except(selectedList);
+
+			var da2 = m_msg.Date;
+
+			NM.Status stat;
+			using (var db = NM.Database.Open(MainClass.DatabasePath, NM.DatabaseMode.READ_WRITE, out stat))
+			{
+				if (stat != NM.Status.SUCCESS)
+					throw new Exception();
+
+				var m = db.FindMessage(m_msg.Id);
+
+				foreach (var tag in addTags)
+				{
+					stat = m.AddTag(tag);
+					Console.WriteLine("Added tag {0}: {1}", tag, stat);
+				}
+
+				foreach (var tag in rmTags)
+				{
+					stat = m.RemoveTag(tag);
+					Console.WriteLine("Removed tag {0}: {1}", tag, stat);
+				}
+			}
+
+			m_tags = selectedList;
+		}
+
+		protected void OnResetButtonClicked(object sender, EventArgs e)
+		{
 		}
 	}
 }

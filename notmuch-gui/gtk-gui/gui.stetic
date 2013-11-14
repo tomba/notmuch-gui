@@ -338,12 +338,13 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.Button" id="button2">
+              <widget class="Gtk.Button" id="resetButton">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
                 <property name="Label" translatable="yes">Reset</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnResetButtonClicked" />
               </widget>
               <packing>
                 <property name="PackType">End</property>
@@ -354,12 +355,13 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Button" id="button1">
+              <widget class="Gtk.Button" id="applyButton">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
                 <property name="Label" translatable="yes">Apply</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnApplyButtonClicked" />
               </widget>
               <packing>
                 <property name="PackType">End</property>
