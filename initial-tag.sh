@@ -22,16 +22,18 @@ from="($from)"
 new="tag:new AND "
 new=
 
-notmuch tag -inbox +to-me -- $new $to
+notmuch tag --batch <<-end
+	-inbox +to-me -- $new $to
 
-notmuch tag -inbox +from-me -- $new $from
+	-inbox +from-me -- $new $from
 
-notmuch tag -inbox +linux-kernel -- $new to:linux-kernel@vger.kernel.org
-notmuch tag -inbox +linux-omap -- $new to:linux-omap@vger.kernel.org
-notmuch tag -inbox +linux-fbdev -- $new to:linux-fbdev@vger.kernel.org
-notmuch tag -inbox +linux-arm -- $new to:linux-arm-kernel@lists.infradead.org
+	-inbox +linux-kernel -- $new to:linux-kernel@vger.kernel.org
+	-inbox +linux-omap -- $new to:linux-omap@vger.kernel.org
+	-inbox +linux-fbdev -- $new to:linux-fbdev@vger.kernel.org
+	-inbox +linux-arm -- $new to:linux-arm-kernel@lists.infradead.org
 
-notmuch tag -inbox +users-kernel-org -- $new to:users@linux.kernel.org
+	-inbox +users-kernel-org -- $new to:users@linux.kernel.org
 
-notmuch tag -new -- tag:new
+	-new -- tag:new
+end
 
