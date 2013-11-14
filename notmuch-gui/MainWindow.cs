@@ -212,91 +212,11 @@ public partial class MainWindow: Gtk.Window
 
 		if (!m_threadedView)
 		{
-			var msgs = query.SearchMessages();
-
-			while (msgs.Valid)
-			{
-				if (m_cancelProcessing)
-				{
-					Console.WriteLine("CANCEL");
-					sw.Stop();
-					m_processing = false;
-					m_cancelProcessing = false;
-					return;
-				}
-
-				var msg = msgs.Current;
-
-				model.Append(msg, 0);
-
-				if (count == 0)
-					treeviewList.SetCursor(TreePath.NewFirst(), null, false);
-
-				count++;
-
-				if (count % 100 == 0)
-				{
-					label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
-
-					//Console.WriteLine("yielding");
-					//await Task.Delay(100);
-					Application.RunIteration();
-					//await Task.Yield();
-				}
-
-				msgs.Next();
-			}
+			SearchMessages(query, model, ref count);
 		}
 		else
 		{
-			var threads = query.SearchThreads();
-			int lastYield = 0;
-
-			while (threads.Valid)
-			{
-				if (m_cancelProcessing)
-				{
-					Console.WriteLine("CANCEL");
-					sw.Stop();
-					m_processing = false;
-					m_cancelProcessing = false;
-					return;
-				}
-
-				var thread = threads.Current;
-
-				//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
-
-				var msgs = thread.GetToplevelMessages();
-
-				bool firstLoop = count == 0;
-
-				while (msgs.Valid)
-				{
-					var msg = msgs.Current;
-
-					AddMsgsRecursive(model, msg, 0, ref count);
-
-					msgs.Next();
-				}
-
-				if (firstLoop)
-					treeviewList.SetCursor(TreePath.NewFirst(), null, false);
-
-				if (count - lastYield > 500)
-				{
-					label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
-
-					//Console.WriteLine("yielding");
-					//await Task.Delay(1000);
-					//await Task.Yield();
-					Application.RunIteration();
-
-					lastYield = count;
-				}
-
-				threads.Next();
-			}
+			SearchThreads(query, model, ref count);
 		}
 
 		long t3 = sw.ElapsedMilliseconds;
@@ -310,8 +230,94 @@ public partial class MainWindow: Gtk.Window
 		sw.Stop();
 
 		Console.WriteLine("Added {0} messages in {1}, {2}, {3}, {4} = {5} ms", count, t1, t2 - t1, t3 - t2, t4 - t3, t4);
-	
+
 		m_processing = false;
+	}
+
+	void SearchMessages(NM.Query query, MyTreeModel model, ref int count)
+	{
+		var msgs = query.SearchMessages();
+
+		while (msgs.Valid)
+		{
+			if (m_cancelProcessing)
+			{
+				Console.WriteLine("CANCEL");
+				m_cancelProcessing = false;
+				return;
+			}
+
+			var msg = msgs.Current;
+
+			model.Append(msg, 0);
+
+			if (count == 0)
+				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
+
+			count++;
+
+			if (count % 100 == 0)
+			{
+				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
+
+				//Console.WriteLine("yielding");
+				//await Task.Delay(100);
+				Application.RunIteration();
+				//await Task.Yield();
+			}
+
+			msgs.Next();
+		}
+	}
+
+	void SearchThreads(NM.Query query, MyTreeModel model, ref int count)
+	{
+		var threads = query.SearchThreads();
+		int lastYield = 0;
+
+		while (threads.Valid)
+		{
+			if (m_cancelProcessing)
+			{
+				Console.WriteLine("CANCEL");
+				m_cancelProcessing = false;
+				return;
+			}
+
+			var thread = threads.Current;
+
+			//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
+
+			var msgs = thread.GetToplevelMessages();
+
+			bool firstLoop = count == 0;
+
+			while (msgs.Valid)
+			{
+				var msg = msgs.Current;
+
+				AddMsgsRecursive(model, msg, 0, ref count);
+
+				msgs.Next();
+			}
+
+			if (firstLoop)
+				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
+
+			if (count - lastYield > 500)
+			{
+				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
+
+				//Console.WriteLine("yielding");
+				//await Task.Delay(1000);
+				//await Task.Yield();
+				Application.RunIteration();
+
+				lastYield = count;
+			}
+
+			threads.Next();
+		}
 	}
 
 	void AddMsgsRecursive(MyTreeModel model, NM.Message msg, int depth, ref int count)
@@ -438,7 +444,6 @@ public partial class MainWindow: Gtk.Window
 		return gmsg;
 	}
 	#endif
-
 	protected void OnGcActionActivated(object sender, EventArgs e)
 	{
 		var sw = Stopwatch.StartNew();
