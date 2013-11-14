@@ -12,8 +12,6 @@ using System.Linq;
 
 public partial class MainWindow: Gtk.Window
 {
-	NM.Database m_db;
-	NM.Query m_query;
 	ListStore m_queryStore;
 	DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
@@ -25,32 +23,25 @@ public partial class MainWindow: Gtk.Window
 	{
 		Build();
 
-		m_db = MainClass.Database;
-
 		threadedAction.Active = m_threadedView;
 
 		SetupQueryList();
 		SetupMailList();
 
-		var tags = m_db.AllTags;
-
-		while (tags.Valid)
+		using (var db = MainClass.OpenDB())
 		{
-			m_allTags.Add(tags.Current);
-			m_queryStore.AppendValues(String.Format("tag:{0}", tags.Current));
-			tags.Next();
+			var tags = db.AllTags;
+
+			while (tags.Valid)
+			{
+				m_allTags.Add(tags.Current);
+				m_queryStore.AppendValues(String.Format("tag:{0}", tags.Current));
+				tags.Next();
+			}
 		}
 
 		// select first items
 		treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
-	}
-
-	protected override void OnDestroyed()
-	{
-		base.OnDestroyed();
-
-		m_db.Dispose();
-		m_db = null;
 	}
 
 	void SetupQueryList()
@@ -179,11 +170,6 @@ public partial class MainWindow: Gtk.Window
 		if (string.IsNullOrWhiteSpace(dateSearchEntry.Text) == false)
 			queryString = queryString + String.Format(" date:{0}", dateSearchEntry.Text);
 
-		ProcessSearch(queryString);
-	}
-
-	void ProcessSearch(string queryString)
-	{
 		if (m_processing)
 		{
 			Console.WriteLine("ProcessSearch already running");
@@ -192,36 +178,33 @@ public partial class MainWindow: Gtk.Window
 
 		if (string.IsNullOrWhiteSpace(queryString))
 		{
-			if (m_query != null)
-			{
-				treeviewList.Model = new TreeModelAdapter(new MyTreeModel());
-				m_query.Dispose();
-				m_query = null;
-			}
+			treeviewList.Model = new TreeModelAdapter(new MyTreeModel());
 			return;
 		}
 
 		m_processing = true;
 
-		if (m_query != null)
-		{
-			m_query.Dispose();
-			m_query = null;
-		}
-
-		var sw = Stopwatch.StartNew();
-
 		Console.WriteLine("Query({0})", queryString);
 
-		m_query = m_db.CreateQuery(queryString);
+		using (var db = MainClass.OpenDB())
+		{
+			RunQuery(db, queryString);
+		}
+	}
 
-		m_query.Sort = NM.SortOrder.OLDEST_FIRST;
+	void RunQuery(NM.Database db, string queryString)
+	{
+		var sw = Stopwatch.StartNew();
+
+		var query = db.CreateQuery(queryString);
+
+		query.Sort = NM.SortOrder.OLDEST_FIRST;
 
 		long t1 = sw.ElapsedMilliseconds;
 
 		int count = 0;
 
-		var model = new MyTreeModel(m_query.Count);
+		var model = new MyTreeModel(query.Count);
 
 		treeviewList.Model = new TreeModelAdapter(model);
 
@@ -229,7 +212,7 @@ public partial class MainWindow: Gtk.Window
 
 		if (!m_threadedView)
 		{
-			var msgs = m_query.SearchMessages();
+			var msgs = query.SearchMessages();
 
 			while (msgs.Valid)
 			{
@@ -266,7 +249,7 @@ public partial class MainWindow: Gtk.Window
 		}
 		else
 		{
-			var threads = m_query.SearchThreads();
+			var threads = query.SearchThreads();
 			int lastYield = 0;
 
 			while (threads.Valid)
@@ -363,26 +346,29 @@ public partial class MainWindow: Gtk.Window
 		var adap = (TreeModelAdapter)model;
 		var myModel = (MyTreeModel)adap.Implementor;
 
-		var msg = myModel.GetMessage(iter);
+		var id = myModel.GetMessageID(iter);
 
-		if (msg.IsNull)
+		if (id == null)
 			return;
 
-		tagsWidget.UpdateTagsView(msg, m_allTags);
-
-
-		var filename = msg.FileName;
-
-		int fd = Mono.Unix.Native.Syscall.open(filename, Mono.Unix.Native.OpenFlags.O_RDONLY);
-
-		using (var readStream = new GMime.StreamFs(fd))
+		using (var db = MainClass.OpenDB())
 		{
-			readStream.Owner = true;
+			var msg = db.FindMessage(id);
 
-			var p = new GMime.Parser(readStream);
-			var gmsg = p.ConstructMessage();
+			tagsWidget.UpdateTagsView(msg, m_allTags);
 
-			#if MBOX_PARSE_HACK
+			var filename = msg.FileName;
+
+			int fd = Mono.Unix.Native.Syscall.open(filename, Mono.Unix.Native.OpenFlags.O_RDONLY);
+
+			using (var readStream = new GMime.StreamFs(fd))
+			{
+				readStream.Owner = true;
+
+				var p = new GMime.Parser(readStream);
+				var gmsg = p.ConstructMessage();
+
+				#if MBOX_PARSE_HACK
 			// HACK: try skipping >From: line
 			if (gmsg == null)
 			{
@@ -393,32 +379,33 @@ public partial class MainWindow: Gtk.Window
 				if (gmsg != null)
 					DialogHelpers.ShowDialog(this, MessageType.Warning, "Parsed old style mbox message", "Parsed old style mbox message '{0}'", filename);
 			}
-			#endif
+				#endif
 
-			if (gmsg == null)
-			{
-				DialogHelpers.ShowDialog(this, MessageType.Error, "Failed to parse message", "Failed to parse message from '{0}'", filename);
+				if (gmsg == null)
+				{
+					DialogHelpers.ShowDialog(this, MessageType.Error, "Failed to parse message", "Failed to parse message from '{0}'", filename);
+					readStream.Close();
+					return;
+				}
+
+				if (m_dbgWnd != null)
+				{
+					var sw = new StringWriter();
+					GMimeHelpers.DumpStructure(gmsg, sw, 0);
+					var dump = sw.ToString();
+					m_dbgWnd.SetDump(dump);
+				}
+
+				messagewidget1.ShowEmail(msg, gmsg);
+
+				if (m_dbgWnd != null)
+				{
+					m_dbgWnd.SetSrc(messagewidget1.HtmlContent);
+				}
+
+				// GMime.StreamFs is buggy. Dispose doesn't close the fd.
 				readStream.Close();
-				return;
 			}
-
-			if (m_dbgWnd != null)
-			{
-				var sw = new StringWriter();
-				GMimeHelpers.DumpStructure(gmsg, sw, 0);
-				var dump = sw.ToString();
-				m_dbgWnd.SetDump(dump);
-			}
-
-			messagewidget1.ShowEmail(msg, gmsg);
-
-			if (m_dbgWnd != null)
-			{
-				m_dbgWnd.SetSrc(messagewidget1.HtmlContent);
-			}
-
-			// GMime.StreamFs is buggy. Dispose doesn't close the fd.
-			readStream.Close();
 		}
 	}
 	#if MBOX_PARSE_HACK
@@ -451,25 +438,6 @@ public partial class MainWindow: Gtk.Window
 		return gmsg;
 	}
 	#endif
-	NM.Message GetCurrentMessage()
-	{
-		TreeSelection selection = treeviewList.Selection;
-		TreeModel model;
-		TreeIter iter;
-
-		if (!selection.GetSelected(out model, out iter))
-			return NM.Message.NullMessage;
-
-		var adap = (TreeModelAdapter)model;
-		var myModel = (MyTreeModel)adap.Implementor;
-
-		var msg = myModel.GetMessage(iter);
-
-		if (msg.IsNull)
-			throw new Exception();
-
-		return msg;
-	}
 
 	protected void OnGcActionActivated(object sender, EventArgs e)
 	{
@@ -493,14 +461,27 @@ public partial class MainWindow: Gtk.Window
 		Reply(false);
 	}
 
+	string GetCurrentMessageID()
+	{
+		TreeSelection selection = treeviewList.Selection;
+		TreeModel model;
+		TreeIter iter;
+
+		if (!selection.GetSelected(out model, out iter))
+			return null;
+
+		var adap = (TreeModelAdapter)model;
+		var myModel = (MyTreeModel)adap.Implementor;
+
+		return myModel.GetMessageID(iter);
+	}
+
 	void Reply(bool replyAll)
 	{
-		var nmMsg = GetCurrentMessage();
+		var msgId = GetCurrentMessageID();
 
-		if (nmMsg.IsNull)
+		if (msgId == null)
 			return;
-
-		var msgId = nmMsg.Id;
 
 		string replyText;
 

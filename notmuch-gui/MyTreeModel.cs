@@ -12,7 +12,7 @@ namespace NotMuchGUI
 	{
 		struct Entry
 		{
-			public NM.Message Msg;
+			public string Id;
 			public int Depth;
 		}
 
@@ -47,21 +47,11 @@ namespace NotMuchGUI
 
 			var entry = new Entry()
 			{
-				Msg = msg,
+				Id = msg.Id,
 				Depth = depth,
 			};
 
 			m_entries.Add(entry);
-			/*
-			TreeModelAdapter adapter = new TreeModelAdapter(this);
-
-			var iter = TreeIter.Zero;
-			iter.UserData = (IntPtr)idx;
-
-			var path = new TreePath(new [] { idx });
-
-			adapter.EmitRowChanged(path, iter);
-			*/
 		}
 
 		public void FinishAdding()
@@ -149,14 +139,14 @@ namespace NotMuchGUI
 			return new TreePath(new int[] { idx });
 		}
 
-		public NM.Message GetMessage(TreeIter iter)
+		public string GetMessageID(TreeIter iter)
 		{
 			int idx = (int)iter.UserData;
 
 			if (idx >= m_entries.Count)
-				return NM.Message.NullMessage;
+				return null;
 
-			return m_entries[idx].Msg;
+			return m_entries[idx].Id;
 		}
 
 		public void GetValue(TreeIter iter, int col, ref GLib.Value val)
@@ -196,80 +186,83 @@ namespace NotMuchGUI
 
 			var entry = m_entries[idx];
 
-			var msg = entry.Msg;
-
-			switch (col)
+			using (var db = MainClass.OpenDB())
 			{
-				case COL_FROM:
-					{
-						str = msg.GetHeader("From");
-						val = new GLib.Value(str);
-					}
-					break;
+				var msg = db.FindMessage(entry.Id);
 
-				case COL_SUBJECT:
-					{
-						str = msg.GetHeader("Subject");
-
-						str = new String('→', entry.Depth) + str;
-
-						val = new GLib.Value(str);
-					}
-					break;
-
-				case COL_DATE:
-					{
-						var date = msg.Date.ToLocalTime();
-						str = date.ToString("g");
-						val = new GLib.Value(str);
-					}
-					break;
-
-				case COL_TAGS:
-					{
-						var tags = msg.GetTags();
-
-						List<string> list = new List<string>();
-
-						while (tags.Valid)
+				switch (col)
+				{
+					case COL_FROM:
 						{
-							list.Add(tags.Current);
-							tags.Next();
+							str = msg.GetHeader("From");
+							//str = entry.From;
+							val = new GLib.Value(str);
 						}
+						break;
 
-						str = string.Join("/", list);
-
-						val = new GLib.Value(str);
-					}
-					break;
-
-				case COL_UNREAD:
-					{
-						var tags = msg.GetTags();
-
-						val = new GLib.Value(false);
-
-						while (tags.Valid)
+					case COL_SUBJECT:
 						{
-							if (tags.Current == "unread")
+							str = msg.GetHeader("Subject");
+
+							str = new String('→', entry.Depth) + str;
+
+							val = new GLib.Value(str);
+						}
+						break;
+
+					case COL_DATE:
+						{
+							var date = msg.Date.ToLocalTime();
+							str = date.ToString("g");
+							val = new GLib.Value(str);
+						}
+						break;
+
+					case COL_TAGS:
+						{
+							var tags = msg.GetTags();
+
+							List<string> list = new List<string>();
+
+							while (tags.Valid)
 							{
-								val = new GLib.Value(true);
-								break;
+								list.Add(tags.Current);
+								tags.Next();
 							}
 
-							tags.Next();
+							str = string.Join("/", list);
+
+							val = new GLib.Value(str);
 						}
-					}
-					break;
+						break;
 
-				case COL_DEPTH:
-					val = new GLib.Value(entry.Depth);
-					break;
+					case COL_UNREAD:
+						{
+							var tags = msg.GetTags();
 
-				default:
-					throw new Exception();
+							val = new GLib.Value(false);
+
+							while (tags.Valid)
+							{
+								if (tags.Current == "unread")
+								{
+									val = new GLib.Value(true);
+									break;
+								}
+
+								tags.Next();
+							}
+						}
+						break;
+
+					case COL_DEPTH:
+						val = new GLib.Value(entry.Depth);
+						break;
+
+					default:
+						throw new Exception();
+				}
 			}
-
 			//Console.WriteLine("getval {0} {1} {2}", idx, col, val);
 		}
 

@@ -10,7 +10,6 @@ namespace NotMuchGUI
 	public partial class TagsWidget : Gtk.Bin
 	{
 		ListStore m_tagStore;
-		NM.Message m_msg;
 
 		public TagsWidget()
 		{
@@ -47,10 +46,11 @@ namespace NotMuchGUI
 		}
 
 		List<string> m_tags = new List<string>();
+		string m_msgId;
 
 		public void UpdateTagsView(NM.Message msg, List<string> allTags)
 		{
-			m_msg = msg;
+			m_msgId = msg.Id;
 
 			m_tags.Clear();
 
@@ -89,15 +89,13 @@ namespace NotMuchGUI
 			var addTags = selectedList.Except(m_tags);
 			var rmTags = m_tags.Except(selectedList);
 
-			var da2 = m_msg.Date;
-
 			NM.Status stat;
 			using (var db = NM.Database.Open(MainClass.DatabasePath, NM.DatabaseMode.READ_WRITE, out stat))
 			{
 				if (stat != NM.Status.SUCCESS)
 					throw new Exception();
 
-				var m = db.FindMessage(m_msg.Id);
+				var m = db.FindMessage(m_msgId);
 
 				foreach (var tag in addTags)
 				{
