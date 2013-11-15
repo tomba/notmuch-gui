@@ -61,7 +61,7 @@ public partial class MainWindow: Gtk.Window
 			{
 				using (var query = db.CreateQuery(val))
 				{
-					int count = query.Count;
+					int count = query.Count();
 
 					GLib.Idle.Add(() =>
 					{
@@ -76,7 +76,7 @@ public partial class MainWindow: Gtk.Window
 
 				using (var query = db.CreateQuery(val + " AND tag:unread"))
 				{
-					int count = query.Count;
+					int count = query.Count();
 
 					GLib.Idle.Add(() =>
 					{
@@ -262,7 +262,7 @@ public partial class MainWindow: Gtk.Window
 
 		int count = 0;
 
-		var model = new MyTreeModel(query.Count);
+		var model = new MyTreeModel(query.Count());
 
 		treeviewList.Model = new TreeModelAdapter(model);
 

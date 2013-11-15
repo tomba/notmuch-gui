@@ -38,14 +38,11 @@ namespace NotMuch
 			}
 		}
 
-		public int Count
+		public int Count()
 		{
-			get
-			{
-				Debug.Assert(m_handle != IntPtr.Zero);
+			Debug.Assert(m_handle != IntPtr.Zero);
 
-				return (int)notmuch_query_count_messages(m_handle);
-			}
+			return (int)notmuch_query_count_messages(m_handle);
 		}
 
 		public Messages SearchMessages()
