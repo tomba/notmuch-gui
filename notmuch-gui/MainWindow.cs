@@ -37,39 +37,93 @@ public partial class MainWindow: Gtk.Window
 			while (tags.Valid)
 			{
 				m_allTags.Add(tags.Current);
-				m_queryStore.AppendValues(String.Format("tag:{0}", tags.Current));
+				m_queryStore.AppendValues(String.Format("tag:{0}", tags.Current), 0, 0);
 				tags.Next();
 			}
 		}
 
 		// select first items
 		treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
+
+		var queries = m_queryStore.AsEnumerable().Select(arr => (string)arr[0]).ToArray();
+		Task.Factory.StartNew(() => UpdateQueryCounts(queries));
+	}
+
+	void UpdateQueryCounts(string[] queries)
+	{
+		Parallel.ForEach(queries,
+			() =>
+			{
+				var db = MainClass.OpenDB();
+				return db;
+			},
+			(val, state, db) =>
+			{
+				using (var query = db.CreateQuery(val))
+				{
+					int count = query.Count;
+
+					GLib.Idle.Add(() =>
+					{
+						var iter = m_queryStore.Find(i => (string)m_queryStore.GetValue(i, 0) == val);
+
+						if (iter.UserData != IntPtr.Zero)
+							m_queryStore.SetValue(iter, 1, count);
+
+						return false;
+					});
+				}
+
+				using (var query = db.CreateQuery(val + " AND tag:unread"))
+				{
+					int count = query.Count;
+
+					GLib.Idle.Add(() =>
+					{
+						var iter = m_queryStore.Find(i => (string)m_queryStore.GetValue(i, 0) == val);
+
+						if (iter.UserData != IntPtr.Zero)
+							m_queryStore.SetValue(iter, 2, count);
+
+						return false;
+					});
+				}
+
+				return db;
+			},
+			(db) =>
+			{
+				db.Dispose();
+			}
+		);
 	}
 
 	void SetupQueryList()
 	{
-		var queryColumn = new Gtk.TreeViewColumn();
-		queryColumn.Title = "Query";
+		var c = treeviewSearch.AppendColumn("Query", new CellRendererText(), "text", 0);
+		c.Expand = true;
+		c.Resizable = true;
+		c.Reorderable = true;
 
-		var queryCell = new Gtk.CellRendererText();
+		c = treeviewSearch.AppendColumn("C", new CellRendererText(), "text", 1);
+		c.Resizable = true;
+		c.Reorderable = true;
 
-		queryColumn.PackStart(queryCell, true);
+		c = treeviewSearch.AppendColumn("U", new CellRendererText(), "text", 2);
+		c.Resizable = true;
+		c.Reorderable = true;
 
-		treeviewSearch.AppendColumn(queryColumn);
-
-		queryColumn.AddAttribute(queryCell, "text", 0);
-
-		var queryStore = new Gtk.ListStore(typeof(string));
+		var queryStore = new Gtk.ListStore(typeof(string), typeof(int), typeof(int));
 
 		treeviewSearch.Model = queryStore;
 
-		queryStore.AppendValues("ttlampopumppuhuolto");
-		queryStore.AppendValues("Tomi");
-		queryStore.AppendValues("from:ti.com");
-		queryStore.AppendValues("from:linkedin");
-		queryStore.AppendValues("to:linux-kernel@vger.kernel.org");
-		queryStore.AppendValues("*");
-		queryStore.AppendValues("");
+		queryStore.AppendValues("ttlampopumppuhuolto", 0, 0);
+		queryStore.AppendValues("Tomi", 0, 0);
+		queryStore.AppendValues("from:ti.com", 0, 0);
+		queryStore.AppendValues("from:linkedin", 0, 0);
+		queryStore.AppendValues("to:linux-kernel@vger.kernel.org", 0, 0);
+		queryStore.AppendValues("*", 0, 0);
+		queryStore.AppendValues("", 0, 0);
 
 		m_queryStore = queryStore;
 	}
