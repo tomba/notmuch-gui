@@ -118,7 +118,8 @@ namespace NotMuch
 
 		internal void OnQueryDisposed(Query query)
 		{
-			Debug.Assert(m_queries.RemoveAll(wr => wr.Target == query) == 1);
+			int c = m_queries.RemoveAll(wr => wr.Target == query);
+			Debug.Assert(c == 1);
 		}
 
 		[DllImport("libnotmuch")]
