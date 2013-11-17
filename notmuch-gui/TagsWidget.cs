@@ -89,16 +89,19 @@ namespace NotMuchGUI
 
 				var m = db.FindMessage(m_msgId);
 
-				foreach (var tag in addTags)
+				using (var atomic = db.BeginAtomic())
 				{
-					stat = m.AddTag(tag);
-					Console.WriteLine("Added tag {0}: {1}", tag, stat);
-				}
+					foreach (var tag in addTags)
+					{
+						stat = m.AddTag(tag);
+						Console.WriteLine("Added tag {0}: {1}", tag, stat);
+					}
 
-				foreach (var tag in rmTags)
-				{
-					stat = m.RemoveTag(tag);
-					Console.WriteLine("Removed tag {0}: {1}", tag, stat);
+					foreach (var tag in rmTags)
+					{
+						stat = m.RemoveTag(tag);
+						Console.WriteLine("Removed tag {0}: {1}", tag, stat);
+					}
 				}
 			}
 

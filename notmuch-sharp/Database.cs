@@ -70,6 +70,45 @@ namespace NotMuch
 			}
 		}
 
+		public IDisposable BeginAtomic()
+		{
+			return new AtomicHolder(m_handle);
+		}
+
+		class AtomicHolder : IDisposable
+		{
+			IntPtr m_handle;
+
+			public AtomicHolder(IntPtr dbHandle)
+			{
+				m_handle = dbHandle;
+
+				var status = notmuch_database_begin_atomic(m_handle);
+
+				if (status != Status.SUCCESS)
+					throw new Exception("begin atomic failed");
+			}
+
+			~AtomicHolder()
+			{
+				Dispose(false);
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			void Dispose(bool disposing)
+			{
+				var status = notmuch_database_end_atomic(m_handle);
+
+				if (status != Status.SUCCESS)
+					Console.WriteLine("end atomic failed");
+			}
+		}
+
 		public Message FindMessage(string messageId)
 		{
 			IntPtr msgPtr;
@@ -133,6 +172,12 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_database_get_path(IntPtr db);
+
+		[DllImport("libnotmuch")]
+		static extern Status notmuch_database_begin_atomic(IntPtr db);
+
+		[DllImport("libnotmuch")]
+		static extern Status notmuch_database_end_atomic(IntPtr db);
 
 		[DllImport("libnotmuch")]
 		static extern Status notmuch_database_find_message(IntPtr db, string messageId, out IntPtr msg);
