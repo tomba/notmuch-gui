@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using Gtk;
 using System.Collections.Generic;
 using NM = NotMuch;
+using System.Linq;
 
 namespace NotMuchGUI
 {
@@ -222,15 +223,7 @@ namespace NotMuchGUI
 
 					case COL_TAGS:
 						{
-							var tags = msg.GetTags();
-
-							List<string> list = new List<string>();
-
-							while (tags.Valid)
-							{
-								list.Add(tags.Current);
-								tags.Next();
-							}
+							var list = msg.GetTags().ToList();
 
 							str = string.Join("/", list);
 
@@ -240,20 +233,8 @@ namespace NotMuchGUI
 
 					case COL_UNREAD:
 						{
-							var tags = msg.GetTags();
-
-							val = new GLib.Value(false);
-
-							while (tags.Valid)
-							{
-								if (tags.Current == "unread")
-								{
-									val = new GLib.Value(true);
-									break;
-								}
-
-								tags.Next();
-							}
+							bool b = msg.GetTags().Contains("unread");
+							val = new GLib.Value(b);
 						}
 						break;
 

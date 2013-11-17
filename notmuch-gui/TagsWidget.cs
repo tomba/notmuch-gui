@@ -52,15 +52,7 @@ namespace NotMuchGUI
 		{
 			m_msgId = msg.Id;
 
-			m_tags.Clear();
-
-			var tags = msg.GetTags();
-
-			while (tags.Valid)
-			{
-				m_tags.Add(tags.Current);
-				tags.Next();
-			}
+			m_tags.AddRange(msg.GetTags());
 
 			m_tagStore.Clear();
 

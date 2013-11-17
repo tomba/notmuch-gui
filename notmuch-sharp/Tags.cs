@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public struct Tags
+	public struct Tags : IEnumerable<string>
 	{
 		IntPtr m_handle;
 
@@ -13,21 +13,24 @@ namespace NotMuch
 			m_handle = handle;
 		}
 
-		public bool Valid { get { return notmuch_tags_valid(m_handle); } }
+		#region IEnumerable implementation
 
-		public string Current
-		{ 
-			get
+		public IEnumerator<string> GetEnumerator()
+		{
+			while (notmuch_tags_valid(m_handle))
 			{
 				IntPtr ptr = notmuch_tags_get(m_handle);
-				return Marshal.PtrToStringAnsi(ptr);
+				yield return Marshal.PtrToStringAnsi(ptr);
+				notmuch_tags_move_to_next(m_handle);
 			}
 		}
 
-		public void Next()
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			notmuch_tags_move_to_next(m_handle);
+			return GetEnumerator();
 		}
+
+		#endregion
 
 		[DllImport("libnotmuch")]
 		static extern void notmuch_tags_destroy(IntPtr tags);

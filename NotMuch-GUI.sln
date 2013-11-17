@@ -27,7 +27,7 @@ Global
 		{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = notmuch-sharp\notmuch-sharp.csproj
+		StartupItem = notmuch-gui\notmuch-gui.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.TabsToSpaces = False

@@ -32,13 +32,10 @@ public partial class MainWindow: Gtk.Window
 		{
 			var db = cdb.Database;
 
-			var tags = db.AllTags;
-
-			while (tags.Valid)
+			foreach (var tag in db.GetAllTags())
 			{
-				m_allTags.Add(tags.Current);
-				m_queryStore.AppendValues(String.Format("tag:{0}", tags.Current), 0, 0);
-				tags.Next();
+				m_allTags.Add(tag);
+				m_queryStore.AppendValues(String.Format("tag:{0}", tag), 0, 0);
 			}
 		}
 

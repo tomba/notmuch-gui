@@ -94,15 +94,12 @@ namespace NotMuch
 			}
 		}
 
-		public Tags AllTags
+		public Tags GetAllTags()
 		{
-			get
-			{
-				Debug.Assert(m_handle != IntPtr.Zero);
+			Debug.Assert(m_handle != IntPtr.Zero);
 
-				IntPtr p = notmuch_database_get_all_tags(m_handle);
-				return new Tags(p);
-			}
+			IntPtr p = notmuch_database_get_all_tags(m_handle);
+			return new Tags(p);
 		}
 
 		public Query CreateQuery(string queryString)
