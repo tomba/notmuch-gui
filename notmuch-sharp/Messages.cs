@@ -13,31 +13,16 @@ namespace NotMuch
 			m_handle = handle;
 		}
 
-		public bool Valid { get { return notmuch_messages_valid(m_handle); } }
-
-		public Message Current
-		{ 
-			get
-			{
-				return new Message(notmuch_messages_get(m_handle));
-			}
-		}
-
-		public void Next()
-		{
-			notmuch_messages_move_to_next(m_handle);
-		}
-
 		#region IEnumerable implementation
 
 		public IEnumerator<Message> GetEnumerator()
 		{
-			return new MyEnumerator(this);
+			while (notmuch_messages_valid(m_handle))
+			{
+				yield return new Message(notmuch_messages_get(m_handle));
+				notmuch_messages_move_to_next(m_handle);
+			}
 		}
-
-		#endregion
-
-		#region IEnumerable implementation
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
@@ -45,69 +30,6 @@ namespace NotMuch
 		}
 
 		#endregion
-
-		class MyEnumerator : IEnumerator<Message>
-		{
-			Messages m_msgs;
-			bool m_valid;
-			Message m_cur;
-
-			public MyEnumerator(Messages msgs)
-			{
-				m_msgs = msgs;
-			}
-
-			#region IEnumerator implementation
-
-			public bool MoveNext()
-			{
-				if (m_valid)
-					m_msgs.Next();
-				else
-					m_valid = true;
-
-				var v = m_msgs.Valid;
-
-				if (v)
-					m_cur = m_msgs.Current;
-
-				return v;
-			}
-
-			public void Reset()
-			{
-				throw new NotImplementedException();
-			}
-
-			public Message Current
-			{
-				get
-				{
-					if (!m_valid)
-						throw new Exception();
-
-					return m_cur;
-				}
-			}
-
-			#endregion
-
-			#region IDisposable implementation
-
-			public void Dispose()
-			{
-			}
-
-			#endregion
-
-			object System.Collections.IEnumerator.Current
-			{
-				get
-				{
-					return this.Current;
-				}
-			}
-		}
 
 		[DllImport("libnotmuch")]
 		static extern bool notmuch_messages_destroy(IntPtr messages);

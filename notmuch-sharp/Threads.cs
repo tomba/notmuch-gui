@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace NotMuch
 {
-	public struct Threads
+	public struct Threads : IEnumerable<Thread>
 	{
 		IntPtr m_handle;
 
@@ -13,20 +13,23 @@ namespace NotMuch
 			m_handle = handle;
 		}
 
-		public bool Valid { get { return notmuch_threads_valid(m_handle); } }
+		#region IEnumerable implementation
 
-		public Thread Current
-		{ 
-			get
+		public IEnumerator<Thread> GetEnumerator()
+		{
+			while (notmuch_threads_valid(m_handle))
 			{
-				return new Thread(notmuch_threads_get(m_handle));
+				yield return new Thread(notmuch_threads_get(m_handle));
+				notmuch_threads_move_to_next(m_handle);
 			}
 		}
 
-		public void Next()
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			notmuch_threads_move_to_next(m_handle);
+			return GetEnumerator();
 		}
+
+		#endregion
 
 		[DllImport("libnotmuch")]
 		static extern void notmuch_threads_destroy(IntPtr threads);

@@ -302,7 +302,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		var msgs = query.SearchMessages();
 
-		while (msgs.Valid)
+		foreach (var msg in msgs)
 		{
 			if (m_cancelProcessing)
 			{
@@ -310,8 +310,6 @@ public partial class MainWindow: Gtk.Window
 				m_cancelProcessing = false;
 				return;
 			}
-
-			var msg = msgs.Current;
 
 			model.Append(msg, 0);
 
@@ -329,8 +327,6 @@ public partial class MainWindow: Gtk.Window
 				Application.RunIteration();
 				//await Task.Yield();
 			}
-
-			msgs.Next();
 		}
 	}
 
@@ -339,7 +335,7 @@ public partial class MainWindow: Gtk.Window
 		var threads = query.SearchThreads();
 		int lastYield = 0;
 
-		while (threads.Valid)
+		foreach (var thread in threads)
 		{
 			if (m_cancelProcessing)
 			{
@@ -348,22 +344,14 @@ public partial class MainWindow: Gtk.Window
 				return;
 			}
 
-			var thread = threads.Current;
-
 			//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
 
 			var msgs = thread.GetToplevelMessages();
 
 			bool firstLoop = count == 0;
 
-			while (msgs.Valid)
-			{
-				var msg = msgs.Current;
-
+			foreach (var msg in msgs)
 				AddMsgsRecursive(model, msg, 0, ref count);
-
-				msgs.Next();
-			}
 
 			if (firstLoop)
 				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
@@ -379,8 +367,6 @@ public partial class MainWindow: Gtk.Window
 
 				lastYield = count;
 			}
-
-			threads.Next();
 		}
 	}
 
@@ -394,14 +380,8 @@ public partial class MainWindow: Gtk.Window
 
 		var replies = msg.GetReplies();
 
-		while (replies.Valid)
-		{
-			var reply = replies.Current;
-
+		foreach (var reply in replies)
 			AddMsgsRecursive(model, reply, depth + 1, ref count);
-
-			replies.Next();
-		}
 	}
 
 	protected void OnTreeviewListCursorChanged(object sender, EventArgs e)
