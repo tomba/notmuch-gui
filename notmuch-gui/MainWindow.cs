@@ -51,6 +51,8 @@ public partial class MainWindow: Gtk.Window
 
 	void UpdateQueryCounts(string[] queries)
 	{
+		var sw = Stopwatch.StartNew();
+
 		Parallel.ForEach(queries,
 			() =>
 			{
@@ -96,6 +98,10 @@ public partial class MainWindow: Gtk.Window
 				db.Dispose();
 			}
 		);
+
+		sw.Stop();
+
+		Console.WriteLine("Updated query counts in {0} ms", sw.ElapsedMilliseconds);
 	}
 
 	void SetupQueryList()
