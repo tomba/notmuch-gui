@@ -38,11 +38,18 @@ namespace NotMuch
 			}
 		}
 
-		public int Count()
+		public int CountMessages()
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
 
 			return (int)notmuch_query_count_messages(m_handle);
+		}
+
+		public int CountThreads()
+		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
+			return (int)notmuch_query_count_threads(m_handle);
 		}
 
 		public Messages SearchMessages()
@@ -74,6 +81,9 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		static extern uint notmuch_query_count_messages(IntPtr query);
+
+		[DllImport("libnotmuch")]
+		static extern uint notmuch_query_count_threads(IntPtr query);
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_query_search_messages(IntPtr query);
