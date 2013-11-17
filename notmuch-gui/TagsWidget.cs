@@ -10,6 +10,8 @@ namespace NotMuchGUI
 	public partial class TagsWidget : Gtk.Bin
 	{
 		ListStore m_tagStore;
+		List<string> m_tags = new List<string>();
+		string m_msgId;
 
 		public TagsWidget()
 		{
@@ -45,13 +47,11 @@ namespace NotMuchGUI
 			}
 		}
 
-		List<string> m_tags = new List<string>();
-		string m_msgId;
-
 		public void UpdateTagsView(NM.Message msg, List<string> allTags)
 		{
 			m_msgId = msg.Id;
 
+			m_tags.Clear();
 			m_tags.AddRange(msg.GetTags());
 
 			m_tagStore.Clear();
