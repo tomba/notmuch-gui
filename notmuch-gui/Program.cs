@@ -69,6 +69,8 @@ namespace NotMuchGUI
 
 			if (db == null)
 			{
+				// XXX this doesn't work if it happens on another thread...
+
 				DialogHelpers.ShowDialog(null, MessageType.Error, "Failed to open database", "Failed to open database\n'{0}':\n\n{1}",
 					MainClass.DatabasePath, status);
 				Application.Quit();

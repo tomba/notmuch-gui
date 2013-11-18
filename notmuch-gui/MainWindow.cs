@@ -50,7 +50,13 @@ public partial class MainWindow: Gtk.Window
 	{
 		var sw = Stopwatch.StartNew();
 
-		Parallel.ForEach(queries,
+		var list = queries.SelectMany(q => new []
+		{
+			new { Key = q, Query = q, Column = 1 },
+			new { Key = q, Query = q + " AND tag:unread", Column = 2 }
+		});
+
+		Parallel.ForEach(list,
 			() =>
 			{
 				var db = MainClass.OpenDB();
@@ -58,31 +64,16 @@ public partial class MainWindow: Gtk.Window
 			},
 			(val, state, db) =>
 			{
-				using (var query = db.CreateQuery(val))
+				using (var query = db.CreateQuery(val.Query))
 				{
 					int count = query.CountMessages();
 
 					GLib.Idle.Add(() =>
 					{
-						var iter = m_queryStore.Find(i => (string)m_queryStore.GetValue(i, 0) == val);
+						var iter = m_queryStore.Find(i => (string)m_queryStore.GetValue(i, 0) == val.Key);
 
 						if (iter.UserData != IntPtr.Zero)
-							m_queryStore.SetValue(iter, 1, count);
-
-						return false;
-					});
-				}
-
-				using (var query = db.CreateQuery(val + " AND tag:unread"))
-				{
-					int count = query.CountMessages();
-
-					GLib.Idle.Add(() =>
-					{
-						var iter = m_queryStore.Find(i => (string)m_queryStore.GetValue(i, 0) == val);
-
-						if (iter.UserData != IntPtr.Zero)
-							m_queryStore.SetValue(iter, 2, count);
+							m_queryStore.SetValue(iter, val.Column, count);
 
 						return false;
 					});
