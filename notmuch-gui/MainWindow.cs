@@ -42,6 +42,7 @@ public partial class MainWindow: Gtk.Window
 		// select first items
 		treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
 
+		// XXX implement cancel
 		var queries = m_queryStore.AsEnumerable().Select(arr => (string)arr[0]).ToArray();
 		Task.Factory.StartNew(() => UpdateQueryCounts(queries));
 	}
