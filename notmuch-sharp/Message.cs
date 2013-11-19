@@ -121,6 +121,8 @@ namespace NotMuch
 
 		public Messages GetReplies()
 		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
 			IntPtr msgsP = notmuch_message_get_replies(m_handle);
 
 			return new Messages(msgsP);

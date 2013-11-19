@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace NotMuch
 {
@@ -17,6 +18,8 @@ namespace NotMuch
 
 		public IEnumerator<string> GetEnumerator()
 		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
 			while (notmuch_tags_valid(m_handle))
 			{
 				IntPtr ptr = notmuch_tags_get(m_handle);

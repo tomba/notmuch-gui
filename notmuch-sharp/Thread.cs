@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace NotMuch
 {
@@ -16,6 +17,7 @@ namespace NotMuch
 		{
 			get
 			{
+				Debug.Assert(m_handle != IntPtr.Zero);
 				IntPtr p = notmuch_thread_get_thread_id(m_handle);
 				return Marshal.PtrToStringAnsi(p);
 			}
@@ -23,6 +25,7 @@ namespace NotMuch
 
 		public int GetTotalMessages()
 		{
+			Debug.Assert(m_handle != IntPtr.Zero);
 			return notmuch_thread_get_total_messages(m_handle);
 		}
 
@@ -38,6 +41,8 @@ namespace NotMuch
 		 */
 		public Messages GetToplevelMessages()
 		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
 			IntPtr msgsP = notmuch_thread_get_toplevel_messages(m_handle);
 
 			return new Messages(msgsP);
@@ -51,6 +56,8 @@ namespace NotMuch
 		 */
 		public Messages GetMessages()
 		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
 			IntPtr msgsP = notmuch_thread_get_messages(m_handle);
 
 			return new Messages(msgsP);
@@ -60,6 +67,7 @@ namespace NotMuch
 		{
 			get
 			{
+				Debug.Assert(m_handle != IntPtr.Zero);
 				IntPtr p = notmuch_thread_get_authors(m_handle);
 				return Marshal.PtrToStringAnsi(p);
 			}
@@ -69,6 +77,7 @@ namespace NotMuch
 		{
 			get
 			{
+				Debug.Assert(m_handle != IntPtr.Zero);
 				IntPtr p = notmuch_thread_get_subject(m_handle);
 				return Marshal.PtrToStringAnsi(p);
 			}
@@ -83,6 +92,8 @@ namespace NotMuch
 		{
 			get
 			{
+				Debug.Assert(m_handle != IntPtr.Zero);
+
 				IntPtr time_t = notmuch_thread_get_newest_date(m_handle);
 
 				return s_epoch.AddSeconds((long)time_t);
@@ -91,6 +102,8 @@ namespace NotMuch
 
 		public Tags GetTags()
 		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
 			IntPtr tags = notmuch_thread_get_tags(m_handle);
 
 			return new Tags(tags);

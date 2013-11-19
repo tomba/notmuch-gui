@@ -24,6 +24,8 @@ namespace NotMuch
 
 		public void Dispose()
 		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
 			m_db.OnQueryDisposed(this);
 			Dispose(true);
 			GC.SuppressFinalize(this);

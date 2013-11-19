@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace NotMuch
 {
@@ -17,6 +18,8 @@ namespace NotMuch
 
 		public IEnumerator<Thread> GetEnumerator()
 		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
 			while (notmuch_threads_valid(m_handle))
 			{
 				yield return new Thread(notmuch_threads_get(m_handle));
