@@ -49,7 +49,7 @@ namespace NotMuchGUI
 
 		public void UpdateTagsView(NM.Message msg, List<string> allTags)
 		{
-			m_msgId = msg.Id;
+			m_msgId = msg.ID;
 
 			m_tags.Clear();
 			m_tags.AddRange(msg.GetTags());

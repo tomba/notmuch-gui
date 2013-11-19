@@ -125,7 +125,7 @@ public partial class MainWindow: Gtk.Window
 
 	void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
 	{
-		bool unread = (bool)model.GetValue(iter, MyTreeModel.COL_UNREAD);
+		bool unread = (bool)model.GetValue(iter, MessagesTreeModel.COL_UNREAD);
 
 		var c = (Gtk.CellRendererText)cell;
 
@@ -144,28 +144,28 @@ public partial class MainWindow: Gtk.Window
 
 		TreeViewColumn c;
 
-		c = CreateTreeViewColumn("From", MyTreeModel.COL_FROM);
+		c = CreateTreeViewColumn("From", MessagesTreeModel.COL_FROM);
 		c.FixedWidth = 350;
 		treeviewList.AppendColumn(c);
 
-		c = CreateTreeViewColumn("Subject", MyTreeModel.COL_SUBJECT);
+		c = CreateTreeViewColumn("Subject", MessagesTreeModel.COL_SUBJECT);
 		c.Expand = true;
 		c.FixedWidth = 150;
 		treeviewList.AppendColumn(c);
 
-		c = CreateTreeViewColumn("Date", MyTreeModel.COL_DATE);
+		c = CreateTreeViewColumn("Date", MessagesTreeModel.COL_DATE);
 		c.FixedWidth = 150;
 		treeviewList.AppendColumn(c);
 
-		c = CreateTreeViewColumn("Tags", MyTreeModel.COL_TAGS);
+		c = CreateTreeViewColumn("Tags", MessagesTreeModel.COL_TAGS);
 		c.FixedWidth = 150;
 		treeviewList.AppendColumn(c);
 
-		c = CreateTreeViewColumn("D", MyTreeModel.COL_DEPTH);
+		c = CreateTreeViewColumn("D", MessagesTreeModel.COL_DEPTH);
 		c.FixedWidth = 50;
 		treeviewList.AppendColumn(c);
 
-		c = CreateTreeViewColumn("N", MyTreeModel.COL_MSG_NUM);
+		c = CreateTreeViewColumn("N", MessagesTreeModel.COL_MSG_NUM);
 		c.FixedWidth = 50;
 		treeviewList.AppendColumn(c);
 	}
@@ -229,7 +229,7 @@ public partial class MainWindow: Gtk.Window
 
 		if (string.IsNullOrWhiteSpace(queryString))
 		{
-			treeviewList.Model = new TreeModelAdapter(new MyTreeModel());
+			treeviewList.Model = new TreeModelAdapter(new MessagesTreeModel());
 			return;
 		}
 
@@ -251,13 +251,13 @@ public partial class MainWindow: Gtk.Window
 
 		var query = db.CreateQuery(queryString);
 
-		query.Sort = NM.SortOrder.OLDEST_FIRST;
+		query.Sort = NM.SortOrder.NEWEST_FIRST;
 
 		long t1 = sw.ElapsedMilliseconds;
 
 		int count = 0;
 
-		var model = new MyTreeModel(query.CountMessages());
+		var model = new MessagesTreeModel(query.CountMessages());
 
 		treeviewList.Model = new TreeModelAdapter(model);
 
@@ -287,7 +287,7 @@ public partial class MainWindow: Gtk.Window
 		m_processing = false;
 	}
 
-	void SearchMessages(NM.Query query, MyTreeModel model, ref int count)
+	void SearchMessages(NM.Query query, MessagesTreeModel model, ref int count)
 	{
 		var msgs = query.SearchMessages();
 
@@ -300,7 +300,7 @@ public partial class MainWindow: Gtk.Window
 				return;
 			}
 
-			model.Append(msg, 0);
+			model.Append(msg.ID, 0);
 
 			if (count == 0)
 				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
@@ -319,7 +319,7 @@ public partial class MainWindow: Gtk.Window
 		}
 	}
 
-	void SearchThreads(NM.Query query, MyTreeModel model, ref int count)
+	void SearchThreads(NM.Query query, MessagesTreeModel model, ref int count)
 	{
 		var threads = query.SearchThreads();
 		int lastYield = 0;
@@ -335,9 +335,9 @@ public partial class MainWindow: Gtk.Window
 
 			//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
 
-			var msgs = thread.GetToplevelMessages();
-
 			bool firstLoop = count == 0;
+
+			var msgs = thread.GetToplevelMessages();
 
 			foreach (var msg in msgs)
 				AddMsgsRecursive(model, msg, 0, ref count);
@@ -359,11 +359,11 @@ public partial class MainWindow: Gtk.Window
 		}
 	}
 
-	void AddMsgsRecursive(MyTreeModel model, NM.Message msg, int depth, ref int count)
+	void AddMsgsRecursive(MessagesTreeModel model, NM.Message msg, int depth, ref int count)
 	{
 		//Console.WriteLine("append {0}", msg.Id);
 
-		model.Append(msg, depth);
+		model.Append(msg.ID, depth);
 
 		count++;
 
@@ -383,7 +383,7 @@ public partial class MainWindow: Gtk.Window
 			return;
 
 		var adap = (TreeModelAdapter)model;
-		var myModel = (MyTreeModel)adap.Implementor;
+		var myModel = (MessagesTreeModel)adap.Implementor;
 
 		var id = myModel.GetMessageID(iter);
 
@@ -395,6 +395,12 @@ public partial class MainWindow: Gtk.Window
 			var db = cdb.Database;
 		
 			var msg = db.FindMessage(id);
+
+			if (msg.IsNull)
+			{
+				Console.WriteLine("can't find message");
+				return;
+			}
 
 			tagsWidget.UpdateTagsView(msg, m_allTags);
 
@@ -511,7 +517,7 @@ public partial class MainWindow: Gtk.Window
 			return null;
 
 		var adap = (TreeModelAdapter)model;
-		var myModel = (MyTreeModel)adap.Implementor;
+		var myModel = (MessagesTreeModel)adap.Implementor;
 
 		return myModel.GetMessageID(iter);
 	}

@@ -95,7 +95,7 @@ namespace NotMuch
 			}
 		}
 
-		public string Id
+		public string ID
 		{
 			get
 			{

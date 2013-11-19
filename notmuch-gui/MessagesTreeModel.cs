@@ -9,11 +9,11 @@ using System.Linq;
 
 namespace NotMuchGUI
 {
-	public class MyTreeModel : GLib.Object, TreeModelImplementor
+	public class MessagesTreeModel : GLib.Object, TreeModelImplementor
 	{
 		struct Entry
 		{
-			public string Id;
+			public string ID;
 			public int Depth;
 		}
 
@@ -28,13 +28,13 @@ namespace NotMuchGUI
 		int m_count;
 		List<Entry> m_entries;
 
-		public MyTreeModel()
+		public MessagesTreeModel()
 		{
 			m_count = 0;
 			m_entries = new List<Entry>();
 		}
 
-		public MyTreeModel(int estimatedCount)
+		public MessagesTreeModel(int estimatedCount)
 		{
 			m_count = estimatedCount;
 			m_entries = new List<Entry>(m_count);
@@ -42,13 +42,13 @@ namespace NotMuchGUI
 
 		public int Count { get { return m_count; } }
 
-		public void Append(NM.Message msg, int depth)
+		public void Append(string msgID, int depth)
 		{
 			int idx = m_entries.Count;
 
 			var entry = new Entry()
 			{
-				Id = msg.Id,
+				ID = msgID,
 				Depth = depth,
 			};
 
@@ -147,7 +147,28 @@ namespace NotMuchGUI
 			if (idx >= m_entries.Count)
 				return null;
 
-			return m_entries[idx].Id;
+			return m_entries[idx].ID;
+		}
+
+		GLib.Value GetNullValue(int col)
+		{
+			switch (col)
+			{
+				case COL_FROM:
+				case COL_SUBJECT:
+				case COL_DATE:
+				case COL_TAGS:
+					return new GLib.Value("null");
+
+				case COL_UNREAD:
+					return new GLib.Value(false);
+
+				case COL_DEPTH:
+					return new GLib.Value(0);
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		public void GetValue(TreeIter iter, int col, ref GLib.Value val)
@@ -164,24 +185,7 @@ namespace NotMuchGUI
 
 			if (idx >= m_entries.Count)
 			{
-				switch (col)
-				{
-					case COL_FROM:
-					case COL_SUBJECT:
-					case COL_DATE:
-					case COL_TAGS:
-						val = new GLib.Value("null");
-						break;
-
-					case COL_UNREAD:
-						val = new GLib.Value(false);
-						break;
-
-					case COL_DEPTH:
-						val = new GLib.Value(0);
-						break;
-				}
-
+				val = GetNullValue(col);
 				return;
 			}
 
@@ -191,7 +195,13 @@ namespace NotMuchGUI
 			{
 				var db = cdb.Database;
 
-				var msg = db.FindMessage(entry.Id);
+				var msg = db.FindMessage(entry.ID);
+
+				if (msg.IsNull)
+				{
+					val = GetNullValue(col);
+					return;
+				}
 
 				switch (col)
 				{
