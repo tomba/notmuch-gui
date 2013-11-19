@@ -12,9 +12,13 @@ namespace NotMuchGUI
 
 		public static string NotmuchExe { get; private set; }
 
+		static System.Threading.Thread s_mainThread;
+
 		public static void Main(string[] args)
 		{
 			Application.Init();
+
+			s_mainThread = System.Threading.Thread.CurrentThread;
 
 			try
 			{
@@ -43,6 +47,15 @@ namespace NotMuchGUI
 			win.Show();
 
 			Application.Run();
+		}
+
+		public static void VerifyThread()
+		{
+			if (System.Threading.Thread.CurrentThread == s_mainThread)
+				return;
+
+			Console.WriteLine("BAD THREAD");
+			throw new Exception();
 		}
 
 		static void ParseConfig()
@@ -91,11 +104,13 @@ namespace NotMuchGUI
 
 		public CachedDB()
 		{
+			MainClass.VerifyThread();
 			this.Database = GetCachedDB();
 		}
 
 		public void Dispose()
 		{
+			MainClass.VerifyThread();
 			PutCachedDB();
 			GC.SuppressFinalize(this);
 		}
@@ -107,6 +122,8 @@ namespace NotMuchGUI
 
 		static NM.Database GetCachedDB()
 		{
+			MainClass.VerifyThread();
+
 			if (s_db == null)
 			{
 				Console.WriteLine("open DB");
