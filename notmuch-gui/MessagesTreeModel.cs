@@ -273,11 +273,6 @@ namespace NotMuchGUI
 			return true;
 		}
 
-		int ChildCount(object node)
-		{
-			return 0;
-		}
-
 		public bool IterChildren(out TreeIter child, TreeIter parent)
 		{
 			child = TreeIter.Zero;
