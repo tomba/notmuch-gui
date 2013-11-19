@@ -107,6 +107,18 @@ namespace NotMuch
 			}
 		}
 
+		public string ThreadID
+		{
+			get
+			{
+				Debug.Assert(m_handle != IntPtr.Zero);
+
+				IntPtr sp = notmuch_message_get_thread_id(m_handle);
+
+				return Marshal.PtrToStringAnsi(sp);
+			}
+		}
+
 		public Messages GetReplies()
 		{
 			IntPtr msgsP = notmuch_message_get_replies(m_handle);
@@ -119,6 +131,9 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_message_get_message_id(IntPtr message);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_message_get_thread_id(IntPtr message);
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_message_get_date(IntPtr message);
