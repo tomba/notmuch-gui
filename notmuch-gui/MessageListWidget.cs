@@ -17,6 +17,7 @@ namespace NotMuchGUI
 		public bool ThreadedView { get; set; }
 
 		public int TotalCount { get; private set; }
+
 		public int Count { get; private set; }
 
 		public MessageListWidget()
@@ -25,7 +26,7 @@ namespace NotMuchGUI
 
 			SetupMessagesTreeView();
 
-			messagesTreeview.CursorChanged += (sender, e) => 
+			messagesTreeview.CursorChanged += (sender, e) =>
 			{
 				if (this.MessageSelected != null)
 					this.MessageSelected(this, e);
@@ -197,13 +198,6 @@ namespace NotMuchGUI
 
 			foreach (var msg in msgs)
 			{
-				if (m_cancelProcessing)
-				{
-					Console.WriteLine("CANCEL");
-					m_cancelProcessing = false;
-					return;
-				}
-
 				model.Append(msg.ID, 0);
 
 				if (count == 0)
@@ -211,18 +205,28 @@ namespace NotMuchGUI
 
 				count++;
 
-				if (count % 100 == 0)
+				if (count % 1000 == 0)
 				{
 					this.Count = count;
 					this.TotalCount = model.Count;
 
 					if (this.CountsChanged != null)
 						CountsChanged(this, EventArgs.Empty);
+				}
 
-					//Console.WriteLine("yielding");
-					//await Task.Delay(100);
-					Application.RunIteration();
-					//await Task.Yield();
+				if (count % 10 == 0)
+				{
+					bool shouldQuit = Application.RunIteration(false);
+
+					if (shouldQuit)
+						m_cancelProcessing = true;
+				}
+
+				if (m_cancelProcessing)
+				{
+					Console.WriteLine("CANCEL");
+					m_cancelProcessing = false;
+					return;
 				}
 			}
 		}
@@ -230,17 +234,10 @@ namespace NotMuchGUI
 		void SearchThreads(NM.Query query, MessagesTreeModel model, ref int count)
 		{
 			var threads = query.SearchThreads();
-			int lastYield = 0;
+			int lastUpdate = 0;
 
 			foreach (var thread in threads)
 			{
-				if (m_cancelProcessing)
-				{
-					Console.WriteLine("CANCEL");
-					m_cancelProcessing = false;
-					return;
-				}
-
 				//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
 
 				bool firstLoop = count == 0;
@@ -253,7 +250,7 @@ namespace NotMuchGUI
 				if (firstLoop)
 					messagesTreeview.SetCursor(TreePath.NewFirst(), null, false);
 
-				if (count - lastYield > 500)
+				if (count - lastUpdate > 1000)
 				{
 					this.Count = count;
 					this.TotalCount = model.Count;
@@ -261,12 +258,19 @@ namespace NotMuchGUI
 					if (this.CountsChanged != null)
 						CountsChanged(this, EventArgs.Empty);
 
-					//Console.WriteLine("yielding");
-					//await Task.Delay(1000);
-					//await Task.Yield();
-					Application.RunIteration();
+					lastUpdate = count;
+				}
 
-					lastYield = count;
+				bool shouldQuit = Application.RunIteration(false);
+
+				if (shouldQuit)
+					m_cancelProcessing = true;
+
+				if (m_cancelProcessing)
+				{
+					Console.WriteLine("CANCEL");
+					m_cancelProcessing = false;
+					return;
 				}
 			}
 		}
