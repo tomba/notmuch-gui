@@ -56,6 +56,46 @@ namespace NotMuch
 			return new Messages(msgsP);
 		}
 
+		public string Authors
+		{
+			get
+			{
+				IntPtr p = notmuch_thread_get_authors(m_handle);
+				return Marshal.PtrToStringAnsi(p);
+			}
+		}
+
+		public string Subject
+		{
+			get
+			{
+				IntPtr p = notmuch_thread_get_subject(m_handle);
+				return Marshal.PtrToStringAnsi(p);
+			}
+		}
+
+		static DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+		/// <summary>
+		/// Returns the date in UTC
+		/// </summary>
+		public DateTime NewestDate
+		{
+			get
+			{
+				IntPtr time_t = notmuch_thread_get_newest_date(m_handle);
+
+				return s_epoch.AddSeconds((long)time_t);
+			}
+		}
+
+		public Tags GetTags()
+		{
+			IntPtr tags = notmuch_thread_get_tags(m_handle);
+
+			return new Tags(tags);
+		}
+
 		[DllImport("libnotmuch")]
 		static extern void notmuch_thread_destroy(IntPtr thread);
 
@@ -70,6 +110,18 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_thread_get_messages(IntPtr thread);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_thread_get_authors(IntPtr thread);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_thread_get_subject(IntPtr thread);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_thread_get_newest_date(IntPtr thread);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_thread_get_tags(IntPtr thread);
 	}
 }
 
