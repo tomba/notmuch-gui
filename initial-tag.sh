@@ -19,8 +19,8 @@ from="($from)"
 
 #set -x
 
-new="tag:new AND "
 new=
+new="tag:new AND "
 
 notmuch tag --batch <<-end
 	-inbox +to-me -- $new $to
