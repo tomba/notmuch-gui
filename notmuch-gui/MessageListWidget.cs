@@ -11,14 +11,13 @@ namespace NotMuchGUI
 		public event EventHandler MessageSelected;
 		public event EventHandler CountsChanged;
 
-		bool m_cancelProcessing;
-		bool m_processing;
-
 		public bool ThreadedView { get; set; }
 
 		public int TotalCount { get; private set; }
 
 		public int Count { get; private set; }
+
+		MyWork m_work;
 
 		public MessageListWidget()
 		{
@@ -113,19 +112,10 @@ namespace NotMuchGUI
 
 		public void ExecuteQuery(string queryString)
 		{
-			if (m_processing)
+			if (m_work != null)
 			{
-				Console.WriteLine("cancelling");
-
-				m_cancelProcessing = true;
-
-				Console.WriteLine("cancelling done");
-			}
-
-			if (m_processing)
-			{
-				Console.WriteLine("ProcessSearch already running");
-				return;
+				m_work.Cancel();
+				m_work = null;
 			}
 
 			if (string.IsNullOrWhiteSpace(queryString))
@@ -134,159 +124,184 @@ namespace NotMuchGUI
 				return;
 			}
 
-			m_processing = true;
-
-			Console.WriteLine("Query({0})", queryString);
-
-			using (var cdb = new CachedDB())
-			{
-				var db = cdb.Database;
-
-				RunQuery(db, queryString);
-			}
+			m_work = new MyWork(this, queryString);
+			m_work.Start();
 		}
 
-		void RunQuery(NM.Database db, string queryString)
+		class MyWork
 		{
-			var sw = Stopwatch.StartNew();
+			MessageListWidget m_parent;
+			string m_queryString;
+			bool m_cancel;
 
-			var query = db.CreateQuery(queryString);
-
-			query.Sort = NM.SortOrder.NEWEST_FIRST;
-
-			long t1 = sw.ElapsedMilliseconds;
-
-			int count = 0;
-
-			var model = new MessagesTreeModel(query.CountMessages());
-
-			messagesTreeview.Model = new TreeModelAdapter(model);
-
-			long t2 = sw.ElapsedMilliseconds;
-
-			if (!this.ThreadedView)
+			public MyWork(MessageListWidget parent, string queryString)
 			{
-				SearchMessages(query, model, ref count);
-			}
-			else
-			{
-				SearchThreads(query, model, ref count);
+				m_parent = parent;
+				m_queryString = queryString;
 			}
 
-			long t3 = sw.ElapsedMilliseconds;
-
-			model.FinishAdding();
-
-			this.Count = count;
-			this.TotalCount = model.Count;
-
-			if (this.CountsChanged != null)
-				CountsChanged(this, EventArgs.Empty);
-
-			long t4 = sw.ElapsedMilliseconds;
-
-			sw.Stop();
-
-			Console.WriteLine("Added {0} messages in {1}, {2}, {3}, {4} = {5} ms", count, t1, t2 - t1, t3 - t2, t4 - t3, t4);
-
-			m_processing = false;
-		}
-
-		void SearchMessages(NM.Query query, MessagesTreeModel model, ref int count)
-		{
-			var msgs = query.SearchMessages();
-
-			foreach (var msg in msgs)
+			public void Cancel()
 			{
-				model.Append(msg.ID, 0);
+				Console.WriteLine("Cancel Query '{0}'", m_queryString);
+				m_cancel = true;
+			}
 
-				if (count == 0)
-					messagesTreeview.SetCursor(TreePath.NewFirst(), null, false);
+			public void Start()
+			{
+				Console.WriteLine("Start Query '{0}'", m_queryString);
 
-				count++;
-
-				if (count % 1000 == 0)
+				using (var cdb = new CachedDB())
 				{
-					this.Count = count;
-					this.TotalCount = model.Count;
+					var db = cdb.Database;
 
-					if (this.CountsChanged != null)
-						CountsChanged(this, EventArgs.Empty);
+					RunQuery(db, m_queryString);
 				}
 
-				if (count % 10 == 0)
+				if (m_parent.m_work == this)
+					m_parent.m_work = null;
+			}
+
+			void RunQuery(NM.Database db, string queryString)
+			{
+				var sw = Stopwatch.StartNew();
+
+				var query = db.CreateQuery(queryString);
+
+				query.Sort = NM.SortOrder.NEWEST_FIRST;
+
+				long t1 = sw.ElapsedMilliseconds;
+
+				int count = 0;
+
+				var model = new MessagesTreeModel(query.CountMessages());
+
+				m_parent.messagesTreeview.Model = new TreeModelAdapter(model);
+
+				long t2 = sw.ElapsedMilliseconds;
+
+				if (!m_parent.ThreadedView)
 				{
+					SearchMessages(query, model, ref count);
+				}
+				else
+				{
+					SearchThreads(query, model, ref count);
+				}
+
+				if (m_cancel)
+				{
+					Console.WriteLine("Query exiting due to cancel '{0}'", m_queryString);
+
+					sw.Stop();
+					return;
+				}
+
+				long t3 = sw.ElapsedMilliseconds;
+
+				model.FinishAdding();
+
+				m_parent.Count = count;
+				m_parent.TotalCount = model.Count;
+
+				if (m_parent.CountsChanged != null)
+					m_parent.CountsChanged(m_parent, EventArgs.Empty);
+
+				long t4 = sw.ElapsedMilliseconds;
+
+				sw.Stop();
+
+				Console.WriteLine("Added {0} msgs in {1}, {2}, {3}, {4} = {5} ms '{6}'",
+					count, t1, t2 - t1, t3 - t2, t4 - t3, t4, m_queryString);
+			}
+
+			void SearchMessages(NM.Query query, MessagesTreeModel model, ref int count)
+			{
+				var msgs = query.SearchMessages();
+
+				foreach (var msg in msgs)
+				{
+					model.Append(msg.ID, 0);
+
+					if (count == 0)
+						m_parent.messagesTreeview.SetCursor(TreePath.NewFirst(), null, false);
+
+					count++;
+
+					if (count % 1000 == 0)
+					{
+						m_parent.Count = count;
+						m_parent.TotalCount = model.Count;
+
+						if (m_parent.CountsChanged != null)
+							m_parent.CountsChanged(m_parent, EventArgs.Empty);
+					}
+
+					if (count % 10 == 0)
+					{
+						bool shouldQuit = Application.RunIteration(false);
+
+						if (shouldQuit)
+							m_cancel = true;
+					}
+
+					if (m_cancel)
+						return;
+				}
+			}
+
+			void SearchThreads(NM.Query query, MessagesTreeModel model, ref int count)
+			{
+				var threads = query.SearchThreads();
+				int lastUpdate = 0;
+
+				foreach (var thread in threads)
+				{
+					//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
+
+					bool firstLoop = count == 0;
+
+					var msgs = thread.GetToplevelMessages();
+
+					foreach (var msg in msgs)
+						AddMsgsRecursive(model, msg, 0, ref count);
+
+					if (firstLoop)
+						m_parent.messagesTreeview.SetCursor(TreePath.NewFirst(), null, false);
+
+					if (count - lastUpdate > 1000)
+					{
+						m_parent.Count = count;
+						m_parent.TotalCount = model.Count;
+
+						if (m_parent.CountsChanged != null)
+							m_parent.CountsChanged(m_parent, EventArgs.Empty);
+
+						lastUpdate = count;
+					}
+
 					bool shouldQuit = Application.RunIteration(false);
 
 					if (shouldQuit)
-						m_cancelProcessing = true;
-				}
+						m_cancel = true;
 
-				if (m_cancelProcessing)
-				{
-					Console.WriteLine("CANCEL");
-					m_cancelProcessing = false;
-					return;
+					if (m_cancel)
+						return;
 				}
 			}
-		}
 
-		void SearchThreads(NM.Query query, MessagesTreeModel model, ref int count)
-		{
-			var threads = query.SearchThreads();
-			int lastUpdate = 0;
-
-			foreach (var thread in threads)
+			void AddMsgsRecursive(MessagesTreeModel model, NM.Message msg, int depth, ref int count)
 			{
-				//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
+				//Console.WriteLine("append {0}", msg.Id);
 
-				bool firstLoop = count == 0;
+				model.Append(msg.ID, depth);
 
-				var msgs = thread.GetToplevelMessages();
+				count++;
 
-				foreach (var msg in msgs)
-					AddMsgsRecursive(model, msg, 0, ref count);
+				var replies = msg.GetReplies();
 
-				if (firstLoop)
-					messagesTreeview.SetCursor(TreePath.NewFirst(), null, false);
-
-				if (count - lastUpdate > 1000)
-				{
-					this.Count = count;
-					this.TotalCount = model.Count;
-
-					if (this.CountsChanged != null)
-						CountsChanged(this, EventArgs.Empty);
-
-					lastUpdate = count;
-				}
-
-				bool shouldQuit = Application.RunIteration(false);
-
-				if (shouldQuit)
-					m_cancelProcessing = true;
-
-				if (m_cancelProcessing)
-				{
-					Console.WriteLine("CANCEL");
-					m_cancelProcessing = false;
-					return;
-				}
+				foreach (var reply in replies)
+					AddMsgsRecursive(model, reply, depth + 1, ref count);
 			}
-		}
-
-		void AddMsgsRecursive(MessagesTreeModel model, NM.Message msg, int depth, ref int count)
-		{
-			//Console.WriteLine("append {0}", msg.Id);
-
-			model.Append(msg.ID, depth);
-
-			count++;
-
-			var replies = msg.GetReplies();
-
-			foreach (var reply in replies)
-				AddMsgsRecursive(model, reply, depth + 1, ref count);
 		}
 	}
 }
