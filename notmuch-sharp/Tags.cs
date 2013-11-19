@@ -18,7 +18,8 @@ namespace NotMuch
 
 		public IEnumerator<string> GetEnumerator()
 		{
-			Debug.Assert(m_handle != IntPtr.Zero);
+			if (m_handle == IntPtr.Zero)
+				yield break;
 
 			while (notmuch_tags_valid(m_handle))
 			{

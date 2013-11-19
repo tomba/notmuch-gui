@@ -18,7 +18,8 @@ namespace NotMuch
 
 		public IEnumerator<Thread> GetEnumerator()
 		{
-			Debug.Assert(m_handle != IntPtr.Zero);
+			if (m_handle == IntPtr.Zero)
+				yield break;
 
 			while (notmuch_threads_valid(m_handle))
 			{
