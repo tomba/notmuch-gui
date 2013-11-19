@@ -15,18 +15,14 @@ public partial class MainWindow: Gtk.Window
 	ListStore m_queryStore;
 	DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
-	bool m_threadedView = false;
-	bool m_cancelProcessing;
-	bool m_processing;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
 		Build();
 
-		threadedAction.Active = m_threadedView;
+		threadedAction.Active = messageListWidget.ThreadedView;
 
 		SetupQueryList();
-		SetupMailList();
 
 		using (var cdb = new CachedDB())
 		{
@@ -40,7 +36,7 @@ public partial class MainWindow: Gtk.Window
 		}
 
 		// select first items
-		treeviewSearch.SetCursor(TreePath.NewFirst(), null, false);
+		queryTreeview.SetCursor(TreePath.NewFirst(), null, false);
 
 		// XXX implement cancel
 		var queries = m_queryStore.AsEnumerable().Select(arr => (string)arr[0]).ToArray();
@@ -95,22 +91,22 @@ public partial class MainWindow: Gtk.Window
 
 	void SetupQueryList()
 	{
-		var c = treeviewSearch.AppendColumn("Query", new CellRendererText(), "text", 0);
+		var c = queryTreeview.AppendColumn("Query", new CellRendererText(), "text", 0);
 		c.Expand = true;
 		c.Resizable = true;
 		c.Reorderable = true;
 
-		c = treeviewSearch.AppendColumn("C", new CellRendererText(), "text", 1);
+		c = queryTreeview.AppendColumn("C", new CellRendererText(), "text", 1);
 		c.Resizable = true;
 		c.Reorderable = true;
 
-		c = treeviewSearch.AppendColumn("U", new CellRendererText(), "text", 2);
+		c = queryTreeview.AppendColumn("U", new CellRendererText(), "text", 2);
 		c.Resizable = true;
 		c.Reorderable = true;
 
 		var queryStore = new Gtk.ListStore(typeof(string), typeof(int), typeof(int));
 
-		treeviewSearch.Model = queryStore;
+		queryTreeview.Model = queryStore;
 
 		queryStore.AppendValues("ttlampopumppuhuolto", 0, 0);
 		queryStore.AppendValues("Tomi", 0, 0);
@@ -123,74 +119,13 @@ public partial class MainWindow: Gtk.Window
 		m_queryStore = queryStore;
 	}
 
-	void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
-	{
-		bool unread = (bool)model.GetValue(iter, MessagesTreeModel.COL_UNREAD);
-
-		var c = (Gtk.CellRendererText)cell;
-
-		if (unread)
-			c.Weight = (int)Pango.Weight.Bold;
-		else
-			c.Weight = (int)Pango.Weight.Normal;
-	}
-
-	void SetupMailList()
-	{
-		treeviewList.FixedHeightMode = true;
-
-		// colorize every other row
-		//treeviewList.RulesHint = true;
-
-		TreeViewColumn c;
-
-		c = CreateTreeViewColumn("From", MessagesTreeModel.COL_FROM);
-		c.FixedWidth = 350;
-		treeviewList.AppendColumn(c);
-
-		c = CreateTreeViewColumn("Subject", MessagesTreeModel.COL_SUBJECT);
-		c.Expand = true;
-		c.FixedWidth = 150;
-		treeviewList.AppendColumn(c);
-
-		c = CreateTreeViewColumn("Date", MessagesTreeModel.COL_DATE);
-		c.FixedWidth = 150;
-		treeviewList.AppendColumn(c);
-
-		c = CreateTreeViewColumn("Tags", MessagesTreeModel.COL_TAGS);
-		c.FixedWidth = 150;
-		treeviewList.AppendColumn(c);
-
-		c = CreateTreeViewColumn("D", MessagesTreeModel.COL_DEPTH);
-		c.FixedWidth = 50;
-		treeviewList.AppendColumn(c);
-
-		c = CreateTreeViewColumn("N", MessagesTreeModel.COL_MSG_NUM);
-		c.FixedWidth = 50;
-		treeviewList.AppendColumn(c);
-	}
-
-	TreeViewColumn CreateTreeViewColumn(string name, int col)
-	{
-		var re = new Gtk.CellRendererText();
-		var c = new TreeViewColumn(name, re, "text", col);
-		c.SetCellDataFunc(re, MyCellDataFunc);
-		c.Expand = false;
-		c.Sizing = TreeViewColumnSizing.Fixed;
-		c.FixedWidth = 50;
-		c.Resizable = true;
-		c.Reorderable = true;
-
-		return c;
-	}
-
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
 		Application.Quit();
 		a.RetVal = true;
 	}
 
-	protected void OnTreeviewSearchCursorChanged(object sender, EventArgs e)
+	protected void OnQueryTreeviewCursorChanged(object sender, EventArgs e)
 	{
 		TreeSelection selection = (sender as TreeView).Selection;
 		TreeModel model;
@@ -205,187 +140,14 @@ public partial class MainWindow: Gtk.Window
 		queryEntry.Activate();
 	}
 
-	void ExecuteQuery()
+	protected void OnMessageListWidgetCountsChanged (object sender, EventArgs e)
 	{
-		if (m_processing)
-		{
-			Console.WriteLine("cancelling");
-
-			m_cancelProcessing = true;
-
-			Console.WriteLine("cancelling done");
-		}
-
-		var queryString = queryEntry.Text;
-
-		if (string.IsNullOrWhiteSpace(dateSearchEntry.Text) == false)
-			queryString = queryString + String.Format(" date:{0}", dateSearchEntry.Text);
-
-		if (m_processing)
-		{
-			Console.WriteLine("ProcessSearch already running");
-			return;
-		}
-
-		if (string.IsNullOrWhiteSpace(queryString))
-		{
-			treeviewList.Model = new TreeModelAdapter(new MessagesTreeModel());
-			return;
-		}
-
-		m_processing = true;
-
-		Console.WriteLine("Query({0})", queryString);
-
-		using (var cdb = new CachedDB())
-		{
-			var db = cdb.Database;
-
-			RunQuery(db, queryString);
-		}
+		label3.Text = String.Format("{0}/{1} msgs", messageListWidget.Count, messageListWidget.TotalCount);
 	}
 
-	void RunQuery(NM.Database db, string queryString)
+	protected void OnMessageListWidgetMessageSelected (object sender, EventArgs e)
 	{
-		var sw = Stopwatch.StartNew();
-
-		var query = db.CreateQuery(queryString);
-
-		query.Sort = NM.SortOrder.NEWEST_FIRST;
-
-		long t1 = sw.ElapsedMilliseconds;
-
-		int count = 0;
-
-		var model = new MessagesTreeModel(query.CountMessages());
-
-		treeviewList.Model = new TreeModelAdapter(model);
-
-		long t2 = sw.ElapsedMilliseconds;
-
-		if (!m_threadedView)
-		{
-			SearchMessages(query, model, ref count);
-		}
-		else
-		{
-			SearchThreads(query, model, ref count);
-		}
-
-		long t3 = sw.ElapsedMilliseconds;
-
-		model.FinishAdding();
-
-		label3.Text = String.Format("{0}/{1} msgs", count, model.Count);
-
-		long t4 = sw.ElapsedMilliseconds;
-
-		sw.Stop();
-
-		Console.WriteLine("Added {0} messages in {1}, {2}, {3}, {4} = {5} ms", count, t1, t2 - t1, t3 - t2, t4 - t3, t4);
-
-		m_processing = false;
-	}
-
-	void SearchMessages(NM.Query query, MessagesTreeModel model, ref int count)
-	{
-		var msgs = query.SearchMessages();
-
-		foreach (var msg in msgs)
-		{
-			if (m_cancelProcessing)
-			{
-				Console.WriteLine("CANCEL");
-				m_cancelProcessing = false;
-				return;
-			}
-
-			model.Append(msg.ID, 0);
-
-			if (count == 0)
-				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
-
-			count++;
-
-			if (count % 100 == 0)
-			{
-				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
-
-				//Console.WriteLine("yielding");
-				//await Task.Delay(100);
-				Application.RunIteration();
-				//await Task.Yield();
-			}
-		}
-	}
-
-	void SearchThreads(NM.Query query, MessagesTreeModel model, ref int count)
-	{
-		var threads = query.SearchThreads();
-		int lastYield = 0;
-
-		foreach (var thread in threads)
-		{
-			if (m_cancelProcessing)
-			{
-				Console.WriteLine("CANCEL");
-				m_cancelProcessing = false;
-				return;
-			}
-
-			//Console.WriteLine("thread {0}: {1}", thread.Id, thread.TotalMessages);
-
-			bool firstLoop = count == 0;
-
-			var msgs = thread.GetToplevelMessages();
-
-			foreach (var msg in msgs)
-				AddMsgsRecursive(model, msg, 0, ref count);
-
-			if (firstLoop)
-				treeviewList.SetCursor(TreePath.NewFirst(), null, false);
-
-			if (count - lastYield > 500)
-			{
-				label3.Text = String.Format("{0}/{1} msgs", count.ToString(), model.Count);
-
-				//Console.WriteLine("yielding");
-				//await Task.Delay(1000);
-				//await Task.Yield();
-				Application.RunIteration();
-
-				lastYield = count;
-			}
-		}
-	}
-
-	void AddMsgsRecursive(MessagesTreeModel model, NM.Message msg, int depth, ref int count)
-	{
-		//Console.WriteLine("append {0}", msg.Id);
-
-		model.Append(msg.ID, depth);
-
-		count++;
-
-		var replies = msg.GetReplies();
-
-		foreach (var reply in replies)
-			AddMsgsRecursive(model, reply, depth + 1, ref count);
-	}
-
-	protected void OnTreeviewListCursorChanged(object sender, EventArgs e)
-	{
-		TreeSelection selection = (sender as TreeView).Selection;
-		TreeModel model;
-		TreeIter iter;
-
-		if (!selection.GetSelected(out model, out iter))
-			return;
-
-		var adap = (TreeModelAdapter)model;
-		var myModel = (MessagesTreeModel)adap.Implementor;
-
-		var id = myModel.GetMessageID(iter);
+		var id = messageListWidget.GetCurrentMessageID();
 
 		if (id == null)
 			return;
@@ -507,24 +269,9 @@ public partial class MainWindow: Gtk.Window
 		Reply(false);
 	}
 
-	string GetCurrentMessageID()
-	{
-		TreeSelection selection = treeviewList.Selection;
-		TreeModel model;
-		TreeIter iter;
-
-		if (!selection.GetSelected(out model, out iter))
-			return null;
-
-		var adap = (TreeModelAdapter)model;
-		var myModel = (MessagesTreeModel)adap.Implementor;
-
-		return myModel.GetMessageID(iter);
-	}
-
 	void Reply(bool replyAll)
 	{
-		var msgId = GetCurrentMessageID();
+		var msgId = messageListWidget.GetCurrentMessageID();
 
 		if (msgId == null)
 			return;
@@ -590,6 +337,16 @@ public partial class MainWindow: Gtk.Window
 		//ExecuteQuery(queryStr);
 	}
 
+	void ExecuteQuery()
+	{
+		var queryString = queryEntry.Text;
+
+		if (string.IsNullOrWhiteSpace(dateSearchEntry.Text) == false)
+			queryString = queryString + String.Format(" date:{0}", dateSearchEntry.Text);
+
+		messageListWidget.ExecuteQuery(queryString);
+	}
+
 	protected void OnQueryEntryActivated(object sender, EventArgs e)
 	{
 		ExecuteQuery();
@@ -619,8 +376,9 @@ public partial class MainWindow: Gtk.Window
 	{
 		var b = (ToggleAction)sender;
 
-		m_threadedView = b.Active;
+		messageListWidget.ThreadedView = b.Active;
 
 		ExecuteQuery();
 	}
+
 }

@@ -17,9 +17,8 @@ public partial class MainWindow
 	private global::Gtk.Entry dateSearchEntry;
 	private global::Gtk.HPaned hpaned1;
 	private global::Gtk.ScrolledWindow GtkScrolledWindow;
-	private global::Gtk.TreeView treeviewSearch;
-	private global::Gtk.ScrolledWindow GtkScrolledWindow1;
-	private global::Gtk.TreeView treeviewList;
+	private global::Gtk.TreeView queryTreeview;
+	private global::NotMuchGUI.MessageListWidget messageListWidget;
 	private global::Gtk.HBox hbox3;
 	private global::NotMuchGUI.MessageWidget messagewidget1;
 	private global::NotMuchGUI.TagsWidget tagsWidget;
@@ -118,29 +117,22 @@ public partial class MainWindow
 		this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 		this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 		// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-		this.treeviewSearch = new global::Gtk.TreeView ();
-		this.treeviewSearch.CanFocus = true;
-		this.treeviewSearch.Name = "treeviewSearch";
-		this.GtkScrolledWindow.Add (this.treeviewSearch);
+		this.queryTreeview = new global::Gtk.TreeView ();
+		this.queryTreeview.CanFocus = true;
+		this.queryTreeview.Name = "queryTreeview";
+		this.GtkScrolledWindow.Add (this.queryTreeview);
 		this.hpaned1.Add (this.GtkScrolledWindow);
 		global::Gtk.Paned.PanedChild w8 = ((global::Gtk.Paned.PanedChild)(this.hpaned1 [this.GtkScrolledWindow]));
 		w8.Resize = false;
 		// Container child hpaned1.Gtk.Paned+PanedChild
-		this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow ();
-		this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
-		this.GtkScrolledWindow1.VscrollbarPolicy = ((global::Gtk.PolicyType)(0));
-		this.GtkScrolledWindow1.ShadowType = ((global::Gtk.ShadowType)(1));
-		// Container child GtkScrolledWindow1.Gtk.Container+ContainerChild
-		this.treeviewList = new global::Gtk.TreeView ();
-		this.treeviewList.CanFocus = true;
-		this.treeviewList.Name = "treeviewList";
-		this.treeviewList.FixedHeightMode = true;
-		this.treeviewList.Reorderable = true;
-		this.GtkScrolledWindow1.Add (this.treeviewList);
-		this.hpaned1.Add (this.GtkScrolledWindow1);
+		this.messageListWidget = new global::NotMuchGUI.MessageListWidget ();
+		this.messageListWidget.Events = ((global::Gdk.EventMask)(256));
+		this.messageListWidget.Name = "messageListWidget";
+		this.messageListWidget.ThreadedView = false;
+		this.hpaned1.Add (this.messageListWidget);
 		this.vbox2.Add (this.hpaned1);
-		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hpaned1]));
-		w11.Position = 2;
+		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hpaned1]));
+		w10.Position = 2;
 		// Container child vbox2.Gtk.Box+BoxChild
 		this.hbox3 = new global::Gtk.HBox ();
 		this.hbox3.Name = "hbox3";
@@ -150,21 +142,21 @@ public partial class MainWindow
 		this.messagewidget1.Events = ((global::Gdk.EventMask)(256));
 		this.messagewidget1.Name = "messagewidget1";
 		this.hbox3.Add (this.messagewidget1);
-		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.messagewidget1]));
-		w12.Position = 0;
+		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.messagewidget1]));
+		w11.Position = 0;
 		// Container child hbox3.Gtk.Box+BoxChild
 		this.tagsWidget = new global::NotMuchGUI.TagsWidget ();
 		this.tagsWidget.Events = ((global::Gdk.EventMask)(256));
 		this.tagsWidget.Name = "tagsWidget";
 		this.hbox3.Add (this.tagsWidget);
-		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.tagsWidget]));
-		w13.PackType = ((global::Gtk.PackType)(1));
-		w13.Position = 1;
-		w13.Expand = false;
-		w13.Fill = false;
+		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.tagsWidget]));
+		w12.PackType = ((global::Gtk.PackType)(1));
+		w12.Position = 1;
+		w12.Expand = false;
+		w12.Fill = false;
 		this.vbox2.Add (this.hbox3);
-		global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox3]));
-		w14.Position = 3;
+		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox3]));
+		w13.Position = 3;
 		// Container child vbox2.Gtk.Box+BoxChild
 		this.statusbar2 = new global::Gtk.Statusbar ();
 		this.statusbar2.Name = "statusbar2";
@@ -174,35 +166,35 @@ public partial class MainWindow
 		this.label1.Name = "label1";
 		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
 		this.statusbar2.Add (this.label1);
-		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label1]));
-		w15.Position = 1;
-		w15.Expand = false;
-		w15.Fill = false;
+		global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label1]));
+		w14.Position = 1;
+		w14.Expand = false;
+		w14.Fill = false;
 		// Container child statusbar2.Gtk.Box+BoxChild
 		this.label2 = new global::Gtk.Label ();
 		this.label2.Name = "label2";
 		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString ("label2");
 		this.statusbar2.Add (this.label2);
-		global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label2]));
-		w16.Position = 2;
-		w16.Expand = false;
-		w16.Fill = false;
+		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label2]));
+		w15.Position = 2;
+		w15.Expand = false;
+		w15.Fill = false;
 		// Container child statusbar2.Gtk.Box+BoxChild
 		this.label3 = new global::Gtk.Label ();
 		this.label3.Name = "label3";
 		this.label3.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
 		this.statusbar2.Add (this.label3);
-		global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label3]));
+		global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label3]));
+		w16.PackType = ((global::Gtk.PackType)(1));
+		w16.Position = 3;
+		w16.Expand = false;
+		w16.Fill = false;
+		this.vbox2.Add (this.statusbar2);
+		global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar2]));
 		w17.PackType = ((global::Gtk.PackType)(1));
-		w17.Position = 3;
+		w17.Position = 4;
 		w17.Expand = false;
 		w17.Fill = false;
-		this.vbox2.Add (this.statusbar2);
-		global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar2]));
-		w18.PackType = ((global::Gtk.PackType)(1));
-		w18.Position = 4;
-		w18.Expand = false;
-		w18.Fill = false;
 		this.Add (this.vbox2);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
@@ -217,7 +209,8 @@ public partial class MainWindow
 		this.queryEntry.Changed += new global::System.EventHandler (this.OnQueryEntryChanged);
 		this.queryEntry.Activated += new global::System.EventHandler (this.OnQueryEntryActivated);
 		this.dateSearchEntry.Activated += new global::System.EventHandler (this.OnDateSearchEntryActivated);
-		this.treeviewSearch.CursorChanged += new global::System.EventHandler (this.OnTreeviewSearchCursorChanged);
-		this.treeviewList.CursorChanged += new global::System.EventHandler (this.OnTreeviewListCursorChanged);
+		this.queryTreeview.CursorChanged += new global::System.EventHandler (this.OnQueryTreeviewCursorChanged);
+		this.messageListWidget.MessageSelected += new global::System.EventHandler (this.OnMessageListWidgetMessageSelected);
+		this.messageListWidget.CountsChanged += new global::System.EventHandler (this.OnMessageListWidgetCountsChanged);
 	}
 }
