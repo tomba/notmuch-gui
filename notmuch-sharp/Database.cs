@@ -37,12 +37,11 @@ namespace NotMuch
 		Database(IntPtr ptr)
 		{
 			m_handle = ptr;
+			//Console.WriteLine("DB({0:X})", (ulong)m_handle);
 		}
 
 		~Database ()
 		{
-			Debug.WriteLine("~Database");
-
 			Dispose(false);
 		}
 
@@ -54,6 +53,8 @@ namespace NotMuch
 
 		void Dispose(bool disposing)
 		{
+			//Console.WriteLine("~DB({0:X}, {1})", (ulong)m_handle, disposing);
+
 			if (m_handle != IntPtr.Zero)
 			{
 				while (m_queries.Count > 0)
