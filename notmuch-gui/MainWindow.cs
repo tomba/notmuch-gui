@@ -9,17 +9,20 @@ using NM = NotMuch;
 using WebKit;
 using System.Collections.Generic;
 using System.Linq;
+using UI = Gtk.Builder.ObjectAttribute;
 
 public partial class MainWindow: Gtk.Window
 {
 	ListStore m_queryStore;
-	DebugWindow m_dbgWnd;
+	//DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
 
-	public MainWindow() : base(Gtk.WindowType.Toplevel)
+	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
-		Build();
+		builder.Autoconnect(this);
+	}
 
+		#if asd
 		threadedAction.Active = messageListWidget.ThreadedView;
 
 		SetupQueryList();
@@ -128,7 +131,7 @@ public partial class MainWindow: Gtk.Window
 	protected void OnQueryTreeviewCursorChanged(object sender, EventArgs e)
 	{
 		TreeSelection selection = (sender as TreeView).Selection;
-		TreeModel model;
+		ITreeModel model;
 		TreeIter iter;
 
 		string queryString = "";
@@ -380,5 +383,5 @@ public partial class MainWindow: Gtk.Window
 
 		ExecuteQuery();
 	}
-
+#endif
 }

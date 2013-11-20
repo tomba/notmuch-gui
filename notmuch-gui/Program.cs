@@ -41,9 +41,8 @@ namespace NotMuchGUI
 
 			MainClass.DatabasePath = output.Trim();
 
-			System.Threading.SynchronizationContext.SetSynchronizationContext(new GLib.GLibSynchronizationContext());
-
-			MainWindow win = new MainWindow();
+			Builder builder = new Builder(null, "NotMuchGUI.interfaces.MainWindow.glade", null);
+			MainWindow win = new MainWindow(builder, builder.GetObject("MainWindow").Handle);
 			win.Show();
 
 			Application.Run();

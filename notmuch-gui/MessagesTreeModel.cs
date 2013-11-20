@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace NotMuchGUI
 {
-	public class MessagesTreeModel : GLib.Object, TreeModelImplementor
+	public class MessagesTreeModel : GLib.Object, ITreeModelImplementor
 	{
 		struct Entry
 		{
@@ -271,6 +271,11 @@ namespace NotMuchGUI
 			iter.UserData = (IntPtr)idx;
 
 			return true;
+		}
+
+		public bool IterPrevious(ref TreeIter iter)
+		{
+			return false;
 		}
 
 		public bool IterChildren(out TreeIter child, TreeIter parent)

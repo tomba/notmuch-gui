@@ -69,7 +69,7 @@ namespace NotMuchGUI
 			tv.AppendColumn(c);
 		}
 
-		void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+		void MyCellDataFunc(TreeViewColumn column, CellRenderer cell, ITreeModel model, TreeIter iter)
 		{
 			bool unread = (bool)model.GetValue(iter, MessagesTreeModel.COL_UNREAD);
 
@@ -98,7 +98,7 @@ namespace NotMuchGUI
 		public string GetCurrentMessageID()
 		{
 			TreeSelection selection = messagesTreeview.Selection;
-			TreeModel model;
+			ITreeModel model;
 			TreeIter iter;
 
 			if (!selection.GetSelected(out model, out iter))
