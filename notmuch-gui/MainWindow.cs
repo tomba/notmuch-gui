@@ -17,13 +17,15 @@ public partial class MainWindow: Gtk.Window
 	//DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
 
+	[UI] Gtk.TreeView queryTreeview;
+	[UI] Gtk.Entry queryEntry;
+
 	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
 		builder.Autoconnect(this);
-	}
+		this.DeleteEvent += OnDeleteEvent;
 
-		#if asd
-		threadedAction.Active = messageListWidget.ThreadedView;
+		//threadedAction.Active = messageListWidget.ThreadedView;
 
 		SetupQueryList();
 
@@ -142,7 +144,7 @@ public partial class MainWindow: Gtk.Window
 		queryEntry.Text = queryString;
 		queryEntry.Activate();
 	}
-
+	#if asd
 	protected void OnMessageListWidgetCountsChanged (object sender, EventArgs e)
 	{
 		label3.Text = String.Format("{0}/{1} msgs", messageListWidget.Count, messageListWidget.TotalCount);
