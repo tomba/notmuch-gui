@@ -56,14 +56,17 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Mono.Posix" />
-    <Reference Include="webkit-sharp">
-      <HintPath>..\..\..\..\usr\lib\cli\webkit-sharp-1.1\webkit-sharp.dll</HintPath>
+    <Reference Include="webkit-sharp, Version=1.1.15.0, Culture=neutral, PublicKeyToken=eaa1d335d2e19745">
+      <Private>False</Private>
+      <Package>webkit-sharp-1.0</Package>
     </Reference>
-    <Reference Include="gmime-sharp">
-      <HintPath>..\..\..\..\usr\lib\cli\gmime-sharp-2.6\gmime-sharp.dll</HintPath>
+    <Reference Include="gmime-sharp, Version=2.6.0.0, Culture=neutral, PublicKeyToken=2b75c2ad004c52e4">
+      <Private>False</Private>
+      <Package>gmime-sharp-2.6</Package>
     </Reference>
-    <Reference Include="gkeyfile-sharp">
-      <HintPath>..\..\..\..\usr\lib\cli\gkeyfile-sharp-1.0\gkeyfile-sharp.dll</HintPath>
+    <Reference Include="gkeyfile-sharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e886e4e52ee77480">
+      <Private>False</Private>
+      <Package>gkeyfile-sharp</Package>
     </Reference>
   </ItemGroup>
   <ItemGroup>
