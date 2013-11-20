@@ -5,8 +5,7 @@ using NM = NotMuch;
 
 namespace NotMuchGUI
 {
-	[System.ComponentModel.ToolboxItem(true)]
-	public partial class MessageListWidget : Gtk.Bin
+	public partial class MessageListWidget : Gtk.TreeView
 	{
 		public event EventHandler MessageSelected;
 		public event EventHandler CountsChanged;
@@ -21,11 +20,9 @@ namespace NotMuchGUI
 
 		public MessageListWidget()
 		{
-			this.Build();
-
 			SetupMessagesTreeView();
 
-			messagesTreeview.CursorChanged += (sender, e) =>
+			this.CursorChanged += (sender, e) =>
 			{
 				if (this.MessageSelected != null)
 					this.MessageSelected(this, e);
@@ -34,7 +31,7 @@ namespace NotMuchGUI
 
 		void SetupMessagesTreeView()
 		{
-			var tv = messagesTreeview;
+			var tv = this;
 
 			tv.FixedHeightMode = true;
 
@@ -69,7 +66,7 @@ namespace NotMuchGUI
 			tv.AppendColumn(c);
 		}
 
-		void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+		void MyCellDataFunc(TreeViewColumn column, CellRenderer cell, ITreeModel model, TreeIter iter)
 		{
 			bool unread = (bool)model.GetValue(iter, MessagesTreeModel.COL_UNREAD);
 
@@ -97,8 +94,8 @@ namespace NotMuchGUI
 
 		public string GetCurrentMessageID()
 		{
-			TreeSelection selection = messagesTreeview.Selection;
-			TreeModel model;
+			TreeSelection selection = this.Selection;
+			ITreeModel model;
 			TreeIter iter;
 
 			if (!selection.GetSelected(out model, out iter))
@@ -120,7 +117,7 @@ namespace NotMuchGUI
 
 			if (string.IsNullOrWhiteSpace(queryString))
 			{
-				messagesTreeview.Model = new TreeModelAdapter(new MessagesTreeModel());
+				this.Model = new TreeModelAdapter(new MessagesTreeModel());
 				return;
 			}
 
@@ -175,7 +172,7 @@ namespace NotMuchGUI
 
 				var model = new MessagesTreeModel(query.CountMessages());
 
-				m_parent.messagesTreeview.Model = new TreeModelAdapter(model);
+				m_parent.Model = new TreeModelAdapter(model);
 
 				long t2 = sw.ElapsedMilliseconds;
 
@@ -223,7 +220,7 @@ namespace NotMuchGUI
 					model.Append(msg.ID, 0);
 
 					if (count == 0)
-						m_parent.messagesTreeview.SetCursor(TreePath.NewFirst(), null, false);
+						m_parent.SetCursor(TreePath.NewFirst(), null, false);
 
 					count++;
 
@@ -266,7 +263,7 @@ namespace NotMuchGUI
 						AddMsgsRecursive(model, msg, 0, ref count);
 
 					if (firstLoop)
-						m_parent.messagesTreeview.SetCursor(TreePath.NewFirst(), null, false);
+						m_parent.SetCursor(TreePath.NewFirst(), null, false);
 
 					if (count - lastUpdate > 1000)
 					{

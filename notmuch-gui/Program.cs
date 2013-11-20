@@ -41,9 +41,8 @@ namespace NotMuchGUI
 
 			MainClass.DatabasePath = output.Trim();
 
-			System.Threading.SynchronizationContext.SetSynchronizationContext(new GLib.GLibSynchronizationContext());
-
-			MainWindow win = new MainWindow();
+			Builder builder = new Builder(null, "NotMuchGUI.UI.MainWindow.ui", null);
+			MainWindow win = new MainWindow(builder, builder.GetObject("MainWindow").Handle);
 			win.Show();
 
 			Application.Run();
@@ -126,7 +125,7 @@ namespace NotMuchGUI
 
 			if (s_db == null)
 			{
-				Console.WriteLine("open DB");
+				//Console.WriteLine("open DB");
 				s_db = MainClass.OpenDB();
 
 				GLib.Timeout.Add(1000, () =>
@@ -134,7 +133,7 @@ namespace NotMuchGUI
 						if (s_dbRefs > 0)
 							return true;
 
-						Console.WriteLine("close DB");
+						//Console.WriteLine("close DB");
 
 						s_db.Dispose();
 						s_db = null;

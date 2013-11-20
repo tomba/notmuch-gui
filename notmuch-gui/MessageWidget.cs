@@ -1,23 +1,32 @@
 using System;
 using System.IO;
 using NM = NotMuch;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	[System.ComponentModel.ToolboxItem(true)]
-	public partial class MessageWidget : Gtk.Bin
+	public partial class MessageWidget : Gtk.Box
 	{
 		WebKit.WebView m_webView;
 
-		public MessageWidget()
+		[UI] Gtk.ScrolledWindow webKitScrolledWindow;
+		[UI] Gtk.Label labelFrom;
+		[UI] Gtk.Label labelTo;
+		[UI] Gtk.Label labelCc;
+		[UI] Gtk.Label labelSubject;
+		[UI] Gtk.Label labelDate;
+		[UI] Gtk.Label labelContentType;
+		[UI] Gtk.Label labelCharset;
+
+		public MessageWidget(Gtk.Builder builder, IntPtr handle) : base(handle)
 		{
-			this.Build();
+			builder.Autoconnect(this);
 
 			m_webView = new WebKit.WebView();
 			m_webView.Editable = false;
+			m_webView.LoadString("kalaAAA", null, null, null);
 
-			scrolledwindowWeb.Add(m_webView);
-			scrolledwindowWeb.ShowAll();
+			webKitScrolledWindow.Add(m_webView);
 		}
 
 		public void ShowEmail(NM.Message msg, GMime.Message gmsg)
@@ -49,7 +58,7 @@ namespace NotMuchGUI
 
 			this.HtmlContent = html;
 
-			m_webView.LoadHtmlString(html, null);
+			m_webView.LoadString(html, "text/html", null, null);
 		}
 
 		public string HtmlContent { get; private set; }
@@ -100,10 +109,11 @@ namespace NotMuchGUI
 			}
 		}
 
+		// XXX
 		protected void OnTogglebutton1Toggled(object sender, EventArgs e)
 		{
-			m_webView.ViewSourceMode = togglebutton1.Active;
-			m_webView.LoadHtmlString(this.HtmlContent, null);
+			//m_webView.ViewSourceMode = togglebutton1.Active;
+			//m_webView.LoadHtmlString(this.HtmlContent, null);
 		}
 	}
 }

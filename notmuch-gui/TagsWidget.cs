@@ -3,19 +3,21 @@ using Gtk;
 using System.Collections.Generic;
 using NM = NotMuch;
 using System.Linq;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	[System.ComponentModel.ToolboxItem(true)]
-	public partial class TagsWidget : Gtk.Bin
+	public partial class TagsWidget : Gtk.Box
 	{
 		ListStore m_tagStore;
 		List<string> m_tags = new List<string>();
 		string m_msgId;
 
-		public TagsWidget()
+		[UI] Gtk.TreeView tagsTreeview;
+
+		public TagsWidget(Gtk.Builder builder, IntPtr handle) : base(handle)
 		{
-			this.Build();
+			builder.Autoconnect(this);
 
 			var c = new TreeViewColumn();
 			c.Title = "Tags";
@@ -63,7 +65,8 @@ namespace NotMuchGUI
 				m_tagStore.AppendValues(t, false);
 		}
 
-		protected void OnApplyButtonClicked(object sender, EventArgs e)
+		// XXX
+		void OnApplyButtonClicked(object sender, EventArgs e)
 		{
 			var selectedList = new List<string>();
 
@@ -108,7 +111,8 @@ namespace NotMuchGUI
 			m_tags = selectedList;
 		}
 
-		protected void OnResetButtonClicked(object sender, EventArgs e)
+		// XXX
+		void OnResetButtonClicked(object sender, EventArgs e)
 		{
 		}
 	}
