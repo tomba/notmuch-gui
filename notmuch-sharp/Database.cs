@@ -32,7 +32,6 @@ namespace NotMuch
 		}
 
 		IntPtr m_handle;
-		List<WeakReference> m_queries = new List<WeakReference>();
 
 		Database(IntPtr ptr)
 		{
@@ -54,60 +53,15 @@ namespace NotMuch
 		void Dispose(bool disposing)
 		{
 			//Console.WriteLine("~DB({0:X}, {1})", (ulong)m_handle, disposing);
+			Debug.Assert(m_handle != IntPtr.Zero);
 
-			if (m_handle != IntPtr.Zero)
-			{
-				while (m_queries.Count > 0)
-				{
-					var wr = m_queries[0];
-					if (wr.IsAlive)
-						((Query)wr.Target).Dispose();
-					else
-						m_queries.RemoveAt(0);
-				}
-
-				notmuch_database_destroy(m_handle);
-				m_handle = IntPtr.Zero;
-			}
+			notmuch_database_destroy(m_handle);
+			m_handle = IntPtr.Zero;
 		}
 
 		public IDisposable BeginAtomic()
 		{
 			return new AtomicHolder(m_handle);
-		}
-
-		class AtomicHolder : IDisposable
-		{
-			IntPtr m_handle;
-
-			public AtomicHolder(IntPtr dbHandle)
-			{
-				m_handle = dbHandle;
-
-				var status = notmuch_database_begin_atomic(m_handle);
-
-				if (status != Status.SUCCESS)
-					throw new Exception("begin atomic failed");
-			}
-
-			~AtomicHolder()
-			{
-				Dispose(false);
-			}
-
-			public void Dispose()
-			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-
-			void Dispose(bool disposing)
-			{
-				var status = notmuch_database_end_atomic(m_handle);
-
-				if (status != Status.SUCCESS)
-					Console.WriteLine("end atomic failed");
-			}
 		}
 
 		public Message FindMessage(string messageId)
@@ -146,17 +100,43 @@ namespace NotMuch
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
 
-			var query = new Query(this, notmuch_query_create(m_handle, queryString));
-
-			m_queries.Add(new WeakReference(query));
+			var query = new Query(notmuch_query_create(m_handle, queryString));
 
 			return query;
 		}
 
-		internal void OnQueryDisposed(Query query)
+		class AtomicHolder : IDisposable
 		{
-			int c = m_queries.RemoveAll(wr => wr.Target == query);
-			Debug.Assert(c == 1);
+			IntPtr m_handle;
+
+			public AtomicHolder(IntPtr dbHandle)
+			{
+				m_handle = dbHandle;
+
+				var status = notmuch_database_begin_atomic(m_handle);
+
+				if (status != Status.SUCCESS)
+					throw new Exception("begin atomic failed");
+			}
+
+			~AtomicHolder()
+			{
+				Dispose(false);
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			void Dispose(bool disposing)
+			{
+				var status = notmuch_database_end_atomic(m_handle);
+
+				if (status != Status.SUCCESS)
+					Console.WriteLine("end atomic failed");
+			}
 		}
 
 		[DllImport("libnotmuch")]

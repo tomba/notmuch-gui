@@ -6,38 +6,19 @@ namespace NotMuch
 {
 	public class Query : IDisposable
 	{
-		Database m_db;
 		IntPtr m_handle;
 
-		internal Query(Database db, IntPtr handle)
+		internal Query(IntPtr handle)
 		{
-			m_db = db;
 			m_handle = handle;
-		}
-
-		~Query()
-		{
-			Debug.WriteLine("~Query");
-
-			Dispose(false);
 		}
 
 		public void Dispose()
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
 
-			m_db.OnQueryDisposed(this);
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		void Dispose(bool disposing)
-		{
-			if (m_handle != IntPtr.Zero)
-			{
-				notmuch_query_destroy(m_handle);
-				m_handle = IntPtr.Zero;
-			}
+			notmuch_query_destroy(m_handle);
+			m_handle = IntPtr.Zero;
 		}
 
 		public int CountMessages()
