@@ -6,7 +6,8 @@ namespace NotMuchGUI
 {
 	public class CmdHelpers
 	{
-		public static bool RunCmd(string cmd, string args, out string stdout, out string stderr, out int ret, out string err, int maxbuf = 2048)
+		public static bool RunCmd(string cmd, string args, out string stdout, out string stderr,
+			out int ret, out string err, int maxbuf = 100000)
 		{
 			err = null;
 
