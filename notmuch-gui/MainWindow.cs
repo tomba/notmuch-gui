@@ -19,11 +19,16 @@ public partial class MainWindow: Gtk.Window
 
 	[UI] Gtk.TreeView queryTreeview;
 	[UI] Gtk.Entry queryEntry;
+	[UI] Gtk.Frame messageFrame;
 
 	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
 		builder.Autoconnect(this);
 		this.DeleteEvent += OnDeleteEvent;
+
+		CreateSubWidgets();
+
+		this.ShowAll();
 
 		//threadedAction.Active = messageListWidget.ThreadedView;
 
@@ -45,7 +50,14 @@ public partial class MainWindow: Gtk.Window
 
 		// XXX implement cancel
 		var queries = m_queryStore.AsEnumerable().Select(arr => (string)arr[0]).ToArray();
-		Task.Factory.StartNew(() => UpdateQueryCounts(queries));
+		//Task.Factory.StartNew(() => UpdateQueryCounts(queries));
+	}
+
+	void CreateSubWidgets()
+	{
+		var builder = new Builder(null, "NotMuchGUI.UI.MainWindow.ui", null);
+		var widget = new MessageWidget(builder, builder.GetObject("MessageWidget").Handle);
+		messageFrame.Add(widget);
 	}
 
 	void UpdateQueryCounts(string[] queries)

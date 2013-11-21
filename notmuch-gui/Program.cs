@@ -41,7 +41,7 @@ namespace NotMuchGUI
 
 			MainClass.DatabasePath = output.Trim();
 
-			Builder builder = new Builder(null, "NotMuchGUI.interfaces.MainWindow.glade", null);
+			Builder builder = new Builder(null, "NotMuchGUI.UI.MainWindow.ui", null);
 			MainWindow win = new MainWindow(builder, builder.GetObject("MainWindow").Handle);
 			win.Show();
 
