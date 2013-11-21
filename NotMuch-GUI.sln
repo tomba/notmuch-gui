@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "notmuch-sharp", "notmuch-sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "notmuch-gui", "notmuch-gui\notmuch-gui.csproj", "{071C5B5D-6B05-4A1B-9302-2A234CB9B43C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XapianSharpTest", "xapian-sharp-test\XapianSharpTest.csproj", "{123D3B95-1F26-428A-8024-166754481283}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -17,10 +15,6 @@ Global
 		{071C5B5D-6B05-4A1B-9302-2A234CB9B43C}.Debug|x86.Build.0 = Debug|x86
 		{071C5B5D-6B05-4A1B-9302-2A234CB9B43C}.Release|x86.ActiveCfg = Release|x86
 		{071C5B5D-6B05-4A1B-9302-2A234CB9B43C}.Release|x86.Build.0 = Release|x86
-		{123D3B95-1F26-428A-8024-166754481283}.Debug|x86.ActiveCfg = Debug|x86
-		{123D3B95-1F26-428A-8024-166754481283}.Debug|x86.Build.0 = Debug|x86
-		{123D3B95-1F26-428A-8024-166754481283}.Release|x86.ActiveCfg = Release|x86
-		{123D3B95-1F26-428A-8024-166754481283}.Release|x86.Build.0 = Release|x86
 		{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}.Debug|x86.Build.0 = Debug|Any CPU
 		{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}.Release|x86.ActiveCfg = Release|Any CPU
