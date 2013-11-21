@@ -22,6 +22,7 @@ public partial class MainWindow: Gtk.Window
 	[UI] Gtk.Box messageBox;
 	[UI] Gtk.ScrolledWindow scrolledwindow2;
 	[UI] Gtk.Label label3;
+
 	TagsWidget tagsWidget;
 	MessageListWidget messageListWidget;
 	MessageWidget messagewidget1;
