@@ -125,7 +125,7 @@ namespace NotMuchGUI
 
 			if (s_db == null)
 			{
-				Console.WriteLine("open DB");
+				//Console.WriteLine("open DB");
 				s_db = MainClass.OpenDB();
 
 				GLib.Timeout.Add(1000, () =>
@@ -133,7 +133,7 @@ namespace NotMuchGUI
 						if (s_dbRefs > 0)
 							return true;
 
-						Console.WriteLine("close DB");
+						//Console.WriteLine("close DB");
 
 						s_db.Dispose();
 						s_db = null;

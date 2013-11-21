@@ -4,10 +4,20 @@ namespace NotMuchGUI
 {
 	public partial class DebugWindow : Gtk.Window
 	{
+		Gtk.TextView textviewSrc;
+		Gtk.TextView textviewDump;
+
 		public DebugWindow() : 
 			base(Gtk.WindowType.Toplevel)
 		{
-			this.Build();
+			var box = new Gtk.Box(Gtk.Orientation.Vertical, 2);
+			Add(box);
+
+			textviewSrc = new Gtk.TextView();
+			box.Add(textviewSrc);
+
+			textviewDump = new Gtk.TextView();
+			box.Add(textviewDump);
 		}
 
 		public void SetDump(string txt)

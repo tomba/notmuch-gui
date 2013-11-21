@@ -76,6 +76,9 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="MessagesTreeModel.cs" />
     <Compile Include="MessageWidget.cs" />
+    <Compile Include="TagsWidget.cs" />
+    <Compile Include="MessageListWidget.cs" />
+    <Compile Include="DebugWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -83,11 +86,6 @@
       <Project>{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}</Project>
       <Name>notmuch-sharp</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="MessageListWidget.cs" />
-    <None Include="TagsWidget.cs" />
-    <None Include="DebugWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />

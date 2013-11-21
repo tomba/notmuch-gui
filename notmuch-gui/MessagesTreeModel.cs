@@ -93,7 +93,7 @@ namespace NotMuchGUI
 			m_count = m_entries.Count;
 		}
 
-		public TreeModelFlags Flags { get { return TreeModelFlags.ListOnly; } }
+		public TreeModelFlags Flags { get { return TreeModelFlags.ListOnly | TreeModelFlags.ItersPersist; } }
 
 		public int NColumns { get { return COL_NUM_COLUMNS; } }
 
@@ -186,6 +186,7 @@ namespace NotMuchGUI
 			if (idx >= m_entries.Count)
 			{
 				val = GetNullValue(col);
+				//Console.WriteLine("getval {0} {1} {2}", idx, col, val);
 				return;
 			}
 
@@ -275,7 +276,16 @@ namespace NotMuchGUI
 
 		public bool IterPrevious(ref TreeIter iter)
 		{
-			return false;
+			int idx = (int)iter.UserData;
+
+			idx--;
+
+			if (idx < 0)
+				return false;
+
+			iter.UserData = (IntPtr)idx;
+
+			return true;
 		}
 
 		public bool IterChildren(out TreeIter child, TreeIter parent)

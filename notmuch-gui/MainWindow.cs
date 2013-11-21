@@ -14,12 +14,17 @@ using UI = Gtk.Builder.ObjectAttribute;
 public partial class MainWindow: Gtk.Window
 {
 	ListStore m_queryStore;
-	//DebugWindow m_dbgWnd;
+	DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
-
 	[UI] Gtk.TreeView queryTreeview;
 	[UI] Gtk.Entry queryEntry;
-	[UI] Gtk.Frame messageFrame;
+	[UI] Gtk.Entry dateSearchEntry;
+	[UI] Gtk.Box messageBox;
+	[UI] Gtk.ScrolledWindow scrolledwindow2;
+	[UI] Gtk.Label label3;
+	TagsWidget tagsWidget;
+	MessageListWidget messageListWidget;
+	MessageWidget messagewidget1;
 
 	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
@@ -27,8 +32,6 @@ public partial class MainWindow: Gtk.Window
 		this.DeleteEvent += OnDeleteEvent;
 
 		CreateSubWidgets();
-
-		this.ShowAll();
 
 		//threadedAction.Active = messageListWidget.ThreadedView;
 
@@ -49,15 +52,30 @@ public partial class MainWindow: Gtk.Window
 		queryTreeview.SetCursor(TreePath.NewFirst(), null, false);
 
 		// XXX implement cancel
-		var queries = m_queryStore.AsEnumerable().Select(arr => (string)arr[0]).ToArray();
+		//var queries = m_queryStore.AsEnumerable().Select(arr => (string)arr[0]).ToArray();
 		//Task.Factory.StartNew(() => UpdateQueryCounts(queries));
+
+		this.ShowAll();
 	}
 
 	void CreateSubWidgets()
 	{
 		var builder = new Builder(null, "NotMuchGUI.UI.MainWindow.ui", null);
-		var widget = new MessageWidget(builder, builder.GetObject("MessageWidget").Handle);
-		messageFrame.Add(widget);
+		messagewidget1 = new MessageWidget(builder, builder.GetObject("MessageWidget").Handle);
+		messagewidget1.Expand = true;
+		messageBox.Add(messagewidget1);
+
+		builder = new Builder(null, "NotMuchGUI.UI.MainWindow.ui", null);
+		tagsWidget = new TagsWidget(builder, builder.GetObject("TagsWidget").Handle);
+		messageBox.Add(tagsWidget);
+
+		messageListWidget = new MessageListWidget();
+		messageListWidget.MessageSelected += OnMessageListWidgetMessageSelected;
+		messageListWidget.CountsChanged += OnMessageListWidgetCountsChanged;
+		scrolledwindow2.Add(messageListWidget);
+
+		queryEntry.Activated += OnQueryEntryActivated;
+		dateSearchEntry.Activated += OnDateSearchEntryActivated;
 	}
 
 	void UpdateQueryCounts(string[] queries)
@@ -134,15 +152,17 @@ public partial class MainWindow: Gtk.Window
 		queryStore.AppendValues("", 0, 0);
 
 		m_queryStore = queryStore;
+
+		queryTreeview.CursorChanged += OnQueryTreeviewCursorChanged;
 	}
 
-	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
+	void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
 		Application.Quit();
 		a.RetVal = true;
 	}
 
-	protected void OnQueryTreeviewCursorChanged(object sender, EventArgs e)
+	void OnQueryTreeviewCursorChanged(object sender, EventArgs e)
 	{
 		TreeSelection selection = (sender as TreeView).Selection;
 		ITreeModel model;
@@ -156,13 +176,13 @@ public partial class MainWindow: Gtk.Window
 		queryEntry.Text = queryString;
 		queryEntry.Activate();
 	}
-	#if asd
-	protected void OnMessageListWidgetCountsChanged (object sender, EventArgs e)
+
+	void OnMessageListWidgetCountsChanged(object sender, EventArgs e)
 	{
 		label3.Text = String.Format("{0}/{1} msgs", messageListWidget.Count, messageListWidget.TotalCount);
 	}
 
-	protected void OnMessageListWidgetMessageSelected (object sender, EventArgs e)
+	void OnMessageListWidgetMessageSelected(object sender, EventArgs e)
 	{
 		var id = messageListWidget.GetCurrentMessageID();
 
@@ -194,7 +214,8 @@ public partial class MainWindow: Gtk.Window
 				var p = new GMime.Parser(readStream);
 				var gmsg = p.ConstructMessage();
 
-				#if MBOX_PARSE_HACK
+				
+#if MBOX_PARSE_HACK
 			// HACK: try skipping >From: line
 			if (gmsg == null)
 			{
@@ -206,7 +227,7 @@ public partial class MainWindow: Gtk.Window
 					DialogHelpers.ShowDialog(this, MessageType.Warning, "Parsed old style mbox message", "Parsed old style mbox message '{0}'", filename);
 			}
 				#endif
-
+	
 				if (gmsg == null)
 				{
 					DialogHelpers.ShowDialog(this, MessageType.Error, "Failed to parse message", "Failed to parse message from '{0}'", filename);
@@ -264,6 +285,7 @@ public partial class MainWindow: Gtk.Window
 		return gmsg;
 	}
 	#endif
+	// XXX
 	protected void OnGcActionActivated(object sender, EventArgs e)
 	{
 		var sw = Stopwatch.StartNew();
@@ -275,12 +297,12 @@ public partial class MainWindow: Gtk.Window
 
 		Console.WriteLine("GC in {0} ms", sw.ElapsedMilliseconds);
 	}
-
+	// XXX
 	protected void OnReplyAllActionActivated(object sender, EventArgs e)
 	{
 		Reply(true);
 	}
-
+	// XXX
 	protected void OnReplyActionActivated(object sender, EventArgs e)
 	{
 		Reply(false);
@@ -347,13 +369,6 @@ public partial class MainWindow: Gtk.Window
 		File.Delete(tmpFile);
 	}
 
-	protected void OnQueryEntryChanged(object sender, EventArgs e)
-	{
-		//var queryStr = queryEntry.Text;
-
-		//ExecuteQuery(queryStr);
-	}
-
 	void ExecuteQuery()
 	{
 		var queryString = queryEntry.Text;
@@ -364,16 +379,16 @@ public partial class MainWindow: Gtk.Window
 		messageListWidget.ExecuteQuery(queryString);
 	}
 
-	protected void OnQueryEntryActivated(object sender, EventArgs e)
+	void OnQueryEntryActivated(object sender, EventArgs e)
 	{
 		ExecuteQuery();
 	}
 
-	protected void OnDateSearchEntryActivated(object sender, EventArgs e)
+	void OnDateSearchEntryActivated(object sender, EventArgs e)
 	{
 		ExecuteQuery();
 	}
-
+	// XXX
 	protected void OnDbgActionActivated(object sender, EventArgs e)
 	{
 		if (m_dbgWnd != null)
@@ -381,14 +396,14 @@ public partial class MainWindow: Gtk.Window
 			m_dbgWnd.Destroy();
 			m_dbgWnd = null;
 		}
-
+		/*
 		if (dbgAction.Active)
 		{
 			m_dbgWnd = new DebugWindow();
 			m_dbgWnd.ShowAll();
-		}
+		}*/
 	}
-
+	// XXX
 	protected void OnThreadedActionActivated(object sender, EventArgs e)
 	{
 		var b = (ToggleAction)sender;
@@ -397,5 +412,4 @@ public partial class MainWindow: Gtk.Window
 
 		ExecuteQuery();
 	}
-#endif
 }
