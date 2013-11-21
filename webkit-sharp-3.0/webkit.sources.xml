@@ -1,0 +1,11 @@
+<gapi-parser-input>
+	<api filename="webkit-api.raw">
+		<library name="libwebkitgtk-3.0.so.0">
+			<namespace name="WebKit">
+				<dir>webkitgtk-3.0/webkit</dir>
+				<exclude>webkitgtk-3.0/webkit/webkitapplicationcache.h</exclude>
+				<exclude>webkitgtk-3.0/webkit/webkithittestresult.h</exclude>
+			</namespace>
+		</library>
+	</api>
+</gapi-parser-input>
