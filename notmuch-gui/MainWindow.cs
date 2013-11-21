@@ -22,7 +22,9 @@ public partial class MainWindow: Gtk.Window
 	[UI] Gtk.Box messageBox;
 	[UI] Gtk.ScrolledWindow scrolledwindow2;
 	[UI] Gtk.Label label3;
-
+	[UI] Gtk.ToolButton gcToolButton;
+	[UI] Gtk.ToolButton replyToolButton;
+	[UI] Gtk.ToolButton replyAllToolButton;
 	TagsWidget tagsWidget;
 	MessageListWidget messageListWidget;
 	MessageWidget messagewidget1;
@@ -30,6 +32,7 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
 		builder.Autoconnect(this);
+
 		this.DeleteEvent += OnDeleteEvent;
 
 		CreateSubWidgets();
@@ -75,8 +78,12 @@ public partial class MainWindow: Gtk.Window
 		messageListWidget.CountsChanged += OnMessageListWidgetCountsChanged;
 		scrolledwindow2.Add(messageListWidget);
 
-		queryEntry.Activated += OnQueryEntryActivated;
-		dateSearchEntry.Activated += OnDateSearchEntryActivated;
+		queryEntry.Activated += (sender, e) => ExecuteQuery();
+		dateSearchEntry.Activated += (sender, e) => ExecuteQuery();
+
+		gcToolButton.Clicked += OnGCButtonClicked;
+		replyToolButton.Clicked += (sender, e) => Reply(false);
+		replyAllToolButton.Clicked += (sender, e) => Reply(true);
 	}
 
 	void UpdateQueryCounts(string[] queries)
@@ -286,8 +293,7 @@ public partial class MainWindow: Gtk.Window
 		return gmsg;
 	}
 	#endif
-	// XXX
-	protected void OnGcActionActivated(object sender, EventArgs e)
+	void OnGCButtonClicked(object sender, EventArgs e)
 	{
 		var sw = Stopwatch.StartNew();
 
@@ -297,16 +303,6 @@ public partial class MainWindow: Gtk.Window
 		sw.Stop();
 
 		Console.WriteLine("GC in {0} ms", sw.ElapsedMilliseconds);
-	}
-	// XXX
-	protected void OnReplyAllActionActivated(object sender, EventArgs e)
-	{
-		Reply(true);
-	}
-	// XXX
-	protected void OnReplyActionActivated(object sender, EventArgs e)
-	{
-		Reply(false);
 	}
 
 	void Reply(bool replyAll)
@@ -380,15 +376,6 @@ public partial class MainWindow: Gtk.Window
 		messageListWidget.ExecuteQuery(queryString);
 	}
 
-	void OnQueryEntryActivated(object sender, EventArgs e)
-	{
-		ExecuteQuery();
-	}
-
-	void OnDateSearchEntryActivated(object sender, EventArgs e)
-	{
-		ExecuteQuery();
-	}
 	// XXX
 	protected void OnDbgActionActivated(object sender, EventArgs e)
 	{
