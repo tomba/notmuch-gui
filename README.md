@@ -1,4 +1,4 @@
 notmuch-gui
 ===========
 
-GTK# GUI for notmuch
+A prototype GUI, written in C# and using GTK#
