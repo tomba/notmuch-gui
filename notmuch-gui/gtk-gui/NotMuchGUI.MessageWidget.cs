@@ -18,7 +18,10 @@ namespace NotMuchGUI
 		private global::Gtk.Label labelSubject;
 		private global::Gtk.Label labelTo;
 		private global::Gtk.ToggleButton togglebutton1;
+		private global::Gtk.HBox hbox1;
 		private global::Gtk.ScrolledWindow scrolledwindowWeb;
+		private global::Gtk.ScrolledWindow GtkScrolledWindow;
+		private global::Gtk.NodeView attachmentNodeview;
 
 		protected virtual void Build ()
 		{
@@ -185,20 +188,42 @@ namespace NotMuchGUI
 			w13.Expand = false;
 			w13.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
+			this.hbox1 = new global::Gtk.HBox ();
+			this.hbox1.Name = "hbox1";
+			this.hbox1.Spacing = 6;
+			// Container child hbox1.Gtk.Box+BoxChild
 			this.scrolledwindowWeb = new global::Gtk.ScrolledWindow ();
 			this.scrolledwindowWeb.CanFocus = true;
 			this.scrolledwindowWeb.Name = "scrolledwindowWeb";
 			this.scrolledwindowWeb.VscrollbarPolicy = ((global::Gtk.PolicyType)(0));
 			this.scrolledwindowWeb.ShadowType = ((global::Gtk.ShadowType)(1));
-			this.vbox3.Add (this.scrolledwindowWeb);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.scrolledwindowWeb]));
-			w14.Position = 1;
+			this.hbox1.Add (this.scrolledwindowWeb);
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.scrolledwindowWeb]));
+			w14.Position = 0;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
+			this.GtkScrolledWindow.WidthRequest = 150;
+			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
+			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
+			this.attachmentNodeview = new global::Gtk.NodeView ();
+			this.attachmentNodeview.CanFocus = true;
+			this.attachmentNodeview.Name = "attachmentNodeview";
+			this.GtkScrolledWindow.Add (this.attachmentNodeview);
+			this.hbox1.Add (this.GtkScrolledWindow);
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.GtkScrolledWindow]));
+			w16.Position = 1;
+			w16.Expand = false;
+			this.vbox3.Add (this.hbox1);
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox1]));
+			w17.PackType = ((global::Gtk.PackType)(1));
+			w17.Position = 1;
 			this.Add (this.vbox3);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
 			this.Hide ();
-			this.togglebutton1.Toggled += new global::System.EventHandler (this.OnTogglebutton1Toggled);
+			this.attachmentNodeview.RowActivated += new global::Gtk.RowActivatedHandler (this.OnAttachmentNodeviewRowActivated);
 		}
 	}
 }
