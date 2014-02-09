@@ -1,6 +1,8 @@
 using System;
 using GMime;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NotMuchGUI
 {
@@ -26,7 +28,9 @@ namespace NotMuchGUI
 			sw.Write("{0}{1}", indentStr, ent.GetType());
 
 			if (ent.ContentType != null)
-				sw.Write(" ContentType({0}, {1})", ent.ContentType.ToString(), ent.ContentType.GetParameter("charset"));
+				sw.Write(" ContentType({0}, {1}), ContentID({2})",
+					ent.ContentType.ToString(), ent.ContentType.GetParameter("charset"),
+					ent.ContentId);
 
 			if (ent.ContentId != null)
 				sw.Write(" ContentId({0})", ent.ContentId);
@@ -71,49 +75,53 @@ namespace NotMuchGUI
 			}
 		}
 
-		public static Part FindFirstContent(Entity ent, ContentType ct)
+		public static IEnumerable<Entity> GetAllEntities(Entity ent)
 		{
-			if (ent == null)
-				throw new NullReferenceException();
+			yield return ent;
 
 			if (ent is Message)
 			{
 				var msg = (Message)ent;
 
-				return FindFirstContent(msg.MimePart, ct);
+				foreach (var p in GetAllEntities(msg.MimePart))
+					yield return p;
 			}
 			else if (ent is Multipart)
 			{
 				var mp = (Multipart)ent;
 
 				foreach (Entity part in mp)
-				{
-					var p = FindFirstContent(part, ct);
-					if (p != null)
-						return p;
-				}
-
-				return null;
+					foreach (var p in GetAllEntities(part))
+						yield return p;
 			}
 			else if (ent is MessagePart)
 			{
-				var msg = (MessagePart)ent;
+				var mp = (MessagePart)ent;
 
-				return FindFirstContent(msg.Message, ct);
+				foreach (var p in GetAllEntities(mp.Message))
+					yield return p;
 			}
 			else if (ent is Part)
 			{
-				var part = (Part)ent;
-
-				if (part.ContentType.IsType(ct.MediaType, ct.MediaSubtype))
-					return part;
-				else
-					return null;
 			}
 			else
 			{
-				throw new Exception(String.Format("Bad part {0}", ent.GetType().Name));
+				throw new Exception();
 			}
+		}
+
+		public static Part FindFirstContent(Entity ent, ContentType ct)
+		{
+			return GetAllEntities(ent)
+				.OfType<Part>()
+				.FirstOrDefault(p => p.ContentType.IsType(ct.MediaType, ct.MediaSubtype));
+		}
+
+		public static IEnumerable<Part> GetAttachments(Entity entity)
+		{
+			return GetAllEntities(entity)
+				.OfType<Part>()
+				.Where(p => p.ContentDisposition != null && p.ContentDisposition.Disposition == "attachment");
 		}
 	}
 }
