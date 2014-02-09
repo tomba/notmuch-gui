@@ -6,6 +6,14 @@ namespace NotMuchGUI
 {
 	public class CmdHelpers
 	{
+		public static void LaunchDefaultApp(string filePath)
+		{
+			GLib.Process child;
+
+			GLib.Process.SpawnAsync("/tmp", new[] { "xdg-open", filePath }, null,
+				GLib.SpawnFlags.SearchPath, null, out child);
+		}
+
 		public static bool RunCmd(string cmd, string args, out string stdout, out string stderr,
 			out int ret, out string err, int maxbuf = 100000)
 		{
