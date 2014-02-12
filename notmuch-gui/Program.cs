@@ -14,6 +14,8 @@ namespace NotMuchGUI
 
 		static System.Threading.Thread s_mainThread;
 
+		public static KeyFile.GKeyFile AppKeyFile { get; private set; }
+
 		public static void Main(string[] args)
 		{
 			Application.Init();
@@ -22,7 +24,7 @@ namespace NotMuchGUI
 
 			try
 			{
-				ParseConfig();
+				LoadConfig();
 			}
 			catch (Exception e)
 			{
@@ -58,7 +60,7 @@ namespace NotMuchGUI
 			throw new Exception();
 		}
 
-		static void ParseConfig()
+		static void LoadConfig()
 		{
 			MainClass.NotmuchExe = "notmuch";
 
@@ -67,11 +69,16 @@ namespace NotMuchGUI
 			var filename = Path.Combine(home, ".notmuch-gui-config");
 
 			if (File.Exists(filename) == false)
-				return;
+			{
+				using (File.Create(filename))
+					;
+			}
 
-			var keyfile = new KeyFile.GKeyFile(filename);
+			MainClass.AppKeyFile = new KeyFile.GKeyFile(filename);
 
-			MainClass.NotmuchExe = keyfile.GetString("notmuch", "executable");
+			var exe = MainClass.AppKeyFile.GetStringOrNull("notmuch", "executable");
+			if (exe != null)
+				MainClass.NotmuchExe = exe;
 		}
 
 		public static NM.Database OpenDB()
@@ -130,16 +137,16 @@ namespace NotMuchGUI
 				s_db = MainClass.OpenDB();
 
 				GLib.Timeout.Add(1000, () =>
-					{
-						if (s_dbRefs > 0)
-							return true;
+				{
+					if (s_dbRefs > 0)
+						return true;
 
-						Console.WriteLine("close DB");
+					Console.WriteLine("close DB");
 
-						s_db.Dispose();
-						s_db = null;
-						return false;
-					});
+					s_db.Dispose();
+					s_db = null;
+					return false;
+				});
 			}
 
 			s_dbRefs++;

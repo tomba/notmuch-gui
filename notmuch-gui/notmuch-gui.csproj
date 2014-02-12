@@ -96,6 +96,7 @@
     <Compile Include="gtk-gui\NotMuchGUI.MessageListWidget.cs" />
     <Compile Include="QueryCountUpdater.cs" />
     <Compile Include="MessageListColumns.cs" />
+    <Compile Include="KeyFileExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

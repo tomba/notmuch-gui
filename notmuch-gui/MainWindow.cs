@@ -93,12 +93,12 @@ public partial class MainWindow: Gtk.Window
 
 		queryTreeview.Model = queryStore;
 
-		queryStore.AppendValues("Tomi", 0, 0);
-		queryStore.AppendValues("ttlampopumppuhuolto", 0, 0);
-		queryStore.AppendValues("from:ti.com", 0, 0);
-		queryStore.AppendValues("from:linkedin", 0, 0);
-		queryStore.AppendValues("to:linux-kernel@vger.kernel.org", 0, 0);
-		queryStore.AppendValues("*", 0, 0);
+		var uiTags = MainClass.AppKeyFile.GetStringListOrNull("ui", "queries");
+		if (uiTags != null)
+		{
+			foreach (var tag in uiTags)
+				queryStore.AppendValues(tag, 0, 0);
+		}
 
 		m_queryStore = queryStore;
 	}
