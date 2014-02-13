@@ -17,7 +17,6 @@ namespace NotMuchGUI
 		private global::Gtk.Label labelFrom;
 		private global::Gtk.Label labelSubject;
 		private global::Gtk.Label labelTo;
-		private global::Gtk.ToggleButton togglebutton1;
 		private global::Gtk.HBox hbox1;
 		private global::Gtk.ScrolledWindow scrolledwindowWeb;
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
@@ -168,25 +167,11 @@ namespace NotMuchGUI
 			w11.RightAttach = ((uint)(2));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
-			this.togglebutton1 = new global::Gtk.ToggleButton ();
-			this.togglebutton1.CanFocus = true;
-			this.togglebutton1.Name = "togglebutton1";
-			this.togglebutton1.UseUnderline = true;
-			this.togglebutton1.Label = global::Mono.Unix.Catalog.GetString ("Src");
-			this.table1.Add (this.togglebutton1);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1 [this.togglebutton1]));
-			w12.TopAttach = ((uint)(3));
-			w12.BottomAttach = ((uint)(4));
-			w12.LeftAttach = ((uint)(2));
-			w12.RightAttach = ((uint)(3));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
-			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.vbox3.Add (this.table1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.table1]));
-			w13.Position = 0;
-			w13.Expand = false;
-			w13.Fill = false;
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.table1]));
+			w12.Position = 0;
+			w12.Expand = false;
+			w12.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox ();
 			this.hbox1.Name = "hbox1";
@@ -198,8 +183,8 @@ namespace NotMuchGUI
 			this.scrolledwindowWeb.VscrollbarPolicy = ((global::Gtk.PolicyType)(0));
 			this.scrolledwindowWeb.ShadowType = ((global::Gtk.ShadowType)(1));
 			this.hbox1.Add (this.scrolledwindowWeb);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.scrolledwindowWeb]));
-			w14.Position = 0;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.scrolledwindowWeb]));
+			w13.Position = 0;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 			this.GtkScrolledWindow.WidthRequest = 150;
@@ -211,13 +196,13 @@ namespace NotMuchGUI
 			this.attachmentNodeview.Name = "attachmentNodeview";
 			this.GtkScrolledWindow.Add (this.attachmentNodeview);
 			this.hbox1.Add (this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.GtkScrolledWindow]));
-			w16.Position = 1;
-			w16.Expand = false;
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.GtkScrolledWindow]));
+			w15.Position = 1;
+			w15.Expand = false;
 			this.vbox3.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox1]));
-			w17.PackType = ((global::Gtk.PackType)(1));
-			w17.Position = 1;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox1]));
+			w16.PackType = ((global::Gtk.PackType)(1));
+			w16.Position = 1;
 			this.Add (this.vbox3);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

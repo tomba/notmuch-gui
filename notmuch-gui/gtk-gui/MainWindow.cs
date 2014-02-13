@@ -11,6 +11,7 @@ public partial class MainWindow
 	private global::Gtk.ToggleAction threadedAction;
 	private global::Gtk.Action ViewAction;
 	private global::Gtk.Action refreshAction;
+	private global::Gtk.ToggleAction msgSrcAction;
 	private global::Gtk.VBox vbox2;
 	private global::Gtk.MenuBar menubar1;
 	private global::Gtk.Toolbar toolbar1;
@@ -57,6 +58,9 @@ public partial class MainWindow
 		this.refreshAction = new global::Gtk.Action ("refreshAction", global::Mono.Unix.Catalog.GetString ("_Refresh"), null, "gtk-refresh");
 		this.refreshAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("_Refresh");
 		w1.Add (this.refreshAction, "F5");
+		this.msgSrcAction = new global::Gtk.ToggleAction ("msgSrcAction", global::Mono.Unix.Catalog.GetString ("Msg Src"), null, null);
+		this.msgSrcAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Msg Src");
+		w1.Add (this.msgSrcAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -79,7 +83,7 @@ public partial class MainWindow
 		w2.Expand = false;
 		w2.Fill = false;
 		// Container child vbox2.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/><toolitem name='dbgAction' action='dbgAction'/><toolitem name='threadedAction' action='threadedAction'/></toolbar></ui>");
+		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/><toolitem name='dbgAction' action='dbgAction'/><toolitem name='threadedAction' action='threadedAction'/><toolitem name='msgSrcAction' action='msgSrcAction'/></toolbar></ui>");
 		this.toolbar1 = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/toolbar1")));
 		this.toolbar1.Name = "toolbar1";
 		this.toolbar1.ShowArrow = false;
@@ -160,6 +164,7 @@ public partial class MainWindow
 		this.messagewidget1 = new global::NotMuchGUI.MessageWidget ();
 		this.messagewidget1.Events = ((global::Gdk.EventMask)(256));
 		this.messagewidget1.Name = "messagewidget1";
+		this.messagewidget1.ShowHtmlSource = false;
 		this.hbox3.Add (this.messagewidget1);
 		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.messagewidget1]));
 		w12.Position = 0;
@@ -226,6 +231,7 @@ public partial class MainWindow
 		this.dbgAction.Activated += new global::System.EventHandler (this.OnDbgActionActivated);
 		this.threadedAction.Activated += new global::System.EventHandler (this.OnThreadedActionActivated);
 		this.refreshAction.Activated += new global::System.EventHandler (this.OnRefreshActionActivated);
+		this.msgSrcAction.Activated += new global::System.EventHandler (this.OnMsgSrcActionActivated);
 		this.queryEntry.Changed += new global::System.EventHandler (this.OnQueryEntryChanged);
 		this.queryEntry.Activated += new global::System.EventHandler (this.OnQueryEntryActivated);
 		this.dateSearchEntry.Activated += new global::System.EventHandler (this.OnDateSearchEntryActivated);

@@ -161,11 +161,15 @@ namespace NotMuchGUI
 			}
 		}
 
-		protected void OnTogglebutton1Toggled(object sender, EventArgs e)
+		public bool ShowHtmlSource
 		{
-			m_webView.ViewSourceMode = togglebutton1.Active;
-			if (this.HtmlContent != null)
-				m_webView.LoadHtmlString(this.HtmlContent, null);
+			get { return m_webView.ViewSourceMode; }
+			set
+			{
+				m_webView.ViewSourceMode = value;
+				if (this.HtmlContent != null)
+					m_webView.LoadHtmlString(this.HtmlContent, null);
+			}
 		}
 
 		protected void OnAttachmentNodeviewRowActivated(object o, Gtk.RowActivatedArgs args)

@@ -376,4 +376,9 @@ public partial class MainWindow: Gtk.Window
 	{
 		ExecuteQuery(true);
 	}
+
+	protected void OnMsgSrcActionActivated(object sender, EventArgs e)
+	{
+		messagewidget1.ShowHtmlSource = msgSrcAction.Active;
+	}
 }
