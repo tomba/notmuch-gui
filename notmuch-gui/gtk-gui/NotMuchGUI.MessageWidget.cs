@@ -33,8 +33,7 @@ namespace NotMuchGUI
 			this.vbox3.Name = "vbox3";
 			this.vbox3.Spacing = 6;
 			// Container child vbox3.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table (((uint)(4)), ((uint)(3)), false);
-			this.table1.Name = "table1";
+			this.table1 = new global::Gtk.Table (((uint)(4)), ((uint)(4)), false);
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(10));
 			this.table1.BorderWidth = ((uint)(4));
@@ -84,24 +83,22 @@ namespace NotMuchGUI
 			this.labelCc = new global::Gtk.Label ();
 			this.labelCc.Name = "labelCc";
 			this.labelCc.Xalign = 0F;
-			this.labelCc.LabelProp = global::Mono.Unix.Catalog.GetString ("label10");
+			this.labelCc.LabelProp = global::Mono.Unix.Catalog.GetString ("labelCc");
 			this.labelCc.Selectable = true;
 			this.table1.Add (this.labelCc);
 			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelCc]));
 			w5.TopAttach = ((uint)(3));
 			w5.BottomAttach = ((uint)(4));
 			w5.LeftAttach = ((uint)(1));
-			w5.RightAttach = ((uint)(2));
+			w5.RightAttach = ((uint)(4));
 			w5.XOptions = ((global::Gtk.AttachOptions)(4));
 			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.labelCharset = new global::Gtk.Label ();
 			this.labelCharset.Name = "labelCharset";
-			this.labelCharset.LabelProp = global::Mono.Unix.Catalog.GetString ("label8");
+			this.labelCharset.LabelProp = global::Mono.Unix.Catalog.GetString ("charset");
 			this.table1.Add (this.labelCharset);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelCharset]));
-			w6.TopAttach = ((uint)(2));
-			w6.BottomAttach = ((uint)(3));
 			w6.LeftAttach = ((uint)(2));
 			w6.RightAttach = ((uint)(3));
 			w6.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -109,23 +106,23 @@ namespace NotMuchGUI
 			// Container child table1.Gtk.Table+TableChild
 			this.labelContentType = new global::Gtk.Label ();
 			this.labelContentType.Name = "labelContentType";
-			this.labelContentType.LabelProp = global::Mono.Unix.Catalog.GetString ("label8");
+			this.labelContentType.LabelProp = global::Mono.Unix.Catalog.GetString ("contentType");
 			this.table1.Add (this.labelContentType);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelContentType]));
-			w7.TopAttach = ((uint)(1));
-			w7.BottomAttach = ((uint)(2));
-			w7.LeftAttach = ((uint)(2));
-			w7.RightAttach = ((uint)(3));
+			w7.LeftAttach = ((uint)(3));
+			w7.RightAttach = ((uint)(4));
 			w7.XOptions = ((global::Gtk.AttachOptions)(4));
 			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.labelDate = new global::Gtk.Label ();
 			this.labelDate.Name = "labelDate";
-			this.labelDate.LabelProp = global::Mono.Unix.Catalog.GetString ("label7");
+			this.labelDate.LabelProp = global::Mono.Unix.Catalog.GetString ("date");
 			this.table1.Add (this.labelDate);
 			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelDate]));
-			w8.LeftAttach = ((uint)(2));
-			w8.RightAttach = ((uint)(3));
+			w8.TopAttach = ((uint)(1));
+			w8.BottomAttach = ((uint)(2));
+			w8.LeftAttach = ((uint)(3));
+			w8.RightAttach = ((uint)(4));
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -150,21 +147,21 @@ namespace NotMuchGUI
 			w10.TopAttach = ((uint)(1));
 			w10.BottomAttach = ((uint)(2));
 			w10.LeftAttach = ((uint)(1));
-			w10.RightAttach = ((uint)(2));
+			w10.RightAttach = ((uint)(3));
 			w10.XOptions = ((global::Gtk.AttachOptions)(4));
 			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.labelTo = new global::Gtk.Label ();
 			this.labelTo.Name = "labelTo";
 			this.labelTo.Xalign = 0F;
-			this.labelTo.LabelProp = global::Mono.Unix.Catalog.GetString ("label6");
+			this.labelTo.LabelProp = global::Mono.Unix.Catalog.GetString ("labelTo");
 			this.labelTo.Selectable = true;
 			this.table1.Add (this.labelTo);
 			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelTo]));
 			w11.TopAttach = ((uint)(2));
 			w11.BottomAttach = ((uint)(3));
 			w11.LeftAttach = ((uint)(1));
-			w11.RightAttach = ((uint)(2));
+			w11.RightAttach = ((uint)(4));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.vbox3.Add (this.table1);
