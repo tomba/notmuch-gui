@@ -15,6 +15,7 @@ namespace NotMuchGUI
 		private global::Gtk.Label labelContentType;
 		private global::Gtk.Label labelDate;
 		private global::Gtk.Label labelFrom;
+		private global::Gtk.Label labelMsgID;
 		private global::Gtk.Label labelSubject;
 		private global::Gtk.Label labelTo;
 		private global::Gtk.HBox hbox1;
@@ -34,6 +35,7 @@ namespace NotMuchGUI
 			this.vbox3.Spacing = 6;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.table1 = new global::Gtk.Table (((uint)(4)), ((uint)(4)), false);
+			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(10));
 			this.table1.BorderWidth = ((uint)(4));
@@ -97,8 +99,11 @@ namespace NotMuchGUI
 			this.labelCharset = new global::Gtk.Label ();
 			this.labelCharset.Name = "labelCharset";
 			this.labelCharset.LabelProp = global::Mono.Unix.Catalog.GetString ("charset");
+			this.labelCharset.Selectable = true;
 			this.table1.Add (this.labelCharset);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelCharset]));
+			w6.TopAttach = ((uint)(1));
+			w6.BottomAttach = ((uint)(2));
 			w6.LeftAttach = ((uint)(2));
 			w6.RightAttach = ((uint)(3));
 			w6.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -107,6 +112,7 @@ namespace NotMuchGUI
 			this.labelContentType = new global::Gtk.Label ();
 			this.labelContentType.Name = "labelContentType";
 			this.labelContentType.LabelProp = global::Mono.Unix.Catalog.GetString ("contentType");
+			this.labelContentType.Selectable = true;
 			this.table1.Add (this.labelContentType);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelContentType]));
 			w7.LeftAttach = ((uint)(3));
@@ -117,6 +123,7 @@ namespace NotMuchGUI
 			this.labelDate = new global::Gtk.Label ();
 			this.labelDate.Name = "labelDate";
 			this.labelDate.LabelProp = global::Mono.Unix.Catalog.GetString ("date");
+			this.labelDate.Selectable = true;
 			this.table1.Add (this.labelDate);
 			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelDate]));
 			w8.TopAttach = ((uint)(1));
@@ -137,19 +144,30 @@ namespace NotMuchGUI
 			w9.RightAttach = ((uint)(2));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.labelMsgID = new global::Gtk.Label ();
+			this.labelMsgID.Name = "labelMsgID";
+			this.labelMsgID.LabelProp = global::Mono.Unix.Catalog.GetString ("msgID");
+			this.labelMsgID.Selectable = true;
+			this.table1.Add (this.labelMsgID);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelMsgID]));
+			w10.LeftAttach = ((uint)(2));
+			w10.RightAttach = ((uint)(3));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.labelSubject = new global::Gtk.Label ();
 			this.labelSubject.Name = "labelSubject";
 			this.labelSubject.Xalign = 0F;
 			this.labelSubject.LabelProp = global::Mono.Unix.Catalog.GetString ("labelSubject");
 			this.labelSubject.Selectable = true;
 			this.table1.Add (this.labelSubject);
-			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelSubject]));
-			w10.TopAttach = ((uint)(1));
-			w10.BottomAttach = ((uint)(2));
-			w10.LeftAttach = ((uint)(1));
-			w10.RightAttach = ((uint)(3));
-			w10.XOptions = ((global::Gtk.AttachOptions)(4));
-			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelSubject]));
+			w11.TopAttach = ((uint)(1));
+			w11.BottomAttach = ((uint)(2));
+			w11.LeftAttach = ((uint)(1));
+			w11.RightAttach = ((uint)(2));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.labelTo = new global::Gtk.Label ();
 			this.labelTo.Name = "labelTo";
@@ -157,18 +175,18 @@ namespace NotMuchGUI
 			this.labelTo.LabelProp = global::Mono.Unix.Catalog.GetString ("labelTo");
 			this.labelTo.Selectable = true;
 			this.table1.Add (this.labelTo);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelTo]));
-			w11.TopAttach = ((uint)(2));
-			w11.BottomAttach = ((uint)(3));
-			w11.LeftAttach = ((uint)(1));
-			w11.RightAttach = ((uint)(4));
-			w11.XOptions = ((global::Gtk.AttachOptions)(4));
-			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1 [this.labelTo]));
+			w12.TopAttach = ((uint)(2));
+			w12.BottomAttach = ((uint)(3));
+			w12.LeftAttach = ((uint)(1));
+			w12.RightAttach = ((uint)(4));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.vbox3.Add (this.table1);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.table1]));
-			w12.Position = 0;
-			w12.Expand = false;
-			w12.Fill = false;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.table1]));
+			w13.Position = 0;
+			w13.Expand = false;
+			w13.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox ();
 			this.hbox1.Name = "hbox1";
@@ -180,8 +198,8 @@ namespace NotMuchGUI
 			this.scrolledwindowWeb.VscrollbarPolicy = ((global::Gtk.PolicyType)(0));
 			this.scrolledwindowWeb.ShadowType = ((global::Gtk.ShadowType)(1));
 			this.hbox1.Add (this.scrolledwindowWeb);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.scrolledwindowWeb]));
-			w13.Position = 0;
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.scrolledwindowWeb]));
+			w14.Position = 0;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 			this.GtkScrolledWindow.WidthRequest = 150;
@@ -193,13 +211,13 @@ namespace NotMuchGUI
 			this.attachmentNodeview.Name = "attachmentNodeview";
 			this.GtkScrolledWindow.Add (this.attachmentNodeview);
 			this.hbox1.Add (this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.GtkScrolledWindow]));
-			w15.Position = 1;
-			w15.Expand = false;
-			this.vbox3.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox1]));
-			w16.PackType = ((global::Gtk.PackType)(1));
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.GtkScrolledWindow]));
 			w16.Position = 1;
+			w16.Expand = false;
+			this.vbox3.Add (this.hbox1);
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox1]));
+			w17.PackType = ((global::Gtk.PackType)(1));
+			w17.Position = 1;
 			this.Add (this.vbox3);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

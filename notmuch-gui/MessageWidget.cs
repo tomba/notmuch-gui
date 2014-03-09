@@ -41,6 +41,7 @@ namespace NotMuchGUI
 			labelCc.Text = "";
 			labelSubject.Text = "";
 			labelDate.Text = "";
+			labelMsgID.Text = "";
 			labelContentType.Text = "";
 			labelCharset.Text = "";
 
@@ -88,6 +89,7 @@ namespace NotMuchGUI
 			labelCc.Text = msg.Cc;
 			labelSubject.Text = msg.Subject;
 			labelDate.Text = msg.Date.ToLocalTime().ToString("g");
+			labelMsgID.Text = msg.ID;
 
 			GMime.Part textpart = null;
 
