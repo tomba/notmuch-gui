@@ -25,7 +25,7 @@ new="tag:new AND "
 notmuch tag --batch <<-end
 	-inbox +to-me -- $new $to
 
-	-inbox +from-me -- $new $from
+	-inbox -unread +from-me -- $new $from
 
 	-inbox +linux-kernel -- $new to:linux-kernel@vger.kernel.org
 	-inbox +linux-omap -- $new to:linux-omap@vger.kernel.org
