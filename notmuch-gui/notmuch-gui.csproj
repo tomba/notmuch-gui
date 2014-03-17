@@ -68,6 +68,9 @@
       <Private>False</Private>
       <Package>gkeyfile-sharp</Package>
     </Reference>
+    <Reference Include="vte-sharp">
+      <HintPath>..\..\..\..\usr\lib\cli\vte-sharp-0.16\vte-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -97,6 +100,8 @@
     <Compile Include="QueryCountUpdater.cs" />
     <Compile Include="MessageListColumns.cs" />
     <Compile Include="KeyFileExtensions.cs" />
+    <Compile Include="RunWindow.cs" />
+    <Compile Include="gtk-gui\NotMuchGUI.RunWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

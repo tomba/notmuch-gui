@@ -381,4 +381,16 @@ public partial class MainWindow: Gtk.Window
 	{
 		messagewidget1.ShowHtmlSource = msgSrcAction.Active;
 	}
+
+	protected void OnRefreshAction1Activated(object sender, EventArgs e)
+	{
+	}
+
+	protected void OnFetchAction1Activated(object sender, EventArgs e)
+	{
+		var wnd = new RunWindow();
+		wnd.ParentWindow = this.RootWindow;
+		wnd.ShowAll();
+		wnd.Run();
+	}
 }
