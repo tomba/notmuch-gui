@@ -6,8 +6,8 @@
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="webkit-sharp, Version=1.1.15.0, Culture=neutral, PublicKeyToken=eaa1d335d2e19745" />
+    <widget-library name="vte-sharp, Version=0.16.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../bin/Debug/notmuch-gui.exe" internal="true" />
-    <widget-library name="../../../../../usr/lib/cli/vte-sharp-0.16/vte-sharp.dll" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="997 646">
     <action-group name="Default">
