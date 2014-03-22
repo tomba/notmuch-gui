@@ -33,11 +33,13 @@ namespace NotMuchGUI
 
 		public void Run()
 		{
-			m_term.ForkCommand("notmuch", new string[] { "notmuch", "new", null },
+			int pid = m_term.ForkCommand(MainClass.NotmuchExe, new string[] { "notmuch", "new", null },
 				null,
 				Environment.GetEnvironmentVariable("HOME"),
 				false, false, false);
+
+			if (pid < 0)
+				m_term.Feed("<Process start failed>");
 		}
 	}
 }
-
