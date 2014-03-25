@@ -25,7 +25,6 @@ namespace NotMuchGUI
 			this.messagesTreeview.Name = "messagesTreeview";
 			this.messagesTreeview.EnableSearch = false;
 			this.messagesTreeview.FixedHeightMode = true;
-			this.messagesTreeview.Reorderable = true;
 			this.GtkScrolledWindow.Add (this.messagesTreeview);
 			this.Add (this.GtkScrolledWindow);
 			if ((this.Child != null)) {

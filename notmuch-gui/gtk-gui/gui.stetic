@@ -774,7 +774,6 @@
             <property name="ShowScrollbars">True</property>
             <property name="EnableSearch">False</property>
             <property name="FixedHeightMode">True</property>
-            <property name="Reorderable">True</property>
           </widget>
         </child>
       </widget>
