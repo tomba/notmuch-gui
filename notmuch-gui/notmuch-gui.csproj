@@ -95,7 +95,6 @@
     <Compile Include="CmdHelpers.cs" />
     <Compile Include="DialogHelpers.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="MessagesTreeModel.cs" />
     <Compile Include="MessageListWidget.cs" />
     <Compile Include="gtk-gui\NotMuchGUI.MessageListWidget.cs" />
     <Compile Include="QueryCountUpdater.cs" />

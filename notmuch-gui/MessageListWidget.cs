@@ -202,7 +202,7 @@ namespace NotMuchGUI
 
 			if (string.IsNullOrWhiteSpace(queryString))
 			{
-				messagesTreeview.Model = new TreeModelAdapter(new MessagesTreeModel());
+				messagesTreeview.Model = null;
 				return;
 			}
 
@@ -269,27 +269,23 @@ namespace NotMuchGUI
 
 				int count = 0;
 
-				long t2;
+				long t2 = sw.ElapsedMilliseconds;
+
+				var model = new TreeStore(typeof(string), typeof(string), typeof(string), typeof(long), typeof(string),
+					typeof(int), typeof(int), typeof(int), typeof(int));
 
 				if (!m_parent.ThreadedView)
 				{
-					var model = new MessagesTreeModel(query.CountMessages());
+					SearchMessages(query, model, out count);
+					m_parent.messagesTreeview.Model = model;
 
-					m_parent.messagesTreeview.Model = new TreeModelAdapter(model);
-
-					t2 = sw.ElapsedMilliseconds;
-
-					SearchMessages(query, model, ref count);
-
-					model.FinishAdding();
+					if (m_selectMsgIDs.Length == 0)
+						ScrollToMostRecent(model);
+					else
+						SelectOldMessages(model);
 				}
 				else
 				{
-					var model = new TreeStore(typeof(string), typeof(string), typeof(string), typeof(long), typeof(string), 
-						typeof(int), typeof(int), typeof(int), typeof(int));
-
-					t2 = sw.ElapsedMilliseconds;
-
 					//model.SetSortColumnId((int)MessageListColumns.Date, SortType.Ascending);
 
 					SearchThreads(query, model, out count);
@@ -326,23 +322,27 @@ namespace NotMuchGUI
 					count, t1, t2 - t1, t3 - t2, t4 - t3, t4, m_queryString);
 			}
 
-			void SearchMessages(NM.Query query, MessagesTreeModel model, ref int count)
+			void SearchMessages(NM.Query query, TreeStore model, out int count)
 			{
+				count = 0;
+
 				var msgs = query.SearchMessages();
 
 				foreach (var msg in msgs)
 				{
-					model.Append(msg.ID, 0);
+					TreeIter parent = TreeIter.Zero;
 
-					if (count == 0)
-						m_parent.messagesTreeview.SetCursor(TreePath.NewFirst(), null, false);
+					AddMsg(model, msg, 0, count, ref parent, 0, MessageListFlags.Match);
 
 					count++;
 
+					// XXX max 1000 msgs
+					if (count >= 1000)
+						break;
+
 					if (count % 1000 == 0)
 					{
-						m_parent.Count = count;
-						m_parent.TotalCount = model.Count;
+						m_parent.TotalCount = m_parent.Count = count;
 
 						if (m_parent.CountsChanged != null)
 							m_parent.CountsChanged(m_parent, EventArgs.Empty);
@@ -469,8 +469,8 @@ namespace NotMuchGUI
 				});
 			}
 
-			void AddMsgsRecursive(TreeStore model, NM.Message msg, int depth, ref int msgCount, ref TreeIter parent,
-			                      int threadNum)
+			TreeIter AddMsg(TreeStore model, NM.Message msg, int depth, int msgNum, ref TreeIter parent, int threadNum,
+				MessageListFlags flags)
 			{
 				//Console.WriteLine("append {0}", msg.Id);
 
@@ -483,16 +483,8 @@ namespace NotMuchGUI
 				else
 					iter = model.AppendNode(parent);
 
-				MessageListFlags flags = MessageListFlags.None;
-
 				if (tags.Contains("unread"))
 					flags |= MessageListFlags.Unread;
-
-				if (msg.GetFlag(NM.MessageFlag.MATCH))
-					flags |= MessageListFlags.Match;
-
-				if (msg.GetFlag(NM.MessageFlag.EXCLUDED))
-					flags |= MessageListFlags.Excluded;
 
 				model.SetValues(iter,
 					msg.ID,
@@ -502,8 +494,26 @@ namespace NotMuchGUI
 					string.Join("/", tags),
 					(int)flags,
 					depth,
-					msgCount,
+					msgNum,
 					threadNum);
+
+				return iter;
+			}
+
+			void AddMsgsRecursive(TreeStore model, NM.Message msg, int depth, ref int msgCount, ref TreeIter parent,
+			                      int threadNum)
+			{
+				//Console.WriteLine("append {0}", msg.Id);
+
+				MessageListFlags flags = MessageListFlags.None;
+
+				if (msg.GetFlag(NM.MessageFlag.MATCH))
+					flags |= MessageListFlags.Match;
+
+				if (msg.GetFlag(NM.MessageFlag.EXCLUDED))
+					flags |= MessageListFlags.Excluded;
+
+				TreeIter iter = AddMsg(model, msg, depth, msgCount, ref parent, threadNum, flags);
 
 				msgCount++;
 
