@@ -16,6 +16,8 @@ namespace NotMuchGUI
 
 		public static KeyFile.GKeyFile AppKeyFile { get; private set; }
 
+		public static MainWindow MainWindow { get; private set; }
+
 		public static void Main(string[] args)
 		{
 			Application.Init();
@@ -45,8 +47,8 @@ namespace NotMuchGUI
 
 			System.Threading.SynchronizationContext.SetSynchronizationContext(new GLib.GLibSynchronizationContext());
 
-			MainWindow win = new MainWindow();
-			win.Show();
+			MainClass.MainWindow = new MainWindow();
+			MainClass.MainWindow.Show();
 
 			Application.Run();
 		}

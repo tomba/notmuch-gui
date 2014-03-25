@@ -198,7 +198,7 @@ public partial class MainWindow
 		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
 		this.statusbar2.Add (this.label1);
 		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.statusbar2 [this.label1]));
-		w15.Position = 1;
+		w15.Position = 0;
 		w15.Expand = false;
 		w15.Fill = false;
 		// Container child statusbar2.Gtk.Box+BoxChild

@@ -42,6 +42,8 @@ namespace NotMuchGUI
 
 		void UpdateQueryCounts(string[] queries)
 		{
+			DBNotifier.AddReadRef();
+
 			var sw = Stopwatch.StartNew();
 
 			var list = queries.SelectMany(q => new []
@@ -96,6 +98,8 @@ namespace NotMuchGUI
 			sw.Stop();
 
 			Console.WriteLine("Updated query counts in {0} ms", sw.ElapsedMilliseconds);
+
+			DBNotifier.DelRef();
 		}
 	}
 }

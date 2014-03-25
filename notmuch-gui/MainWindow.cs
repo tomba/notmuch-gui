@@ -21,6 +21,9 @@ public partial class MainWindow: Gtk.Window
 	{
 		Build();
 
+		DBNotifier.DBOpenEvent += (bool write) => label1.Text = write ? "Writing..." : "Reading...";
+		DBNotifier.DBCloseEvent += () => label1.Text = "";
+
 		messageListWidget.ThreadedView = true;
 
 		threadedAction.Active = messageListWidget.ThreadedView;

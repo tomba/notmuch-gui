@@ -35,6 +35,9 @@ namespace NotMuchGUI
 		{
 			MainClass.VerifyThread();
 
+			if (s_dbRefs == 0)
+				DBNotifier.AddReadRef();
+
 			if (s_db == null)
 			{
 				Console.WriteLine("open DB");
@@ -62,6 +65,9 @@ namespace NotMuchGUI
 			s_dbRefs--;
 			if (s_dbRefs < 0)
 				throw new Exception();
+
+			if (s_dbRefs == 0)
+				DBNotifier.DelRef();
 		}
 	}
 }

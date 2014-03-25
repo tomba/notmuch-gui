@@ -121,6 +121,8 @@ namespace NotMuchGUI
 					selectedList.Add(tag);
 			}
 
+			DBNotifier.AddWriteRef();
+
 			NM.Status stat;
 			using (var db = NM.Database.Open(MainClass.DatabasePath, NM.DatabaseMode.READ_WRITE, out stat))
 			{
@@ -153,6 +155,8 @@ namespace NotMuchGUI
 					}
 				}
 			}
+
+			DBNotifier.DelRef();
 
 			UpdateTagsView(m_idTagsMap.Keys.ToArray());
 		}
