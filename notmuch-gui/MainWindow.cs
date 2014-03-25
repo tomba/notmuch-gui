@@ -42,6 +42,7 @@ public partial class MainWindow: Gtk.Window
 		}
 
 		tagsWidget.SetDBTags(m_allTags);
+		tagsWidget.MsgTagsUpdatedEvent += messageListWidget.UpdateMsgIds;
 
 		GLib.Idle.Add(() =>
 		{

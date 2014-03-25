@@ -154,6 +154,44 @@ namespace NotMuchGUI
 			return c;
 		}
 
+		public void UpdateMsgIds(IEnumerable<string> ids)
+		{
+			string[] idArray = ids.ToArray();
+
+			var model = messagesTreeview.Model;
+
+			model.Foreach((m, path, iter) =>
+			{
+				var id = (string)m.GetValue(iter, (int)MessageListColumns.MessageId);
+
+				if (!idArray.Contains(id))
+					return false;
+
+				Console.WriteLine("update {0}", id);
+
+				using (var cdb = new CachedDB())
+				{
+					var db = cdb.Database;
+
+					var msg = db.FindMessage(id);
+					var tags = msg.GetTags().ToList();
+
+					m.SetValue(iter, (int)MessageListColumns.Tags, string.Join("/", tags));
+
+					MessageListFlags flags = (MessageListFlags)m.GetValue(iter, (int)MessageListColumns.Flags);
+
+					if (tags.Contains("unread"))
+						flags |= MessageListFlags.Unread;
+					else
+						flags &= ~MessageListFlags.Unread;
+
+					m.SetValue(iter, (int)MessageListColumns.Flags, (int)flags);
+				}
+
+				return false;
+			});
+		}
+
 		public string GetCurrentMessageID()
 		{
 			TreeSelection selection = messagesTreeview.Selection;
@@ -272,7 +310,7 @@ namespace NotMuchGUI
 				long t2 = sw.ElapsedMilliseconds;
 
 				var model = new TreeStore(typeof(string), typeof(string), typeof(string), typeof(long), typeof(string),
-					typeof(int), typeof(int), typeof(int), typeof(int));
+					            typeof(int), typeof(int), typeof(int), typeof(int));
 
 				if (!m_parent.ThreadedView)
 				{
@@ -470,7 +508,7 @@ namespace NotMuchGUI
 			}
 
 			TreeIter AddMsg(TreeStore model, NM.Message msg, int depth, int msgNum, ref TreeIter parent, int threadNum,
-				MessageListFlags flags)
+			                MessageListFlags flags)
 			{
 				//Console.WriteLine("append {0}", msg.Id);
 

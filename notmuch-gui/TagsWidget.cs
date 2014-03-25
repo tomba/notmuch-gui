@@ -14,6 +14,8 @@ namespace NotMuchGUI
 		Dictionary<string, string[]> m_idTagsMap;
 		string[] m_allDBTags = new string[0];
 
+		public event Action<IEnumerable<string>> MsgTagsUpdatedEvent;
+
 		public TagsWidget()
 		{
 			this.Build();
@@ -157,6 +159,8 @@ namespace NotMuchGUI
 			}
 
 			DBNotifier.DelRef();
+
+			MsgTagsUpdatedEvent(m_idTagsMap.Keys);
 
 			UpdateTagsView(m_idTagsMap.Keys.ToArray());
 		}
