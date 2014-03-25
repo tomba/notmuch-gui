@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace NotMuch
 {
-	public class Database : IDisposable
+	public sealed class Database : IDisposable
 	{
 		public static Database Create(string path, out Status status)
 		{

@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace NotMuch
 {
-	public class Query : IDisposable
+	public sealed class Query : IDisposable
 	{
 		IntPtr m_handle;
 
