@@ -160,19 +160,17 @@ namespace NotMuchGUI
 		{
 			string[] idArray = ids.ToArray();
 
-			messagesTreeview.Model.Foreach((m, path, iter) =>
+			using (var cdb = new CachedDB())
 			{
-				var model = (MessageTreeStore)m;
-				var id = model.GetMessageID(ref iter);
+				var db = cdb.Database;
 
-				if (!idArray.Contains(id))
-					return false;
-
-				Console.WriteLine("update {0}", id);
-
-				using (var cdb = new CachedDB())
+				messagesTreeview.Model.Foreach((m, path, iter) =>
 				{
-					var db = cdb.Database;
+					var model = (MessageTreeStore)m;
+					var id = model.GetMessageID(ref iter);
+
+					if (!idArray.Contains(id))
+						return false;
 
 					var msg = db.FindMessage(id);
 					var tags = msg.GetTags().ToList();
@@ -187,10 +185,10 @@ namespace NotMuchGUI
 						flags &= ~MessageListFlags.Unread;
 
 					model.SetFlags(ref iter, flags);
-				}
 
-				return false;
-			});
+					return false;
+				});
+			}
 		}
 
 		public string GetCurrentMessageID()
