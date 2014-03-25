@@ -82,10 +82,10 @@ namespace NotMuchGUI
 		static Gdk.Color CellBgColor1 = new Gdk.Color(255, 255, 255);
 		static Gdk.Color CellBgColor2 = new Gdk.Color(235, 235, 255);
 
-		void SetCommonCellSettings(Gtk.TreeViewColumn column, Gtk.CellRendererText cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+		void SetCommonCellSettings(Gtk.TreeViewColumn column, Gtk.CellRendererText cell, MessageTreeStore model, ref TreeIter iter)
 		{
-			MessageListFlags flags = (MessageListFlags)model.GetValue(iter, (int)MessageListColumns.Flags);
-			int threadNum = (int)model.GetValue(iter, (int)MessageListColumns.ThreadNum);
+			MessageListFlags flags = model.GetFlags(ref iter);
+			int threadNum = model.GetThreadNum(ref iter);
 
 			cell.Weight = (flags & MessageListFlags.Unread) != 0 ? (int)Pango.Weight.Bold : (int)Pango.Weight.Normal;
 
@@ -100,22 +100,24 @@ namespace NotMuchGUI
 				cell.CellBackgroundGdk = CellBgColor2;
 		}
 
-		void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+		void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel _model, Gtk.TreeIter iter)
 		{
+			var model = (MessageTreeStore)_model;
 			var c = (Gtk.CellRendererText)cell;
 
-			SetCommonCellSettings(column, c, model, iter);
+			SetCommonCellSettings(column, c, model, ref iter);
 		}
 
-		void DateCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+		void DateCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel _model, Gtk.TreeIter iter)
 		{
+			var model = (MessageTreeStore)_model;
 			var c = (Gtk.CellRendererText)cell;
 
-			var stamp = (long)model.GetValue(iter, (int)MessageListColumns.Date);
+			var stamp = model.GetDate(ref iter);
 
 			c.Text = NM.Utils.NotmuchTimeToDateTime(stamp).ToLocalTime().ToString("g");
 
-			SetCommonCellSettings(column, c, model, iter);
+			SetCommonCellSettings(column, c, model, ref iter);
 		}
 
 		TreeViewColumn CreateTreeViewColumn(string name, int col)
@@ -158,11 +160,10 @@ namespace NotMuchGUI
 		{
 			string[] idArray = ids.ToArray();
 
-			var model = messagesTreeview.Model;
-
-			model.Foreach((m, path, iter) =>
+			messagesTreeview.Model.Foreach((m, path, iter) =>
 			{
-				var id = (string)m.GetValue(iter, (int)MessageListColumns.MessageId);
+				var model = (MessageTreeStore)m;
+				var id = model.GetMessageID(ref iter);
 
 				if (!idArray.Contains(id))
 					return false;
@@ -175,17 +176,17 @@ namespace NotMuchGUI
 
 					var msg = db.FindMessage(id);
 					var tags = msg.GetTags().ToList();
+					
+					model.SetTags(ref iter, tags);
 
-					m.SetValue(iter, (int)MessageListColumns.Tags, string.Join("/", tags));
-
-					MessageListFlags flags = (MessageListFlags)m.GetValue(iter, (int)MessageListColumns.Flags);
+					MessageListFlags flags = model.GetFlags(ref iter);
 
 					if (tags.Contains("unread"))
 						flags |= MessageListFlags.Unread;
 					else
 						flags &= ~MessageListFlags.Unread;
 
-					m.SetValue(iter, (int)MessageListColumns.Flags, (int)flags);
+					model.SetFlags(ref iter, flags);
 				}
 
 				return false;
@@ -203,20 +204,20 @@ namespace NotMuchGUI
 
 			var path = selection.GetSelectedRows()[0];
 
-			var model = selection.TreeView.Model;
+			var model = (MessageTreeStore)selection.TreeView.Model;
 
 			TreeIter iter;
 
 			model.GetIter(out iter, path);
 
-			return (string)model.GetValue(iter, (int)MessageListColumns.MessageId);
+			return model.GetMessageID(ref iter);
 		}
 
 		public string[] GetSelectedMessageIDs()
 		{
 			TreeSelection selection = messagesTreeview.Selection;
 
-			var model = selection.TreeView.Model;
+			var model = (MessageTreeStore)selection.TreeView.Model;
 
 			var arr = selection.GetSelectedRows().Select(path =>
 			{
@@ -224,7 +225,7 @@ namespace NotMuchGUI
 
 				model.GetIter(out iter, path);
 
-				return (string)model.GetValue(iter, (int)MessageListColumns.MessageId);
+				return model.GetMessageID(ref iter);
 			}).ToArray();
 
 			return arr;
@@ -309,8 +310,7 @@ namespace NotMuchGUI
 
 				long t2 = sw.ElapsedMilliseconds;
 
-				var model = new TreeStore(typeof(string), typeof(string), typeof(string), typeof(long), typeof(string),
-					            typeof(int), typeof(int), typeof(int), typeof(int));
+				var model = new MessageTreeStore();
 
 				if (!m_parent.ThreadedView)
 				{
@@ -360,7 +360,7 @@ namespace NotMuchGUI
 					count, t1, t2 - t1, t3 - t2, t4 - t3, t4, m_queryString);
 			}
 
-			void SearchMessages(NM.Query query, TreeStore model, out int count)
+			void SearchMessages(NM.Query query, MessageTreeStore model, out int count)
 			{
 				count = 0;
 
@@ -398,7 +398,7 @@ namespace NotMuchGUI
 				}
 			}
 
-			void SearchThreads(NM.Query query, TreeStore model, out int msgCount)
+			void SearchThreads(NM.Query query, MessageTreeStore model, out int msgCount)
 			{
 				var threads = query.SearchThreads();
 				int lastUpdate = 0;
@@ -451,7 +451,7 @@ namespace NotMuchGUI
 				}
 			}
 
-			void ScrollToMostRecent(TreeStore model)
+			void ScrollToMostRecent(MessageTreeStore model)
 			{
 				int num = model.IterNChildren();
 
@@ -481,7 +481,7 @@ namespace NotMuchGUI
 				m_parent.messagesTreeview.ScrollToCell(path, null, false, 0, 0);
 			}
 
-			void SelectOldMessages(TreeStore model)
+			void SelectOldMessages(MessageTreeStore model)
 			{
 				m_parent.messagesTreeview.Selection.UnselectAll();
 
@@ -489,7 +489,7 @@ namespace NotMuchGUI
 
 				model.Foreach((m, path, iter) =>
 				{
-					var id = (string)m.GetValue(iter, (int)MessageListColumns.MessageId);
+					var id = model.GetMessageID(ref iter);
 					
 					if (l.Remove(id))
 					{
@@ -507,7 +507,7 @@ namespace NotMuchGUI
 				});
 			}
 
-			TreeIter AddMsg(TreeStore model, NM.Message msg, int depth, int msgNum, ref TreeIter parent, int threadNum,
+			TreeIter AddMsg(MessageTreeStore model, NM.Message msg, int depth, int msgNum, ref TreeIter parent, int threadNum,
 			                MessageListFlags flags)
 			{
 				//Console.WriteLine("append {0}", msg.Id);
@@ -524,13 +524,13 @@ namespace NotMuchGUI
 				if (tags.Contains("unread"))
 					flags |= MessageListFlags.Unread;
 
-				model.SetValues(iter,
+				model.SetValues(ref iter,
 					msg.ID,
 					msg.From,
 					msg.Subject,
 					msg.DateStamp,
-					string.Join("/", tags),
-					(int)flags,
+					tags,
+					flags,
 					depth,
 					msgNum,
 					threadNum);
@@ -538,7 +538,7 @@ namespace NotMuchGUI
 				return iter;
 			}
 
-			void AddMsgsRecursive(TreeStore model, NM.Message msg, int depth, ref int msgCount, ref TreeIter parent,
+			void AddMsgsRecursive(MessageTreeStore model, NM.Message msg, int depth, ref int msgCount, ref TreeIter parent,
 			                      int threadNum)
 			{
 				//Console.WriteLine("append {0}", msg.Id);
