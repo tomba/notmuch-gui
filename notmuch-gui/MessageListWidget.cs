@@ -319,11 +319,6 @@ namespace NotMuchGUI
 				{
 					SearchMessages(query, model, out count);
 					m_parent.messagesTreeview.Model = model;
-
-					if (m_selectMsgIDs.Length == 0)
-						ScrollToMostRecent(model);
-					else
-						SelectOldMessages(model);
 				}
 				else
 				{
@@ -333,12 +328,12 @@ namespace NotMuchGUI
 
 					m_parent.messagesTreeview.Model = model;
 					m_parent.messagesTreeview.ExpandAll();
-
-					if (m_selectMsgIDs.Length == 0)
-						ScrollToMostRecent(model);
-					else
-						SelectOldMessages(model);
 				}
+
+				if (m_selectMsgIDs.Length == 0)
+					ScrollToMostRecent(model);
+				else
+					SelectOldMessages(model);
 
 				if (m_cancel)
 				{
