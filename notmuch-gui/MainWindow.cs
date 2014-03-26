@@ -42,7 +42,7 @@ public partial class MainWindow: Gtk.Window
 		}
 
 		tagsWidget.SetDBTags(m_allTags);
-		tagsWidget.MsgTagsUpdatedEvent += messageListWidget.UpdateMsgIds;
+		tagsWidget.MsgTagsUpdatedEvent += messageListWidget.RefreshMessages;
 
 		GLib.Idle.Add(() =>
 		{
@@ -78,7 +78,7 @@ public partial class MainWindow: Gtk.Window
 			{
 				var db = cdb.Database;
 
-				var curId = messageListWidget.GetCurrentMessageID2();
+				var curId = messageListWidget.GetCurrentMessageID();
 
 				var msg = db.GetMessage(curId);
 
@@ -106,7 +106,7 @@ public partial class MainWindow: Gtk.Window
 				}
 			}
 
-			messageListWidget.UpdateMsgIds(selected);
+			messageListWidget.RefreshMessages(selected);
 		}
 	}
 

@@ -156,7 +156,7 @@ namespace NotMuchGUI
 			return c;
 		}
 
-		public void UpdateMsgIds(IEnumerable<string> ids)
+		public void RefreshMessages(IEnumerable<string> ids)
 		{
 			string[] idArray = ids.ToArray();
 
@@ -191,12 +191,18 @@ namespace NotMuchGUI
 			}
 		}
 
-		public string GetCurrentMessageID2()
+		/// <summary>
+		/// Gets the message ID for the message under cursor
+		/// </summary>
+		public string GetCurrentMessageID()
 		{
 			TreePath path;
 			TreeViewColumn column;
 
 			messagesTreeview.GetCursor(out path, out column);
+
+			if (path == null)
+				return null;
 
 			var model = (MessageTreeStore)messagesTreeview.Model;
 
@@ -207,31 +213,14 @@ namespace NotMuchGUI
 			return model.GetMessageID(ref iter);
 		}
 
-		public string GetCurrentMessageID()
-		{
-			TreeSelection selection = messagesTreeview.Selection;
-
-			int numRows = selection.CountSelectedRows();
-
-			if (numRows != 1)
-				return null;
-
-			var path = selection.GetSelectedRows()[0];
-
-			var model = (MessageTreeStore)selection.TreeView.Model;
-
-			TreeIter iter;
-
-			model.GetIter(out iter, path);
-
-			return model.GetMessageID(ref iter);
-		}
-
+		/// <summary>
+		/// Get the message IDs for selected messages
+		/// </summary>
 		public string[] GetSelectedMessageIDs()
 		{
 			TreeSelection selection = messagesTreeview.Selection;
 
-			var model = (MessageTreeStore)selection.TreeView.Model;
+			var model = (MessageTreeStore)messagesTreeview.Model;
 
 			var arr = selection.GetSelectedRows().Select(path =>
 			{
