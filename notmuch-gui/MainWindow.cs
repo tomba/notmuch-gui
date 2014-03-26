@@ -118,6 +118,7 @@ public partial class MainWindow: Gtk.Window
 			}
 
 			messageListWidget.RefreshMessages(selected);
+			tagsWidget.UpdateTagsView(selected);
 		}
 	}
 
