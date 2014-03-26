@@ -191,6 +191,22 @@ namespace NotMuchGUI
 			}
 		}
 
+		public string GetCurrentMessageID2()
+		{
+			TreePath path;
+			TreeViewColumn column;
+
+			messagesTreeview.GetCursor(out path, out column);
+
+			var model = (MessageTreeStore)messagesTreeview.Model;
+
+			TreeIter iter;
+
+			model.GetIter(out iter, path);
+
+			return model.GetMessageID(ref iter);
+		}
+
 		public string GetCurrentMessageID()
 		{
 			TreeSelection selection = messagesTreeview.Selection;

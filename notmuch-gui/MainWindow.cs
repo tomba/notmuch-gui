@@ -64,6 +64,50 @@ public partial class MainWindow: Gtk.Window
 
 		var queries = m_queryStore.AsEnumerable().Select(arr => (string)arr[0]).ToArray();
 		m_queryCountUpdater.Start(queries);
+
+		this.KeyPressEvent += HandleKeyPressEvent;
+	}
+
+	void HandleKeyPressEvent(object o, KeyPressEventArgs args)
+	{
+		if (args.Event.Key == Gdk.Key.m)
+		{
+			bool unread;
+
+			using (var cdb = new CachedDB())
+			{
+				var db = cdb.Database;
+
+				var curId = messageListWidget.GetCurrentMessageID2();
+
+				var msg = db.GetMessage(curId);
+
+				unread = msg.GetTags().Contains("unread");
+
+				unread = !unread;
+			}
+
+			var selected = messageListWidget.GetSelectedMessageIDs();
+
+			NM.Status stat;
+			using (var db = NM.Database.Open(MainClass.DatabasePath, NM.DatabaseMode.READ_WRITE, out stat))
+			{
+				if (stat != NM.Status.SUCCESS)
+					throw new Exception();
+
+				foreach (var id in selected)
+				{
+					var msg = db.GetMessage(id);
+
+					if (unread)
+						msg.AddTag("unread");
+					else
+						msg.RemoveTag("unread");
+				}
+			}
+
+			messageListWidget.UpdateMsgIds(selected);
+		}
 	}
 
 	void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer _cell, Gtk.TreeModel model, Gtk.TreeIter iter)
