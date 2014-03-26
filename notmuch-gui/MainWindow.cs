@@ -429,7 +429,7 @@ public partial class MainWindow: Gtk.Window
 
 		messageListWidget.ThreadedView = b.Active;
 
-		ExecuteQuery();
+		ExecuteQuery(true);
 	}
 
 	protected void OnRefreshActionActivated(object sender, EventArgs e)
