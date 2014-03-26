@@ -70,17 +70,11 @@
         <property name="Active">False</property>
         <signal name="Activated" handler="OnMsgSrcActionActivated" />
       </action>
-      <action id="refreshAction1">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes" />
-        <property name="StockId">gtk-refresh</property>
-        <signal name="Activated" handler="OnRefreshAction1Activated" />
-      </action>
-      <action id="fetchAction1">
+      <action id="fetchAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Fetch</property>
         <property name="ShortLabel" translatable="yes">Fetch</property>
-        <signal name="Activated" handler="OnFetchAction1Activated" />
+        <signal name="Activated" handler="OnFetchActionActivated" />
       </action>
     </action-group>
     <property name="MemberName" />
@@ -122,8 +116,7 @@
               <node type="Toolitem" action="dbgAction" />
               <node type="Toolitem" action="threadedAction" />
               <node type="Toolitem" action="msgSrcAction" />
-              <node type="Toolitem" action="refreshAction1" />
-              <node type="Toolitem" action="fetchAction1" />
+              <node type="Toolitem" action="fetchAction" />
             </node>
           </widget>
           <packing>
