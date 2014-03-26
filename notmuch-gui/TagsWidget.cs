@@ -123,13 +123,9 @@ namespace NotMuchGUI
 					selectedList.Add(tag);
 			}
 
-			DBNotifier.AddWriteRef();
-
-			NM.Status stat;
-			using (var db = NM.Database.Open(MainClass.DatabasePath, NM.DatabaseMode.READ_WRITE, out stat))
+			using (var cdb = new CachedDB(true))
 			{
-				if (stat != NM.Status.SUCCESS)
-					throw new Exception();
+				var db = cdb.Database;
 
 				foreach (var kvp in m_idTagsMap)
 				{
@@ -145,20 +141,18 @@ namespace NotMuchGUI
 					{
 						foreach (var tag in addTags)
 						{
-							stat = m.AddTag(tag);
+							var stat = m.AddTag(tag);
 							Console.WriteLine("{0}: Added tag {1}: {2}", id, tag, stat);
 						}
 
 						foreach (var tag in rmTags)
 						{
-							stat = m.RemoveTag(tag);
+							var stat = m.RemoveTag(tag);
 							Console.WriteLine("{0}: Removed tag {1}: {2}", id, tag, stat);
 						}
 					}
 				}
 			}
-
-			DBNotifier.DelRef();
 
 			MsgTagsUpdatedEvent(m_idTagsMap.Keys);
 

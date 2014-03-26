@@ -103,7 +103,6 @@
     <Compile Include="RunWindow.cs" />
     <Compile Include="gtk-gui\NotMuchGUI.RunWindow.cs" />
     <Compile Include="CachedDB.cs" />
-    <Compile Include="DBNotifier.cs" />
     <Compile Include="MessageTreeStore.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

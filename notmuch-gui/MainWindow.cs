@@ -21,8 +21,21 @@ public partial class MainWindow: Gtk.Window
 	{
 		Build();
 
-		DBNotifier.DBOpenEvent += (bool write) => label1.Text = write ? "Writing..." : "Reading...";
-		DBNotifier.DBCloseEvent += () => label1.Text = "";
+		CachedDB.DBOpenEvent += (bool write) =>
+		{
+			Application.Invoke((s, o) =>
+			{
+				label1.Text = write ? "Writing..." : "Reading...";
+			});
+		};
+
+		CachedDB.DBCloseEvent += () =>
+		{
+			Application.Invoke((s, o) =>
+			{
+				label1.Text = "";
+			});
+		};
 
 		messageListWidget.ThreadedView = true;
 
@@ -89,11 +102,9 @@ public partial class MainWindow: Gtk.Window
 
 			var selected = messageListWidget.GetSelectedMessageIDs();
 
-			NM.Status stat;
-			using (var db = NM.Database.Open(MainClass.DatabasePath, NM.DatabaseMode.READ_WRITE, out stat))
+			using (var cdb = new CachedDB(true))
 			{
-				if (stat != NM.Status.SUCCESS)
-					throw new Exception();
+				var db = cdb.Database;
 
 				foreach (var id in selected)
 				{

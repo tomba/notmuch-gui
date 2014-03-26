@@ -42,8 +42,6 @@ namespace NotMuchGUI
 
 		void UpdateQueryCounts(string[] queries)
 		{
-			DBNotifier.AddReadRef();
-
 			var sw = Stopwatch.StartNew();
 
 			var list = queries.SelectMany(q => new []
@@ -55,23 +53,25 @@ namespace NotMuchGUI
 			Parallel.ForEach(list,
 				() =>
 				{
-					var db = MainClass.OpenDB();
-					return db;
+					var cdb = new CachedDB();
+					return cdb;
 				},
-				(val, state, db) =>
+				(val, state, cdb) =>
 				{
 					if (state.IsStopped)
 					{
 						//Console.WriteLine("{0} stopped, exit", Thread.CurrentThread.ManagedThreadId);
-						return db;
+						return cdb;
 					}
 
 					if (m_cancel)
 					{
 						//Console.WriteLine("{0} set stop", Thread.CurrentThread.ManagedThreadId);
 						state.Stop();
-						return db;
+						return cdb;
 					}
+
+					var db = cdb.Database;
 
 					using (var query = db.CreateQuery(val.Query))
 					{
@@ -86,20 +86,18 @@ namespace NotMuchGUI
 						});
 					}
 
-					return db;
+					return cdb;
 				},
-				(db) =>
+				(cdb) =>
 				{
 					//Console.WriteLine("{0} ended", Thread.CurrentThread.ManagedThreadId);
-					db.Dispose();
+					cdb.Dispose();
 				}
 			);
 
 			sw.Stop();
 
 			Console.WriteLine("Updated query counts in {0} ms", sw.ElapsedMilliseconds);
-
-			DBNotifier.DelRef();
 		}
 	}
 }
