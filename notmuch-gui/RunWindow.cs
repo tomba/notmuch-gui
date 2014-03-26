@@ -9,6 +9,8 @@ namespace NotMuchGUI
 	{
 		Vte.Terminal m_term;
 
+		public event Action RunDone;
+
 		public RunWindow() :
 			base(Gtk.WindowType.Toplevel)
 		{
@@ -21,6 +23,8 @@ namespace NotMuchGUI
 			{
 				m_term.Feed("<Process ended>");
 				m_term.Sensitive = false;
+				if (this.RunDone != null)
+					this.RunDone();
 			};
 
 			m_term.IsFocus = true;

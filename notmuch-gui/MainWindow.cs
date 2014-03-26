@@ -445,6 +445,7 @@ public partial class MainWindow: Gtk.Window
 	protected void OnFetchActionActivated(object sender, EventArgs e)
 	{
 		var wnd = new RunWindow();
+		wnd.RunDone += () => OnRefreshActionActivated(null, null);
 		wnd.ParentWindow = this.RootWindow;
 		wnd.ShowAll();
 		wnd.Run();
