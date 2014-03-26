@@ -150,6 +150,7 @@ public partial class MainWindow
 		this.queryTreeview = new global::Gtk.TreeView ();
 		this.queryTreeview.CanFocus = true;
 		this.queryTreeview.Name = "queryTreeview";
+		this.queryTreeview.EnableSearch = false;
 		this.GtkScrolledWindow.Add (this.queryTreeview);
 		this.hpaned1.Add (this.GtkScrolledWindow);
 		global::Gtk.Paned.PanedChild w9 = ((global::Gtk.Paned.PanedChild)(this.hpaned1 [this.GtkScrolledWindow]));
