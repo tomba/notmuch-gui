@@ -69,10 +69,10 @@ public partial class MainWindow
 		w1.Add (this.fetchAction, null);
 		this.DeleteAction = new global::Gtk.Action ("DeleteAction", global::Mono.Unix.Catalog.GetString ("Delete"), null, null);
 		this.DeleteAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Delete");
-		w1.Add (this.DeleteAction, "Delete");
+		w1.Add (this.DeleteAction, null);
 		this.toggleReadAction = new global::Gtk.Action ("toggleReadAction", global::Mono.Unix.Catalog.GetString ("Toggle Read"), null, null);
 		this.toggleReadAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Toggle Read");
-		w1.Add (this.toggleReadAction, "m");
+		w1.Add (this.toggleReadAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -95,7 +95,7 @@ public partial class MainWindow
 		w2.Expand = false;
 		w2.Fill = false;
 		// Container child vbox2.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/><toolitem name='dbgAction' action='dbgAction'/><toolitem name='threadedAction' action='threadedAction'/><toolitem name='msgSrcAction' action='msgSrcAction'/><toolitem name='fetchAction' action='fetchAction'/><toolitem name='DeleteAction' action='DeleteAction'/><toolitem name='toggleReadAction' action='toggleReadAction'/></toolbar></ui>");
+		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/><toolitem name='dbgAction' action='dbgAction'/><toolitem name='threadedAction' action='threadedAction'/><toolitem name='msgSrcAction' action='msgSrcAction'/><toolitem name='fetchAction' action='fetchAction'/><toolitem name='DeleteAction' action='DeleteAction'/><toolitem name='refreshAction' action='refreshAction'/><toolitem name='toggleReadAction' action='toggleReadAction'/></toolbar></ui>");
 		this.toolbar1 = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/toolbar1")));
 		this.toolbar1.Name = "toolbar1";
 		this.toolbar1.ShowArrow = false;
