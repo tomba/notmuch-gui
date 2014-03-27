@@ -9,8 +9,8 @@ namespace NotMuchGUI
 	class MessageTreeStore : TreeStore
 	{
 		public MessageTreeStore() :
-			base(typeof(string), typeof(string), typeof(string), typeof(long), typeof(string),
-			     typeof(int), typeof(int), typeof(int), typeof(int))
+			base(typeof(string), typeof(string), typeof(string), typeof(long), typeof(string[]),
+			    typeof(int), typeof(int), typeof(int), typeof(int))
 		{
 		}
 
@@ -34,20 +34,15 @@ namespace NotMuchGUI
 			return (string)GetValue(iter, (int)MessageListColumns.MessageId);
 		}
 
-		public void SetTags(ref TreeIter iter, List<string> tags)
+		public string[] GetTags(ref TreeIter iter)
 		{
-			SetValue(iter, (int)MessageListColumns.Tags, string.Join("/", tags));
-		}
-
-		public void SetFlags(ref TreeIter iter, MessageListFlags flags)
-		{
-			SetValue(iter, (int)MessageListColumns.Flags, (int)flags);
+			return (string[])GetValue(iter, (int)MessageListColumns.Tags);
 		}
 
 		public void SetValues(ref TreeIter iter, NM.Message msg, MessageListFlags flags,
 		                      int depth, int msgNum, int threadNum)
 		{
-			var tags = msg.GetTags().ToList();
+			var tags = msg.GetTags().ToArray();
 
 			if (tags.Contains("unread"))
 				flags |= MessageListFlags.Unread;
@@ -64,7 +59,7 @@ namespace NotMuchGUI
 				msg.From,
 				msg.Subject,
 				msg.DateStamp,
-				string.Join("/", tags),
+				tags,
 				(int)flags,
 				depth,
 				msgNum,
@@ -75,7 +70,7 @@ namespace NotMuchGUI
 		{
 			var flags = GetFlags(ref iter);
 
-			var tags = msg.GetTags().ToList();
+			var tags = msg.GetTags().ToArray();
 
 			if (tags.Contains("unread"))
 				flags |= MessageListFlags.Unread;
@@ -92,7 +87,7 @@ namespace NotMuchGUI
 				msg.From,
 				msg.Subject,
 				msg.DateStamp,
-				string.Join("/", tags),
+				tags,
 				(int)flags);
 		}
 	}

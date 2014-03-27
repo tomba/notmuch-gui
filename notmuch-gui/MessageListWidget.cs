@@ -62,7 +62,7 @@ namespace NotMuchGUI
 			c.FixedWidth = 150;
 			tv.AppendColumn(c);
 
-			c = CreateTreeViewColumn("Tags", (int)MessageListColumns.Tags);
+			c = CreateTagsTreeViewColumn("Tags", (int)MessageListColumns.Tags);
 			c.FixedWidth = 150;
 			tv.AppendColumn(c);
 
@@ -122,6 +122,18 @@ namespace NotMuchGUI
 			SetCommonCellSettings(column, c, model, ref iter);
 		}
 
+		void TagsCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel _model, Gtk.TreeIter iter)
+		{
+			var model = (MessageTreeStore)_model;
+			var c = (Gtk.CellRendererText)cell;
+
+			var tags = model.GetTags(ref iter);
+
+			c.Text = tags != null ? string.Join("/", tags) : "";
+
+			SetCommonCellSettings(column, c, model, ref iter);
+		}
+
 		TreeViewColumn CreateTreeViewColumn(string name, int col)
 		{
 			var re = new Gtk.CellRendererText();
@@ -141,7 +153,7 @@ namespace NotMuchGUI
 		TreeViewColumn CreateDateTreeViewColumn(string name, int col)
 		{
 			var re = new Gtk.CellRendererText();
-			var c = new TreeViewColumn(name, re, "text", col)
+			var c = new TreeViewColumn(name, re)
 			{
 				Expand = false,
 				Sizing = TreeViewColumnSizing.Fixed,
@@ -154,6 +166,26 @@ namespace NotMuchGUI
 			};
 
 			c.SetCellDataFunc(re, DateCellDataFunc);
+
+			return c;
+		}
+
+		TreeViewColumn CreateTagsTreeViewColumn(string name, int col)
+		{
+			var re = new Gtk.CellRendererText();
+			var c = new TreeViewColumn(name, re)
+			{
+				Expand = false,
+				Sizing = TreeViewColumnSizing.Fixed,
+				FixedWidth = 50,
+				Resizable = true,
+				Reorderable = true,
+				//SortIndicator = true,
+				//SortOrder =  SortType.Descending,
+				SortColumnId = col,
+			};
+
+			c.SetCellDataFunc(re, TagsCellDataFunc);
 
 			return c;
 		}
