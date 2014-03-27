@@ -8,6 +8,7 @@ namespace NotMuchGUI
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 		private global::Gtk.TreeView tagsTreeview;
 		private global::Gtk.HBox hbox1;
+		private global::Gtk.Button newButton;
 		private global::Gtk.Button resetButton;
 		private global::Gtk.Button applyButton;
 
@@ -38,17 +39,29 @@ namespace NotMuchGUI
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
+			this.newButton = new global::Gtk.Button ();
+			this.newButton.CanFocus = true;
+			this.newButton.Name = "newButton";
+			this.newButton.UseUnderline = true;
+			this.newButton.Label = global::Mono.Unix.Catalog.GetString ("New");
+			this.hbox1.Add (this.newButton);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.newButton]));
+			w3.PackType = ((global::Gtk.PackType)(1));
+			w3.Position = 0;
+			w3.Expand = false;
+			w3.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
 			this.resetButton = new global::Gtk.Button ();
 			this.resetButton.CanFocus = true;
 			this.resetButton.Name = "resetButton";
 			this.resetButton.UseUnderline = true;
 			this.resetButton.Label = global::Mono.Unix.Catalog.GetString ("Reset");
 			this.hbox1.Add (this.resetButton);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.resetButton]));
-			w3.PackType = ((global::Gtk.PackType)(1));
-			w3.Position = 0;
-			w3.Expand = false;
-			w3.Fill = false;
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.resetButton]));
+			w4.PackType = ((global::Gtk.PackType)(1));
+			w4.Position = 1;
+			w4.Expand = false;
+			w4.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.applyButton = new global::Gtk.Button ();
 			this.applyButton.CanFocus = true;
@@ -56,16 +69,16 @@ namespace NotMuchGUI
 			this.applyButton.UseUnderline = true;
 			this.applyButton.Label = global::Mono.Unix.Catalog.GetString ("Apply");
 			this.hbox1.Add (this.applyButton);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.applyButton]));
-			w4.PackType = ((global::Gtk.PackType)(1));
-			w4.Position = 1;
-			w4.Expand = false;
-			w4.Fill = false;
-			this.vbox2.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox1]));
-			w5.Position = 1;
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.applyButton]));
+			w5.PackType = ((global::Gtk.PackType)(1));
+			w5.Position = 2;
 			w5.Expand = false;
 			w5.Fill = false;
+			this.vbox2.Add (this.hbox1);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox1]));
+			w6.Position = 1;
+			w6.Expand = false;
+			w6.Fill = false;
 			this.Add (this.vbox2);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
@@ -73,6 +86,7 @@ namespace NotMuchGUI
 			this.Hide ();
 			this.applyButton.Clicked += new global::System.EventHandler (this.OnApplyButtonClicked);
 			this.resetButton.Clicked += new global::System.EventHandler (this.OnResetButtonClicked);
+			this.newButton.Clicked += new global::System.EventHandler (this.OnNewButtonClicked);
 		}
 	}
 }
