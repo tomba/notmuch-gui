@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Linq;
+using NM = NotMuch;
 
 namespace NotMuchGUI
 {
@@ -75,6 +76,9 @@ namespace NotMuchGUI
 
 					using (var query = db.CreateQuery(val.Query))
 					{
+						query.AddTagExclude("deleted");
+						query.Exclude = NM.Exclude.TRUE;
+
 						int count = query.CountMessages();
 
 						GLib.Idle.Add(() =>

@@ -329,6 +329,9 @@ namespace NotMuchGUI
 
 				var query = db.CreateQuery(queryString);
 
+				query.AddTagExclude("deleted");
+				query.Exclude = NM.Exclude.TRUE;
+
 				query.Sort = NM.SortOrder.NEWEST_FIRST;
 
 				long t1 = sw.ElapsedMilliseconds;

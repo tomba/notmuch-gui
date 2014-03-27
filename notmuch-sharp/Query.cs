@@ -64,6 +64,11 @@ namespace NotMuch
 			set { notmuch_query_set_omit_excluded(m_handle, value); }
 		}
 
+		public void AddTagExclude(string tag)
+		{
+			notmuch_query_add_tag_exclude(m_handle, tag);
+		}
+
 		[DllImport("libnotmuch")]
 		static extern void notmuch_query_destroy(IntPtr query);
 
@@ -87,6 +92,9 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		static extern void notmuch_query_set_omit_excluded(IntPtr query, Exclude omit_excluded);
+
+		[DllImport("libnotmuch")]
+		static extern void notmuch_query_add_tag_exclude(IntPtr query, string tag);
 	}
 
 	public enum Exclude
