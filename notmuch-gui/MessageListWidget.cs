@@ -98,6 +98,8 @@ namespace NotMuchGUI
 				cell.CellBackgroundGdk = CellBgColor1;
 			else
 				cell.CellBackgroundGdk = CellBgColor2;
+
+			cell.Strikethrough = (flags & MessageListFlags.Deleted) != 0 ? true : false;
 		}
 
 		void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel _model, Gtk.TreeIter iter)
@@ -183,6 +185,11 @@ namespace NotMuchGUI
 						flags |= MessageListFlags.Unread;
 					else
 						flags &= ~MessageListFlags.Unread;
+
+					if (tags.Contains("deleted"))
+						flags |= MessageListFlags.Deleted;
+					else
+						flags &= ~MessageListFlags.Deleted;
 
 					model.SetFlags(ref iter, flags);
 
@@ -521,6 +528,9 @@ namespace NotMuchGUI
 
 				if (tags.Contains("unread"))
 					flags |= MessageListFlags.Unread;
+
+				if (tags.Contains("deleted"))
+					flags |= MessageListFlags.Deleted;
 
 				model.SetValues(ref iter,
 					msg.ID,

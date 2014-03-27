@@ -22,6 +22,7 @@ namespace NotMuchGUI
 		Unread = 1 << 0,
 		Match = 1 << 1,
 		Excluded = 1 << 2,
+		Deleted = 1 << 3,
 	}
 }
 

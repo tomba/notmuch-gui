@@ -310,6 +310,47 @@ public partial class MainWindow: Gtk.Window
 		Console.WriteLine("GC in {0} ms", sw.ElapsedMilliseconds);
 	}
 
+	protected void OnDeleteActionActivated(object sender, EventArgs e)
+	{
+		var ids = messageListWidget.GetSelectedMessageIDs();
+
+		if (ids.Length == 0)
+			return;
+
+		bool deleted;
+
+		using (var cdb = new CachedDB())
+		{
+			var db = cdb.Database;
+
+			var curId = messageListWidget.GetCurrentMessageID();
+
+			var msg = db.GetMessage(curId);
+
+			deleted = msg.GetTags().Contains("deleted");
+
+			deleted = !deleted;
+		}
+
+		using (var cdb = new CachedDB(true))
+		{
+			var db = cdb.Database;
+
+			foreach (var id in ids)
+			{
+				var msg = db.FindMessage(id);
+
+				if (deleted)
+					msg.AddTag("deleted");
+				else
+					msg.RemoveTag("deleted");
+			}
+		}
+
+		messageListWidget.RefreshMessages(ids);
+		tagsWidget.UpdateTagsView(ids);
+	}
+
 	protected void OnReplyAllActionActivated(object sender, EventArgs e)
 	{
 		Reply(true);

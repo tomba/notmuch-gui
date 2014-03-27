@@ -13,6 +13,7 @@ public partial class MainWindow
 	private global::Gtk.Action refreshAction;
 	private global::Gtk.ToggleAction msgSrcAction;
 	private global::Gtk.Action fetchAction;
+	private global::Gtk.Action deleteAction;
 	private global::Gtk.VBox vbox2;
 	private global::Gtk.MenuBar menubar1;
 	private global::Gtk.Toolbar toolbar1;
@@ -65,6 +66,9 @@ public partial class MainWindow
 		this.fetchAction = new global::Gtk.Action ("fetchAction", global::Mono.Unix.Catalog.GetString ("Fetch"), null, null);
 		this.fetchAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Fetch");
 		w1.Add (this.fetchAction, null);
+		this.deleteAction = new global::Gtk.Action ("deleteAction", global::Mono.Unix.Catalog.GetString ("Delete"), null, "gtk-delete");
+		this.deleteAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Delete");
+		w1.Add (this.deleteAction, "Delete");
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -78,7 +82,7 @@ public partial class MainWindow
 		this.vbox2.Name = "vbox2";
 		this.vbox2.Spacing = 6;
 		// Container child vbox2.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='ViewAction' action='ViewAction'><menuitem name='refreshAction' action='refreshAction'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='ViewAction' action='ViewAction'><menuitem name='refreshAction' action='refreshAction'/><menuitem name='deleteAction' action='deleteAction'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox2.Add (this.menubar1);
@@ -87,7 +91,7 @@ public partial class MainWindow
 		w2.Expand = false;
 		w2.Fill = false;
 		// Container child vbox2.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/><toolitem name='dbgAction' action='dbgAction'/><toolitem name='threadedAction' action='threadedAction'/><toolitem name='msgSrcAction' action='msgSrcAction'/><toolitem name='fetchAction' action='fetchAction'/></toolbar></ui>");
+		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/><toolitem name='dbgAction' action='dbgAction'/><toolitem name='threadedAction' action='threadedAction'/><toolitem name='msgSrcAction' action='msgSrcAction'/><toolitem name='fetchAction' action='fetchAction'/><toolitem name='deleteAction' action='deleteAction'/></toolbar></ui>");
 		this.toolbar1 = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/toolbar1")));
 		this.toolbar1.Name = "toolbar1";
 		this.toolbar1.ShowArrow = false;
@@ -238,6 +242,7 @@ public partial class MainWindow
 		this.refreshAction.Activated += new global::System.EventHandler (this.OnRefreshActionActivated);
 		this.msgSrcAction.Activated += new global::System.EventHandler (this.OnMsgSrcActionActivated);
 		this.fetchAction.Activated += new global::System.EventHandler (this.OnFetchActionActivated);
+		this.deleteAction.Activated += new global::System.EventHandler (this.OnDeleteActionActivated);
 		this.queryEntry.Changed += new global::System.EventHandler (this.OnQueryEntryChanged);
 		this.queryEntry.Activated += new global::System.EventHandler (this.OnQueryEntryActivated);
 		this.dateSearchEntry.Activated += new global::System.EventHandler (this.OnDateSearchEntryActivated);
