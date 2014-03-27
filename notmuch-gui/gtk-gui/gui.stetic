@@ -76,13 +76,19 @@
         <property name="ShortLabel" translatable="yes">Fetch</property>
         <signal name="Activated" handler="OnFetchActionActivated" />
       </action>
-      <action id="deleteAction">
+      <action id="DeleteAction">
         <property name="Type">Action</property>
         <property name="Accelerator">Delete</property>
         <property name="Label" translatable="yes">Delete</property>
         <property name="ShortLabel" translatable="yes">Delete</property>
-        <property name="StockId">gtk-delete</property>
         <signal name="Activated" handler="OnDeleteActionActivated" />
+      </action>
+      <action id="toggleReadAction">
+        <property name="Type">Action</property>
+        <property name="Accelerator">m</property>
+        <property name="Label" translatable="yes">Toggle Read</property>
+        <property name="ShortLabel" translatable="yes">Toggle Read</property>
+        <signal name="Activated" handler="OnToggleReadActionActivated" />
       </action>
     </action-group>
     <property name="MemberName" />
@@ -102,7 +108,8 @@
             <node name="menubar1" type="Menubar">
               <node type="Menu" action="ViewAction">
                 <node type="Menuitem" action="refreshAction" />
-                <node type="Menuitem" action="deleteAction" />
+                <node type="Menuitem" action="DeleteAction" />
+                <node type="Menuitem" action="toggleReadAction" />
               </node>
             </node>
           </widget>
@@ -126,7 +133,8 @@
               <node type="Toolitem" action="threadedAction" />
               <node type="Toolitem" action="msgSrcAction" />
               <node type="Toolitem" action="fetchAction" />
-              <node type="Toolitem" action="deleteAction" />
+              <node type="Toolitem" action="DeleteAction" />
+              <node type="Toolitem" action="toggleReadAction" />
             </node>
           </widget>
           <packing>

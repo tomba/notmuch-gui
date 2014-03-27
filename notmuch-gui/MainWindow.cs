@@ -77,49 +77,6 @@ public partial class MainWindow: Gtk.Window
 
 		var queries = m_queryStore.AsEnumerable().Select(arr => (string)arr[0]).ToArray();
 		m_queryCountUpdater.Start(queries);
-
-		this.KeyPressEvent += HandleKeyPressEvent;
-	}
-
-	void HandleKeyPressEvent(object o, KeyPressEventArgs args)
-	{
-		if (args.Event.Key == Gdk.Key.m)
-		{
-			bool unread;
-
-			using (var cdb = new CachedDB())
-			{
-				var db = cdb.Database;
-
-				var curId = messageListWidget.GetCurrentMessageID();
-
-				var msg = db.GetMessage(curId);
-
-				unread = msg.GetTags().Contains("unread");
-
-				unread = !unread;
-			}
-
-			var selected = messageListWidget.GetSelectedMessageIDs();
-
-			using (var cdb = new CachedDB(true))
-			{
-				var db = cdb.Database;
-
-				foreach (var id in selected)
-				{
-					var msg = db.GetMessage(id);
-
-					if (unread)
-						msg.AddTag("unread");
-					else
-						msg.RemoveTag("unread");
-				}
-			}
-
-			messageListWidget.RefreshMessages(selected);
-			tagsWidget.UpdateTagsView(selected);
-		}
 	}
 
 	void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer _cell, Gtk.TreeModel model, Gtk.TreeIter iter)
@@ -490,5 +447,43 @@ public partial class MainWindow: Gtk.Window
 		wnd.ParentWindow = this.RootWindow;
 		wnd.ShowAll();
 		wnd.Run();
+	}
+
+	protected void OnToggleReadActionActivated(object sender, EventArgs e)
+	{
+		bool unread;
+
+		using (var cdb = new CachedDB())
+		{
+			var db = cdb.Database;
+
+			var curId = messageListWidget.GetCurrentMessageID();
+
+			var msg = db.GetMessage(curId);
+
+			unread = msg.GetTags().Contains("unread");
+
+			unread = !unread;
+		}
+
+		var ids = messageListWidget.GetSelectedMessageIDs();
+
+		using (var cdb = new CachedDB(true))
+		{
+			var db = cdb.Database;
+
+			foreach (var id in ids)
+			{
+				var msg = db.GetMessage(id);
+
+				if (unread)
+					msg.AddTag("unread");
+				else
+					msg.RemoveTag("unread");
+			}
+		}
+
+		messageListWidget.RefreshMessages(ids);
+		tagsWidget.UpdateTagsView(ids);
 	}
 }
