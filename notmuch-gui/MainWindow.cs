@@ -79,6 +79,28 @@ public partial class MainWindow: Gtk.Window
 		m_queryCountUpdater.Start(queries);
 	}
 
+	protected override bool OnKeyPressEvent(Gdk.EventKey evnt)
+	{
+		bool handled = base.OnKeyPressEvent(evnt);
+
+		if (handled)
+			return true;
+
+		switch (evnt.Key)
+		{
+			case Gdk.Key.m:
+				OnToggleReadActionActivated(null, null);
+				return true;
+
+			case Gdk.Key.Delete:
+				OnDeleteActionActivated(null, null);
+				return true;
+
+			default:
+				return false;
+		}
+	}
+
 	void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer _cell, Gtk.TreeModel model, Gtk.TreeIter iter)
 	{
 		Gtk.CellRendererText cell = (Gtk.CellRendererText)_cell;
