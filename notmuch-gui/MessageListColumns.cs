@@ -20,7 +20,7 @@ namespace NotMuchGUI
 	{
 		None = 0,
 		Unread = 1 << 0,
-		Match = 1 << 1,
+		NoMatch = 1 << 1,
 		Excluded = 1 << 2,
 		Deleted = 1 << 3,
 	}

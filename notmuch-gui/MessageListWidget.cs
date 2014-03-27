@@ -89,7 +89,7 @@ namespace NotMuchGUI
 
 			cell.Weight = (flags & MessageListFlags.Unread) != 0 ? (int)Pango.Weight.Bold : (int)Pango.Weight.Normal;
 
-			if ((flags & MessageListFlags.Match) == 0)
+			if ((flags & MessageListFlags.NoMatch) != 0)
 				cell.ForegroundGdk = new Gdk.Color(200, 200, 200);
 			else
 				cell.Foreground = null;
@@ -175,23 +175,8 @@ namespace NotMuchGUI
 						return false;
 
 					var msg = db.FindMessage(id);
-					var tags = msg.GetTags().ToList();
-					
-					model.SetTags(ref iter, tags);
 
-					MessageListFlags flags = model.GetFlags(ref iter);
-
-					if (tags.Contains("unread"))
-						flags |= MessageListFlags.Unread;
-					else
-						flags &= ~MessageListFlags.Unread;
-
-					if (tags.Contains("deleted"))
-						flags |= MessageListFlags.Deleted;
-					else
-						flags &= ~MessageListFlags.Deleted;
-
-					model.SetFlags(ref iter, flags);
+					model.UpdateValues(ref iter, msg);
 
 					return false;
 				});
@@ -375,7 +360,7 @@ namespace NotMuchGUI
 				{
 					TreeIter parent = TreeIter.Zero;
 
-					AddMsg(model, msg, 0, count, ref parent, 0, MessageListFlags.Match);
+					AddMsg(model, msg, 0, count, ref parent, 0, MessageListFlags.None);
 
 					count++;
 
@@ -517,8 +502,6 @@ namespace NotMuchGUI
 			{
 				//Console.WriteLine("append {0}", msg.Id);
 
-				var tags = msg.GetTags().ToList();
-
 				TreeIter iter;
 
 				if (parent.Equals(TreeIter.Zero))
@@ -526,22 +509,7 @@ namespace NotMuchGUI
 				else
 					iter = model.AppendNode(parent);
 
-				if (tags.Contains("unread"))
-					flags |= MessageListFlags.Unread;
-
-				if (tags.Contains("deleted"))
-					flags |= MessageListFlags.Deleted;
-
-				model.SetValues(ref iter,
-					msg.ID,
-					msg.From,
-					msg.Subject,
-					msg.DateStamp,
-					tags,
-					flags,
-					depth,
-					msgNum,
-					threadNum);
+				model.SetValues(ref iter, msg, flags, depth, msgNum, threadNum);
 
 				return iter;
 			}
@@ -553,8 +521,8 @@ namespace NotMuchGUI
 
 				MessageListFlags flags = MessageListFlags.None;
 
-				if (msg.GetFlag(NM.MessageFlag.MATCH))
-					flags |= MessageListFlags.Match;
+				if (!msg.GetFlag(NM.MessageFlag.MATCH))
+					flags |= MessageListFlags.NoMatch;
 
 				if (msg.GetFlag(NM.MessageFlag.EXCLUDED))
 					flags |= MessageListFlags.Excluded;

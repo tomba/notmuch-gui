@@ -1,6 +1,8 @@
 using System;
-using Gtk;
 using System.Collections.Generic;
+using Gtk;
+using NM = NotMuch;
+using System.Linq;
 
 namespace NotMuchGUI
 {
@@ -42,20 +44,56 @@ namespace NotMuchGUI
 			SetValue(iter, (int)MessageListColumns.Flags, (int)flags);
 		}
 
-		public void SetValues(ref TreeIter iter, string msgId, string from, string subject,
-		                      long dateStamp, List<string> tags, MessageListFlags flags,
+		public void SetValues(ref TreeIter iter, NM.Message msg, MessageListFlags flags,
 		                      int depth, int msgNum, int threadNum)
 		{
+			var tags = msg.GetTags().ToList();
+
+			if (tags.Contains("unread"))
+				flags |= MessageListFlags.Unread;
+			else
+				flags &= ~MessageListFlags.Unread;
+
+			if (tags.Contains("deleted"))
+				flags |= MessageListFlags.Deleted;
+			else
+				flags &= ~MessageListFlags.Deleted;
+
 			SetValues(iter,
-				msgId,
-				from,
-				subject,
-				dateStamp,
+				msg.ID,
+				msg.From,
+				msg.Subject,
+				msg.DateStamp,
 				string.Join("/", tags),
 				(int)flags,
 				depth,
 				msgNum,
 				threadNum);
+		}
+
+		public void UpdateValues(ref TreeIter iter, NM.Message msg)
+		{
+			var flags = GetFlags(ref iter);
+
+			var tags = msg.GetTags().ToList();
+
+			if (tags.Contains("unread"))
+				flags |= MessageListFlags.Unread;
+			else
+				flags &= ~MessageListFlags.Unread;
+
+			if (tags.Contains("deleted"))
+				flags |= MessageListFlags.Deleted;
+			else
+				flags &= ~MessageListFlags.Deleted;
+
+			SetValues(iter,
+				msg.ID,
+				msg.From,
+				msg.Subject,
+				msg.DateStamp,
+				string.Join("/", tags),
+				(int)flags);
 		}
 	}
 }
