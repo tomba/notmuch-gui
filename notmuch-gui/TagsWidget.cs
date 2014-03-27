@@ -9,10 +9,11 @@ namespace NotMuchGUI
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class TagsWidget : Gtk.Bin
 	{
-		ListStore m_tagStore;
+		ListStore m_tagsStore;
+		string[] m_tags = new string[0];
+
 		// msgid -> tags[]
 		Dictionary<string, string[]> m_idTagsMap;
-		string[] m_allDBTags = new string[0];
 
 		public event Action<IEnumerable<string>> MsgTagsUpdatedEvent;
 
@@ -36,24 +37,24 @@ namespace NotMuchGUI
 
 			tagsTreeview.AppendColumn(c);
 
-			m_tagStore = new ListStore(typeof(string), typeof(bool), typeof(bool));
-			tagsTreeview.Model = m_tagStore;
+			m_tagsStore = new ListStore(typeof(string), typeof(bool), typeof(bool));
+			tagsTreeview.Model = m_tagsStore;
 		}
 
-		public void SetDBTags(IEnumerable<string> allTags)
+		public void SetDBTags(IEnumerable<string> tags)
 		{
-			m_allDBTags = allTags.ToArray();
+			m_tags = tags.ToArray();
 		}
 
 		void OnTagToggled(object sender, ToggledArgs args)
 		{
 			TreeIter iter;
 
-			if (m_tagStore.GetIter(out iter, new TreePath(args.Path)))
+			if (m_tagsStore.GetIter(out iter, new TreePath(args.Path)))
 			{
-				bool old = (bool)m_tagStore.GetValue(iter, 1);
-				m_tagStore.SetValue(iter, 1, !old);
-				m_tagStore.SetValue(iter, 2, false);
+				bool old = (bool)m_tagsStore.GetValue(iter, 1);
+				m_tagsStore.SetValue(iter, 1, !old);
+				m_tagsStore.SetValue(iter, 2, false);
 			}
 
 			applyButton.Sensitive = true;
@@ -62,7 +63,7 @@ namespace NotMuchGUI
 		public void Clear()
 		{
 			m_idTagsMap = null;
-			m_tagStore.Clear();
+			m_tagsStore.Clear();
 			this.Sensitive = false;
 		}
 
@@ -86,20 +87,28 @@ namespace NotMuchGUI
 
 			var allTags = m_idTagsMap.Values.SelectMany(v => v);
 
-			var tagCounts = m_allDBTags.Select(t => new { Tag = t, Count = allTags.Count(arg => arg == t) });
+			/* add new tags to m_allDBTags */
+			var missingTags = allTags.Except(m_tags).ToArray();
+			if (missingTags.Length > 0)
+			{
+				m_tags = m_tags.Concat(missingTags).ToArray();
+				Array.Sort(m_tags);
+			}
+
+			var tagCounts = m_tags.Select(t => new { Tag = t, Count = allTags.Count(arg => arg == t) });
 
 			int numMsgs = ids.Length;
 
-			m_tagStore.Clear();
+			m_tagsStore.Clear();
 
 			foreach (var tagCount in tagCounts)
 			{
 				if (tagCount.Count == numMsgs)
-					m_tagStore.AppendValues(tagCount.Tag, true, false);
+					m_tagsStore.AppendValues(tagCount.Tag, true, false);
 				else if (tagCount.Count > 0)
-					m_tagStore.AppendValues(tagCount.Tag, false, true);
+					m_tagsStore.AppendValues(tagCount.Tag, false, true);
 				else
-					m_tagStore.AppendValues(tagCount.Tag, false, false);
+					m_tagsStore.AppendValues(tagCount.Tag, false, false);
 			}
 		}
 
@@ -111,7 +120,7 @@ namespace NotMuchGUI
 			var inconsistentList = new List<string>();
 			var selectedList = new List<string>();
 
-			foreach (object[] item in m_tagStore)
+			foreach (object[] item in m_tagsStore)
 			{
 				string tag = (string)item[0];
 				bool selected = (bool)item[1];
