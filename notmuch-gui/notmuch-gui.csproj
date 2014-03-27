@@ -89,10 +89,10 @@
     <Compile Include="QueryCountUpdater.cs" />
     <Compile Include="MessageListColumns.cs" />
     <Compile Include="KeyFileExtensions.cs" />
-    <Compile Include="RunWindow.cs" />
-    <Compile Include="gtk-gui\NotMuchGUI.RunWindow.cs" />
     <Compile Include="CachedDB.cs" />
     <Compile Include="MessageTreeStore.cs" />
+    <Compile Include="FetchDialog.cs" />
+    <Compile Include="gtk-gui\NotMuchGUI.FetchDialog.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

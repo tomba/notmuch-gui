@@ -401,11 +401,16 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnFetchActionActivated(object sender, EventArgs e)
 	{
-		var wnd = new RunWindow();
-		wnd.RunDone += () => OnRefreshActionActivated(null, null);
-		wnd.ParentWindow = this.RootWindow;
-		wnd.ShowAll();
-		wnd.Run();
+		var dlg = new FetchDialog();
+		dlg.ParentWindow = this.RootWindow;
+		dlg.Start();
+		var resp = (ResponseType)dlg.Run();
+
+		Console.WriteLine("got resp {0}", resp);
+
+		dlg.Destroy();
+
+		OnRefreshActionActivated(null, null);
 	}
 
 	protected void OnToggleReadActionActivated(object sender, EventArgs e)
