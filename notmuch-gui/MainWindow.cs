@@ -410,26 +410,22 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnToggleReadActionActivated(object sender, EventArgs e)
 	{
-		bool unread;
+		var ids = messageListWidget.GetSelectedMessageIDs();
 
-		using (var cdb = new CachedDB())
+		if (ids.Length == 0)
+			return;
+
+		using (var cdb = new CachedDB(true))
 		{
 			var db = cdb.Database;
 
 			var curId = messageListWidget.GetCurrentMessageID();
 
-			var msg = db.GetMessage(curId);
+			var curMsg = db.GetMessage(curId);
 
-			unread = msg.GetTags().Contains("unread");
+			bool unread = curMsg.GetTags().Contains("unread");
 
 			unread = !unread;
-		}
-
-		var ids = messageListWidget.GetSelectedMessageIDs();
-
-		using (var cdb = new CachedDB(true))
-		{
-			var db = cdb.Database;
 
 			foreach (var id in ids)
 			{
@@ -453,24 +449,17 @@ public partial class MainWindow: Gtk.Window
 		if (ids.Length == 0)
 			return;
 
-		bool deleted;
-
-		using (var cdb = new CachedDB())
+		using (var cdb = new CachedDB(true))
 		{
 			var db = cdb.Database;
 
 			var curId = messageListWidget.GetCurrentMessageID();
 
-			var msg = db.GetMessage(curId);
+			var curMsg = db.GetMessage(curId);
 
-			deleted = msg.GetTags().Contains("deleted");
+			bool deleted = curMsg.GetTags().Contains("deleted");
 
 			deleted = !deleted;
-		}
-
-		using (var cdb = new CachedDB(true))
-		{
-			var db = cdb.Database;
 
 			foreach (var id in ids)
 			{
