@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>NotMuch</RootNamespace>
     <AssemblyName>notmuch-sharp</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
