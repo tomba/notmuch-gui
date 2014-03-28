@@ -10,7 +10,7 @@
     <widget-library name="vte-sharp, Version=0.16.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../bin/Debug/notmuch-gui.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="997 646">
+  <widget class="Gtk.Window" id="MainWindow" design-size="873 646">
     <action-group name="Default">
       <action id="dialogWarningAction">
         <property name="Type">Action</property>
@@ -46,6 +46,7 @@
         <property name="Type">Toggle</property>
         <property name="Label" translatable="yes">Threaded</property>
         <property name="ShortLabel" translatable="yes">Threaded</property>
+        <property name="StockId">gtk-justify-right</property>
         <property name="DrawAsRadio">False</property>
         <property name="Active">False</property>
         <signal name="Activated" handler="OnThreadedActionActivated" />
@@ -89,6 +90,16 @@
         <property name="ShortLabel" translatable="yes">Toggle Read</property>
         <signal name="Activated" handler="OnToggleReadActionActivated" />
       </action>
+      <action id="goBackAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes" />
+        <property name="StockId">gtk-go-back</property>
+      </action>
+      <action id="goForwardAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes" />
+        <property name="StockId">gtk-go-forward</property>
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
@@ -129,7 +140,6 @@
               <node type="Toolitem" action="editAction" />
               <node type="Toolitem" action="replyAllAction" />
               <node type="Toolitem" action="dbgAction" />
-              <node type="Toolitem" action="threadedAction" />
               <node type="Toolitem" action="msgSrcAction" />
               <node type="Toolitem" action="fetchAction" />
               <node type="Toolitem" action="DeleteAction" />
@@ -149,6 +159,23 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
+              <widget class="Gtk.Toolbar" id="toolbar2">
+                <property name="MemberName" />
+                <property name="ShowArrow">False</property>
+                <property name="ButtonStyle">Icons</property>
+                <node name="__gtksharp_109_Stetic_Editor_ActionToolbar" type="Toolbar">
+                  <node type="Toolitem" action="goBackAction" />
+                  <node type="Toolitem" action="goForwardAction" />
+                  <node type="Toolitem" action="threadedAction" />
+                </node>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">False</property>
+                <property name="Expand">False</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gtk.Entry" id="queryEntry">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
@@ -158,12 +185,9 @@
                 <signal name="Activated" handler="OnQueryEntryActivated" />
               </widget>
               <packing>
-                <property name="Position">0</property>
-                <property name="AutoSize">True</property>
+                <property name="Position">1</property>
+                <property name="AutoSize">False</property>
               </packing>
-            </child>
-            <child>
-              <placeholder />
             </child>
             <child>
               <placeholder />
