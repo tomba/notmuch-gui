@@ -371,18 +371,10 @@ public partial class MainWindow: Gtk.Window
 	{
 		var queryString = queryEntry.Text;
 
-		if (string.IsNullOrWhiteSpace(dateSearchEntry.Text) == false)
-			queryString = queryString + String.Format(" date:{0}", dateSearchEntry.Text);
-
 		messageListWidget.ExecuteQuery(queryString, retainSelection);
 	}
 
 	protected void OnQueryEntryActivated(object sender, EventArgs e)
-	{
-		ExecuteQuery();
-	}
-
-	protected void OnDateSearchEntryActivated(object sender, EventArgs e)
 	{
 		ExecuteQuery();
 	}
