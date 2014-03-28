@@ -2,7 +2,7 @@ using System;
 
 namespace NotMuchGUI
 {
-	public class QueryHistoryItem
+	public class QueryHistoryItem : IEquatable<QueryHistoryItem>
 	{
 		public string Query { get; set; }
 		public bool Threaded { get; set; }
@@ -10,5 +10,14 @@ namespace NotMuchGUI
 		public QueryHistoryItem()
 		{
 		}
+
+		#region IEquatable implementation
+
+		public bool Equals(QueryHistoryItem other)
+		{
+			return this.Query == other.Query && this.Threaded == other.Threaded;
+		}
+
+		#endregion
 	}
 }

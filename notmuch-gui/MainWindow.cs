@@ -365,23 +365,65 @@ public partial class MainWindow: Gtk.Window
 		//ExecuteQuery(queryStr);
 	}
 
-	void ExecuteQuery(bool retainSelection = false)
+	LinkedList<QueryHistoryItem> m_history = new LinkedList<QueryHistoryItem>();
+	LinkedListNode<QueryHistoryItem> m_currentItem;
+	bool m_skipExecute;
+
+	void ExecuteQuery(QueryHistoryItem item, bool retainSelection = false)
 	{
-		string query = queryEntry.Text;
-		bool threaded = threadedAction.Active;
-
-		var item = new QueryHistoryItem()
-		{
-			Query = query,
-			Threaded = threaded,
-		};
-
-		messageListWidget.ExecuteQuery(query, threaded, retainSelection);
+		messageListWidget.ExecuteQuery(item.Query, item.Threaded, retainSelection);
 	}
 
 	protected void OnQueryEntryActivated(object sender, EventArgs e)
 	{
-		ExecuteQuery();
+		if (m_skipExecute)
+			return;
+
+		ExecuteNewUIQuery(false);
+	}
+
+	protected void OnThreadedActionActivated(object sender, EventArgs e)
+	{
+		if (m_skipExecute)
+			return;
+
+		ExecuteNewUIQuery(true);
+	}
+
+	void ExecuteNewUIQuery(bool retainSelection)
+	{
+		if (queryEntry.Text.Length == 0)
+			return;
+
+		var item = new QueryHistoryItem()
+		{
+			Query = queryEntry.Text,
+			Threaded = threadedAction.Active,
+		};
+
+		if (m_currentItem != null && item.Equals(m_currentItem.Value))
+			return;
+
+		ExecuteQuery(item, retainSelection);
+
+		var node = new LinkedListNode<QueryHistoryItem>(item);
+
+		if (m_currentItem != null)
+		{
+			while (m_currentItem != m_history.Last)
+				m_history.RemoveLast();
+		}
+
+		m_history.AddLast(node);
+		m_currentItem = node;
+
+		goBackAction.Sensitive = m_currentItem.Previous != null;
+		goForwardAction.Sensitive = m_currentItem.Next != null;
+	}
+
+	protected void OnRefreshActionActivated(object sender, EventArgs e)
+	{
+		ExecuteQuery(m_currentItem.Value, true);
 	}
 
 	protected void OnDbgActionActivated(object sender, EventArgs e)
@@ -397,16 +439,6 @@ public partial class MainWindow: Gtk.Window
 			m_dbgWnd = new DebugWindow();
 			m_dbgWnd.ShowAll();
 		}
-	}
-
-	protected void OnThreadedActionActivated(object sender, EventArgs e)
-	{
-		ExecuteQuery(true);
-	}
-
-	protected void OnRefreshActionActivated(object sender, EventArgs e)
-	{
-		ExecuteQuery(true);
 	}
 
 	protected void OnMsgSrcActionActivated(object sender, EventArgs e)
@@ -498,9 +530,28 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnGoBackActionActivated(object sender, EventArgs e)
 	{
+		m_currentItem = m_currentItem.Previous;
+		UpdateAfterCurrentItemChange();
 	}
 
 	protected void OnGoForwardActionActivated(object sender, EventArgs e)
 	{
+		m_currentItem = m_currentItem.Next;
+		UpdateAfterCurrentItemChange();
+	}
+
+	void UpdateAfterCurrentItemChange()
+	{
+		goBackAction.Sensitive = m_currentItem.Previous != null;
+		goForwardAction.Sensitive = m_currentItem.Next != null;
+
+		ExecuteQuery(m_currentItem.Value, false);
+
+		m_skipExecute = true;
+
+		queryEntry.Text = m_currentItem.Value.Query;
+		threadedAction.Active = m_currentItem.Value.Threaded;
+
+		m_skipExecute = false;
 	}
 }

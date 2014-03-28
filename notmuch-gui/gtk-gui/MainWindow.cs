@@ -75,8 +75,10 @@ public partial class MainWindow
 		this.toggleReadAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Toggle Read");
 		w1.Add (this.toggleReadAction, null);
 		this.goBackAction = new global::Gtk.Action ("goBackAction", null, null, "gtk-go-back");
+		this.goBackAction.Sensitive = false;
 		w1.Add (this.goBackAction, null);
 		this.goForwardAction = new global::Gtk.Action ("goForwardAction", null, null, "gtk-go-forward");
+		this.goForwardAction.Sensitive = false;
 		w1.Add (this.goForwardAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
