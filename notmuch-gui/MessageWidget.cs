@@ -42,8 +42,8 @@ namespace NotMuchGUI
 			labelSubject.Text = "";
 			labelDate.Text = "";
 			labelMsgID.Text = "";
-			labelContentType.Text = "";
-			labelCharset.Text = "";
+			labelContent.Text = "";
+			labelThreadID.Text = "";
 
 			m_webView.LoadString("", null, null, null);
 			this.HtmlContent = null;
@@ -89,7 +89,8 @@ namespace NotMuchGUI
 			labelCc.Text = msg.Cc;
 			labelSubject.Text = msg.Subject;
 			labelDate.Text = msg.Date.ToLocalTime().ToString("g");
-			labelMsgID.Text = msg.ID;
+			labelMsgID.Text = "id:" + msg.ID;
+			labelThreadID.Text = "thread:" + msg.ThreadID;
 
 			GMime.Part textpart = null;
 
@@ -107,8 +108,9 @@ namespace NotMuchGUI
 
 			var html = PartToHtml(textpart);
 
-			labelContentType.Text = textpart.ContentType.ToString();
-			labelCharset.Text = textpart.ContentType.GetParameter("charset");
+			labelContent.Text = String.Format("{0} ({1})",
+				textpart.ContentType,
+				textpart.ContentType.GetParameter("charset"));
 
 			this.HtmlContent = html;
 
