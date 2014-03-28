@@ -13,8 +13,6 @@ namespace NotMuchGUI
 		public event EventHandler MessageSelected;
 		public event EventHandler CountsChanged;
 
-		public bool ThreadedView { get; set; }
-
 		public int TotalCount { get; private set; }
 
 		public int Count { get; private set; }
@@ -258,7 +256,7 @@ namespace NotMuchGUI
 			return arr;
 		}
 
-		public void ExecuteQuery(string queryString, bool retainSelection)
+		public void ExecuteQuery(string queryString, bool threaded, bool retainSelection)
 		{
 			if (m_work != null)
 			{
@@ -272,7 +270,7 @@ namespace NotMuchGUI
 				return;
 			}
 
-			m_work = new MyWork(this, queryString, retainSelection);
+			m_work = new MyWork(this, queryString, threaded, retainSelection);
 			m_work.Start();
 		}
 
@@ -291,11 +289,13 @@ namespace NotMuchGUI
 			string m_queryString;
 			bool m_cancel;
 			string[] m_selectMsgIDs;
+			bool m_threaded;
 
-			public MyWork(MessageListWidget parent, string queryString, bool retainSelection)
+			public MyWork(MessageListWidget parent, string queryString, bool threaded, bool retainSelection)
 			{
 				m_parent = parent;
 				m_queryString = queryString;
+				m_threaded = threaded;
 				if (retainSelection)
 					m_selectMsgIDs = parent.GetSelectedMessageIDs();
 				else
@@ -342,7 +342,7 @@ namespace NotMuchGUI
 
 				var model = new MessageTreeStore();
 
-				if (!m_parent.ThreadedView)
+				if (!m_threaded)
 				{
 					SearchMessages(query, model, out count);
 					m_parent.messagesTreeview.Model = model;

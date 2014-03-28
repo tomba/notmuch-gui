@@ -93,6 +93,7 @@
     <Compile Include="MessageTreeStore.cs" />
     <Compile Include="FetchDialog.cs" />
     <Compile Include="gtk-gui\NotMuchGUI.FetchDialog.cs" />
+    <Compile Include="QueryHistoryItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

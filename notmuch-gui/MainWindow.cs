@@ -37,9 +37,7 @@ public partial class MainWindow: Gtk.Window
 			});
 		};
 
-		messageListWidget.ThreadedView = true;
-
-		threadedAction.Active = messageListWidget.ThreadedView;
+		threadedAction.Active = true;
 
 		SetupQueryList();
 
@@ -369,9 +367,16 @@ public partial class MainWindow: Gtk.Window
 
 	void ExecuteQuery(bool retainSelection = false)
 	{
-		var queryString = queryEntry.Text;
+		string query = queryEntry.Text;
+		bool threaded = threadedAction.Active;
 
-		messageListWidget.ExecuteQuery(queryString, retainSelection);
+		var item = new QueryHistoryItem()
+		{
+			Query = query,
+			Threaded = threaded,
+		};
+
+		messageListWidget.ExecuteQuery(query, threaded, retainSelection);
 	}
 
 	protected void OnQueryEntryActivated(object sender, EventArgs e)
@@ -396,10 +401,6 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnThreadedActionActivated(object sender, EventArgs e)
 	{
-		var b = (ToggleAction)sender;
-
-		messageListWidget.ThreadedView = b.Active;
-
 		ExecuteQuery(true);
 	}
 
@@ -493,5 +494,13 @@ public partial class MainWindow: Gtk.Window
 
 		messageListWidget.RefreshMessages(ids);
 		tagsWidget.UpdateTagsView(ids);
+	}
+
+	protected void OnGoBackActionActivated(object sender, EventArgs e)
+	{
+	}
+
+	protected void OnGoForwardActionActivated(object sender, EventArgs e)
+	{
 	}
 }
