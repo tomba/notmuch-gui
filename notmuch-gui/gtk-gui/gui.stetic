@@ -94,11 +94,13 @@
         <property name="Type">Action</property>
         <property name="Label" translatable="yes" />
         <property name="StockId">gtk-go-back</property>
+        <signal name="Activated" handler="OnGoBackActionActivated" />
       </action>
       <action id="goForwardAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes" />
         <property name="StockId">gtk-go-forward</property>
+        <signal name="Activated" handler="OnGoForwardActionActivated" />
       </action>
     </action-group>
     <property name="MemberName" />

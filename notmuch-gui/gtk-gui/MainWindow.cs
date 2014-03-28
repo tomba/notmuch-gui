@@ -244,6 +244,8 @@ public partial class MainWindow
 		this.fetchAction.Activated += new global::System.EventHandler (this.OnFetchActionActivated);
 		this.DeleteAction.Activated += new global::System.EventHandler (this.OnDeleteActionActivated);
 		this.toggleReadAction.Activated += new global::System.EventHandler (this.OnToggleReadActionActivated);
+		this.goBackAction.Activated += new global::System.EventHandler (this.OnGoBackActionActivated);
+		this.goForwardAction.Activated += new global::System.EventHandler (this.OnGoForwardActionActivated);
 		this.queryEntry.Changed += new global::System.EventHandler (this.OnQueryEntryChanged);
 		this.queryEntry.Activated += new global::System.EventHandler (this.OnQueryEntryActivated);
 		this.queryTreeview.CursorChanged += new global::System.EventHandler (this.OnQueryTreeviewCursorChanged);
