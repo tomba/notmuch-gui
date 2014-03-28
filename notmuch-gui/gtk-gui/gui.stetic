@@ -189,9 +189,6 @@
                 <property name="AutoSize">False</property>
               </packing>
             </child>
-            <child>
-              <placeholder />
-            </child>
           </widget>
           <packing>
             <property name="Position">2</property>
@@ -228,7 +225,6 @@
               <widget class="NotMuchGUI.MessageListWidget" id="messageListWidget">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
-                <property name="ThreadedView">False</property>
                 <signal name="MessageSelected" handler="OnMessageListWidgetMessageSelected" />
                 <signal name="CountsChanged" handler="OnMessageListWidgetCountsChanged" />
               </widget>

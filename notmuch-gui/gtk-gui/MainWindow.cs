@@ -161,7 +161,6 @@ public partial class MainWindow
 		this.messageListWidget = new global::NotMuchGUI.MessageListWidget ();
 		this.messageListWidget.Events = ((global::Gdk.EventMask)(256));
 		this.messageListWidget.Name = "messageListWidget";
-		this.messageListWidget.ThreadedView = false;
 		this.hpaned1.Add (this.messageListWidget);
 		this.vbox2.Add (this.hpaned1);
 		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hpaned1]));
