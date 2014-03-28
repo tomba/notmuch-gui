@@ -129,7 +129,7 @@ namespace NotMuchGUI
 
 			var tags = model.GetTags(ref iter);
 
-			c.Text = tags != null ? string.Join("/", tags) : "";
+			c.Text = tags != null ? string.Join(", ", tags) : "";
 
 			SetCommonCellSettings(column, c, model, ref iter);
 		}
