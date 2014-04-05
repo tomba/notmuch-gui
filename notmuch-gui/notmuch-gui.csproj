@@ -93,6 +93,8 @@
     <Compile Include="TextToHtml.cs" />
     <Compile Include="AddressComparer.cs" />
     <Compile Include="Globals.cs" />
+    <Compile Include="ComposeWindow.cs" />
+    <Compile Include="gtk-gui\NotMuchGUI.ComposeWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

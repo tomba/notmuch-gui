@@ -104,6 +104,13 @@
         <property name="StockId">gtk-go-forward</property>
         <signal name="Activated" handler="OnGoForwardActionActivated" />
       </action>
+      <action id="newAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">New</property>
+        <property name="ShortLabel" translatable="yes">New</property>
+        <property name="StockId">gtk-new</property>
+        <signal name="Activated" handler="OnNewActionActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
@@ -141,6 +148,7 @@
             <property name="ButtonStyle">Text</property>
             <node name="toolbar1" type="Toolbar">
               <node type="Toolitem" action="dialogWarningAction" />
+              <node type="Toolitem" action="newAction" />
               <node type="Toolitem" action="editAction" />
               <node type="Toolitem" action="replyAllAction" />
               <node type="Toolitem" action="dbgAction" />
@@ -167,7 +175,7 @@
                 <property name="MemberName" />
                 <property name="ShowArrow">False</property>
                 <property name="ButtonStyle">Icons</property>
-                <node name="__gtksharp_109_Stetic_Editor_ActionToolbar" type="Toolbar">
+                <node name="toolbar2" type="Toolbar">
                   <node type="Toolitem" action="goBackAction" />
                   <node type="Toolitem" action="goForwardAction" />
                   <node type="Toolitem" action="threadedAction" />
@@ -867,6 +875,89 @@
             <property name="Expand">False</property>
             <property name="Fill">False</property>
           </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Window" id="NotMuchGUI.ComposeWindow" design-size="715 455">
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">ComposeWindow</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox2">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.HButtonBox" id="hbuttonbox2">
+            <property name="MemberName" />
+            <property name="Size">3</property>
+            <property name="LayoutStyle">Start</property>
+            <child>
+              <widget class="Gtk.Button" id="editButton">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Edit</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnEditButtonClicked" />
+              </widget>
+              <packing>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="sendButton">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Send</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="button8">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder />
+        </child>
+        <child>
+          <widget class="NotMuchGUI.MessageWidget" id="messagewidget1">
+            <property name="MemberName" />
+            <property name="Events">ButtonPressMask</property>
+            <property name="ShowHtmlSource">False</property>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder />
         </child>
       </widget>
     </child>

@@ -17,6 +17,7 @@ public partial class MainWindow
 	private global::Gtk.Action toggleReadAction;
 	private global::Gtk.Action goBackAction;
 	private global::Gtk.Action goForwardAction;
+	private global::Gtk.Action newAction;
 	private global::Gtk.VBox vbox2;
 	private global::Gtk.MenuBar menubar1;
 	private global::Gtk.Toolbar toolbar1;
@@ -80,6 +81,9 @@ public partial class MainWindow
 		this.goForwardAction = new global::Gtk.Action ("goForwardAction", null, null, "gtk-go-forward");
 		this.goForwardAction.Sensitive = false;
 		w1.Add (this.goForwardAction, null);
+		this.newAction = new global::Gtk.Action ("newAction", global::Mono.Unix.Catalog.GetString ("New"), null, "gtk-new");
+		this.newAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("New");
+		w1.Add (this.newAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -102,7 +106,7 @@ public partial class MainWindow
 		w2.Expand = false;
 		w2.Fill = false;
 		// Container child vbox2.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/><toolitem name='dbgAction' action='dbgAction'/><toolitem name='msgSrcAction' action='msgSrcAction'/><toolitem name='fetchAction' action='fetchAction'/><toolitem name='DeleteAction' action='DeleteAction'/><toolitem name='refreshAction' action='refreshAction'/><toolitem name='toggleReadAction' action='toggleReadAction'/></toolbar></ui>");
+		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='dialogWarningAction' action='dialogWarningAction'/><toolitem name='newAction' action='newAction'/><toolitem name='editAction' action='editAction'/><toolitem name='replyAllAction' action='replyAllAction'/><toolitem name='dbgAction' action='dbgAction'/><toolitem name='msgSrcAction' action='msgSrcAction'/><toolitem name='fetchAction' action='fetchAction'/><toolitem name='DeleteAction' action='DeleteAction'/><toolitem name='refreshAction' action='refreshAction'/><toolitem name='toggleReadAction' action='toggleReadAction'/></toolbar></ui>");
 		this.toolbar1 = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/toolbar1")));
 		this.toolbar1.Name = "toolbar1";
 		this.toolbar1.ShowArrow = false;
@@ -248,6 +252,7 @@ public partial class MainWindow
 		this.toggleReadAction.Activated += new global::System.EventHandler (this.OnToggleReadActionActivated);
 		this.goBackAction.Activated += new global::System.EventHandler (this.OnGoBackActionActivated);
 		this.goForwardAction.Activated += new global::System.EventHandler (this.OnGoForwardActionActivated);
+		this.newAction.Activated += new global::System.EventHandler (this.OnNewActionActivated);
 		this.queryEntry.Changed += new global::System.EventHandler (this.OnQueryEntryChanged);
 		this.queryEntry.Activated += new global::System.EventHandler (this.OnQueryEntryActivated);
 		this.queryTreeview.CursorChanged += new global::System.EventHandler (this.OnQueryTreeviewCursorChanged);

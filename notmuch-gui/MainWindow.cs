@@ -289,63 +289,12 @@ public partial class MainWindow: Gtk.Window
 
 	void Reply(bool replyAll)
 	{
+		var wnd = new ComposeWindow();
+		wnd.ParentWindow = this.GdkWindow;
+		wnd.Show();
+
 		var msgId = messageListWidget.GetCurrentMessageID();
-
-		if (msgId == null)
-			return;
-
-		string replyText;
-
-		if (CmdHelpers.RunNotmuch(String.Format("reply --reply-to={0} id:{1}", replyAll ? "all" : "sender", msgId), out replyText) == false)
-		{
-			Console.WriteLine("Failed to construct reply with notmuch: {0}", replyText);
-			return;
-		}
-
-		var tmpFile = System.IO.Path.GetTempFileName();
-
-		File.WriteAllText(tmpFile, replyText);
-
-		const string editorCmd = "gvim";
-		const string editorArgs = "-f \"+set columns=100\" \"+set lines=50\" \"+set filetype=mail\" +6 {0}";
-
-		using (var process = new Process())
-		{
-			var si = process.StartInfo;
-			si.FileName = editorCmd;
-			si.Arguments = String.Format(editorArgs, tmpFile);
-			si.UseShellExecute = false;
-			si.CreateNoWindow = true;
-
-			var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Cancel,
-				          "Editing.\n\nEditor command {0}\n\nPress cancel to kill the editor.", si.Arguments);
-
-			process.EnableRaisingEvents = true;
-
-			process.Exited += (sender, args) =>
-			{
-				Application.Invoke((s, e) =>
-				{
-					dlg.Destroy();
-				});
-			};
-
-			dlg.Response += (o, args) =>
-			{
-				process.Kill();
-			};
-
-			process.Start();
-
-			dlg.Run();
-
-			process.WaitForExit();
-
-			if (process.ExitCode != 0)
-				Console.WriteLine("Failed to edit reply");
-		}
-
-		File.Delete(tmpFile);
+		wnd.Reply(msgId, replyAll);
 	}
 
 	protected void OnQueryEntryChanged(object sender, EventArgs e)
@@ -543,5 +492,12 @@ public partial class MainWindow: Gtk.Window
 		threadedAction.Active = m_currentItem.Value.Threaded;
 
 		m_skipExecute = false;
+	}
+
+	protected void OnNewActionActivated(object sender, EventArgs e)
+	{
+		var wnd = new ComposeWindow();
+		wnd.ParentWindow = this.GdkWindow;
+		wnd.Show();
 	}
 }
