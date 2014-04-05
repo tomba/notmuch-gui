@@ -56,7 +56,7 @@ namespace NotMuchGUI
 
 		public void ShowEmail(MK.MimeMessage mkmsg, string filename, string threadID)
 		{
-			m_msgFile = filename;;
+			m_msgFile = filename;
 
 			ShowBody(mkmsg, threadID);
 			ShowAttachments(mkmsg);
@@ -96,16 +96,18 @@ namespace NotMuchGUI
 			labelMsgID.Text = "id:" + gmsg.MessageId;
 			labelThreadID.Text = "thread:" + threadID;
 
+			var textParts = gmsg.BodyParts.OfType<MK.TextPart>();
+
 			MK.TextPart textpart = null;
 
 			if (textpart == null)
-				textpart = MimeKitHelpers.FindFirstContent(gmsg, new MK.ContentType("text", "html"));
+				textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "html"));
 
 			if (textpart == null)
-				textpart = MimeKitHelpers.FindFirstContent(gmsg, new MK.ContentType("text", "plain"));
+				textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "plain"));
 
 			if (textpart == null)
-				textpart = MimeKitHelpers.FindFirstContent(gmsg, new MK.ContentType("text", "*"));
+				textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "*"));
 
 			if (textpart == null)
 				throw new Exception();

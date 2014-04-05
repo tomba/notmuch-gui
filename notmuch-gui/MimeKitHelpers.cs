@@ -56,48 +56,5 @@ namespace NotMuchGUI
 				sb.AppendFormat(" ContentEncoding({0})\n", part.ContentTransferEncoding);
 			}
 		}
-
-		public static IEnumerable<object> GetAllEntities(object ent)
-		{
-			yield return ent;
-
-			if (ent is MimeMessage)
-			{
-				var msg = (MimeMessage)ent;
-
-				foreach (var p in GetAllEntities(msg.Body))
-					yield return p;
-			}
-			else if (ent is Multipart)
-			{
-				var mp = (Multipart)ent;
-
-				foreach (MimeEntity part in mp)
-					foreach (var p in GetAllEntities(part))
-						yield return p;
-			}
-			else if (ent is MessagePart)
-			{
-				var mp = (MessagePart)ent;
-
-				foreach (var p in GetAllEntities(mp.Message))
-					yield return p;
-			}
-			else if (ent is MimePart)
-			{
-			}
-			else
-			{
-				throw new Exception();
-			}
-		}
-
-		public static TextPart FindFirstContent(MimeMessage ent, ContentType ct)
-		{
-			return GetAllEntities(ent)
-					.OfType<TextPart>()
-					.FirstOrDefault(p => p.ContentType.Matches(ct.MediaType, ct.MediaSubtype));
-		}
 	}
 }
-
