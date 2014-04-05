@@ -54,14 +54,15 @@ namespace NotMuchGUI
 			m_attachmentStore.Clear();
 		}
 
-		public void ShowEmail(NM.Message msg, MK.MimeMessage mkmsg)
+		public void ShowEmail(MK.MimeMessage mkmsg, string filename, string threadID)
 		{
-			m_msgFile = msg.FileName;
-			ShowBody(msg, mkmsg);
-			ShowAttachments(msg, mkmsg);
+			m_msgFile = filename;;
+
+			ShowBody(mkmsg, threadID);
+			ShowAttachments(mkmsg);
 		}
 
-		void ShowAttachments(NM.Message msg, MK.MimeMessage gmsg)
+		void ShowAttachments(MK.MimeMessage gmsg)
 		{
 			m_attachmentStore.Clear();
 
@@ -85,15 +86,15 @@ namespace NotMuchGUI
 				attachmentNodeview.Parent.ShowAll();
 		}
 
-		void ShowBody(NM.Message msg, MK.MimeMessage gmsg)
+		void ShowBody(MK.MimeMessage gmsg, string threadID)
 		{
-			labelFrom.Text = msg.From;
-			labelTo.Text = msg.To;
-			labelCc.Text = msg.Cc;
-			labelSubject.Text = msg.Subject;
-			labelDate.Text = msg.Date.ToLocalTime().ToString("g");
-			labelMsgID.Text = "id:" + msg.ID;
-			labelThreadID.Text = "thread:" + msg.ThreadID;
+			labelFrom.Text = gmsg.From.ToString();
+			labelTo.Text = gmsg.To.ToString();
+			labelCc.Text = gmsg.Cc.ToString();
+			labelSubject.Text = gmsg.Subject;
+			labelDate.Text = gmsg.Date.ToLocalTime().ToString("g");
+			labelMsgID.Text = "id:" + gmsg.MessageId;
+			labelThreadID.Text = "thread:" + threadID;
 
 			MK.TextPart textpart = null;
 

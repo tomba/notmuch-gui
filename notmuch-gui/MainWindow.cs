@@ -232,7 +232,7 @@ public partial class MainWindow: Gtk.Window
 			}
 			#endif
 
-			messagewidget1.ShowEmail(nmmsg, mkmsg);
+			messagewidget1.ShowEmail(mkmsg, nmmsg.FileName, nmmsg.ThreadID);
 		}
 	}
 	#if MBOX_PARSE_HACK
