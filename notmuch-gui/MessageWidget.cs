@@ -1,8 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
-using NM = NotMuch;
 using System.Collections.Generic;
+using NM = NotMuch;
+using MK = MimeKit;
 
 namespace NotMuchGUI
 {
@@ -12,6 +13,8 @@ namespace NotMuchGUI
 		WebKit.WebView m_webView;
 		Gtk.ListStore m_attachmentStore;
 		string m_msgFile;
+
+		public string HtmlContent { get; private set; }
 
 		public MessageWidget()
 		{
@@ -51,22 +54,22 @@ namespace NotMuchGUI
 			m_attachmentStore.Clear();
 		}
 
-		public void ShowEmail(NM.Message msg, GMime.Message gmsg)
+		public void ShowEmail(NM.Message msg, MK.MimeMessage mkmsg)
 		{
 			m_msgFile = msg.FileName;
-			ShowBody(msg, gmsg);
-			ShowAttachments(msg, gmsg);
+			ShowBody(msg, mkmsg);
+			ShowAttachments(msg, mkmsg);
 		}
 
-		void ShowAttachments(NM.Message msg, GMime.Message gmsg)
+		void ShowAttachments(NM.Message msg, MK.MimeMessage gmsg)
 		{
 			m_attachmentStore.Clear();
 
 			int idx = 0;
 
-			foreach (var part in GMimeHelpers.GetAttachments(gmsg))
+			foreach (var part in gmsg.Attachments)
 			{
-				string filename = part.Filename;
+				string filename = part.FileName;
 				if (filename == null)
 					filename = "attachment-" + System.IO.Path.GetFileName(System.IO.Path.GetTempFileName());
 
@@ -82,7 +85,7 @@ namespace NotMuchGUI
 				attachmentNodeview.Parent.ShowAll();
 		}
 
-		void ShowBody(NM.Message msg, GMime.Message gmsg)
+		void ShowBody(NM.Message msg, MK.MimeMessage gmsg)
 		{
 			labelFrom.Text = msg.From;
 			labelTo.Text = msg.To;
@@ -92,77 +95,34 @@ namespace NotMuchGUI
 			labelMsgID.Text = "id:" + msg.ID;
 			labelThreadID.Text = "thread:" + msg.ThreadID;
 
-			GMime.Part textpart = null;
+			MK.TextPart textpart = null;
 
 			if (textpart == null)
-				textpart = GMimeHelpers.FindFirstContent(gmsg, new GMime.ContentType("text", "html"));
+				textpart = MimeKitHelpers.FindFirstContent(gmsg, new MK.ContentType("text", "html"));
 
 			if (textpart == null)
-				textpart = GMimeHelpers.FindFirstContent(gmsg, new GMime.ContentType("text", "plain"));
+				textpart = MimeKitHelpers.FindFirstContent(gmsg, new MK.ContentType("text", "plain"));
 
 			if (textpart == null)
-				textpart = GMimeHelpers.FindFirstContent(gmsg, new GMime.ContentType("text", "*"));
+				textpart = MimeKitHelpers.FindFirstContent(gmsg, new MK.ContentType("text", "*"));
 
 			if (textpart == null)
 				throw new Exception();
 
-			var html = PartToHtml(textpart);
-
 			labelContent.Text = String.Format("{0} ({1})",
 				textpart.ContentType,
-				textpart.ContentType.GetParameter("charset"));
+				textpart.ContentType.Charset);
+
+			string html;
+
+			if (textpart.ContentType.Matches("text", "html"))
+				html = textpart.Text;
+			else
+				html = TextToHtmlHelper.TextToHtml(textpart.Text);
 
 			this.HtmlContent = html;
 
 			m_webView.LoadHtmlString(html, null);
-		}
-
-		public string HtmlContent { get; private set; }
-
-		string PartToHtml(GMime.Part part)
-		{
-			byte[] buf;
-
-			using (var memstream = new GMime.StreamMem())
-			using (var filterstream = new GMime.StreamFilter(memstream))
-			{
-				filterstream.Add(new GMime.FilterCRLF(false, false));
-
-				var charset = part.ContentType.GetParameter("charset");
-				if (charset != null)
-					filterstream.Add(new GMime.FilterCharset(charset, "utf-8"));
-
-				if (!part.ContentType.IsType("text", "html"))
-				{
-					var flags = 0
-				            //| GMimeHtmlFilterFlags.PRE
-					            | GMimeHtmlFilterFlags.CONVERT_NL
-					            | GMimeHtmlFilterFlags.MARK_CITATION;
-					uint quoteColor = 0x888888;
-					filterstream.Add(new GMime.FilterHTML((uint)flags, quoteColor));
-				}
-
-				part.ContentObject.WriteToStream(filterstream);
-
-				filterstream.Flush();
-
-				memstream.Seek(0);
-
-				buf = new byte[memstream.Length];
-
-				int l = memstream.Read(buf, (uint)buf.Length);
-				if (l != buf.Length)
-					throw new Exception();
-
-				filterstream.Close();
-				memstream.Close();
-			}
-
-			using (var reader = new StreamReader(new MemoryStream(buf), System.Text.UTF8Encoding.UTF8))
-			{
-				var str = reader.ReadToEnd();
-				return str;
-			}
 		}
 
 		public bool ShowHtmlSource
@@ -186,62 +146,23 @@ namespace NotMuchGUI
 
 		void SaveAttachment(int targetIdx)
 		{
-			int fd = Mono.Unix.Native.Syscall.open(m_msgFile, Mono.Unix.Native.OpenFlags.O_RDONLY);
+			var msg = MK.MimeMessage.Load(m_msgFile);
 
-			using (var readStream = new GMime.StreamFs(fd))
-			{
-				readStream.Owner = true;
+			if (targetIdx == -1)
+				throw new Exception();
 
-				var p = new GMime.Parser(readStream);
-				var gmsg = p.ConstructMessage();
+			var part = msg.Attachments.Skip(targetIdx).First();
 
-				int idx = 0;
-				foreach (var part in GMimeHelpers.GetAttachments(gmsg))
-				{
-					if (targetIdx != -1 && targetIdx != idx)
-					{
-						idx++;
-						continue;
-					}
+			string filename = part.FileName;
+			if (filename == null)
+				filename = "attachment-" + System.IO.Path.GetFileName(System.IO.Path.GetTempFileName());
 
-					byte[] buf;
+			var fullPath = "/tmp/" + filename;
 
-					using (var memstream = new GMime.StreamMem())
-					{
-						int l = part.ContentObject.WriteToStream(memstream);
+			using (var stream = File.OpenWrite(fullPath))
+				part.ContentObject.DecodeTo(stream);
 
-						if (l < 0)
-							throw new Exception();
-
-						memstream.Seek(0);
-
-						buf = new byte[memstream.Length];
-
-						l = memstream.Read(buf, (uint)buf.Length);
-						if (l != buf.Length)
-							throw new Exception();
-
-						memstream.Close();
-					}
-
-					string filename = part.Filename;
-					if (filename == null)
-						filename = "attachment-" + System.IO.Path.GetFileName(System.IO.Path.GetTempFileName());
-
-					var fullPath = "/tmp/" + filename;
-					File.WriteAllBytes(fullPath, buf);
-
-					CmdHelpers.LaunchDefaultApp(fullPath);
-
-					idx++;
-
-					if (targetIdx != -1)
-						break;
-				}
-
-				// GMime.StreamFs is buggy. Dispose doesn't close the fd.
-				readStream.Close();
-			}
+			CmdHelpers.LaunchDefaultApp(fullPath);
 		}
 	}
 }

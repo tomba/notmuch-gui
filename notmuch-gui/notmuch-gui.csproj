@@ -49,10 +49,6 @@
       <Private>False</Private>
       <Package>webkit-sharp-1.0</Package>
     </Reference>
-    <Reference Include="gmime-sharp, Version=2.6.0.0, Culture=neutral, PublicKeyToken=2b75c2ad004c52e4">
-      <Private>False</Private>
-      <Package>gmime-sharp-2.6</Package>
-    </Reference>
     <Reference Include="gkeyfile-sharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e886e4e52ee77480">
       <Private>False</Private>
       <Package>gkeyfile-sharp</Package>
@@ -74,7 +70,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GLibSynchronizationContext.cs" />
-    <Compile Include="GMimeHelpers.cs" />
     <Compile Include="DebugWindow.cs" />
     <Compile Include="gtk-gui\NotMuchGUI.DebugWindow.cs" />
     <Compile Include="TagsWidget.cs" />
@@ -94,12 +89,18 @@
     <Compile Include="FetchDialog.cs" />
     <Compile Include="gtk-gui\NotMuchGUI.FetchDialog.cs" />
     <Compile Include="QueryHistoryItem.cs" />
+    <Compile Include="MimeKitHelpers.cs" />
+    <Compile Include="TextToHtml.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\notmuch-sharp\notmuch-sharp.csproj">
       <Project>{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}</Project>
       <Name>notmuch-sharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MimeKit\MimeKit\MimeKitLite.csproj">
+      <Project>{87B25B2B-10E4-4A09-B682-7267CD3123BA}</Project>
+      <Name>MimeKitLite</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

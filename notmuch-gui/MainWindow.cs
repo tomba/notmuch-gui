@@ -185,64 +185,54 @@ public partial class MainWindow: Gtk.Window
 		{
 			var db = cdb.Database;
 		
-			var msg = db.FindMessage(ids[0]);
+			var nmmsg = db.FindMessage(ids[0]);
 
-			if (msg.IsNull)
+			if (nmmsg.IsNull)
 			{
 				Console.WriteLine("can't find message");
 				messagewidget1.Clear();
 				return;
 			}
 
-			var filename = msg.FileName;
+			var filename = nmmsg.FileName;
+
+			MimeKit.MimeMessage mkmsg;
+
+			try
+			{
+				mkmsg = MimeKit.MimeMessage.Load(filename);
+			}
+			catch (Exception exc)
+			{
+				DialogHelpers.ShowDialog(this, MessageType.Error,
+					"Failed to parse message",
+					"Failed to parse message from '{0}':\n{1}", filename, exc.Message);
+				return;
+			}
 
 			if (m_dbgWnd != null)
 			{
 				m_dbgWnd.SetSrc(File.ReadAllText(filename));
+
+				var sb = new System.Text.StringBuilder();
+				MimeKitHelpers.DumpMessage(mkmsg, sb, 0);
+				m_dbgWnd.SetDump(sb.ToString());
 			}
 
-			int fd = Mono.Unix.Native.Syscall.open(filename, Mono.Unix.Native.OpenFlags.O_RDONLY);
-
-			using (var readStream = new GMime.StreamFs(fd))
-			{
-				readStream.Owner = true;
-
-				var p = new GMime.Parser(readStream);
-				var gmsg = p.ConstructMessage();
-
-				#if MBOX_PARSE_HACK
+			#if MBOX_PARSE_HACK
 			// HACK: try skipping >From: line
 			if (gmsg == null)
 			{
-				p.Dispose();
+			p.Dispose();
 
-				gmsg = TryParseMboxMessage(readStream);
+			gmsg = TryParseMboxMessage(readStream);
 
-				if (gmsg != null)
-					DialogHelpers.ShowDialog(this, MessageType.Warning, "Parsed old style mbox message", "Parsed old style mbox message '{0}'", filename);
+			if (gmsg != null)
+			DialogHelpers.ShowDialog(this, MessageType.Warning, "Parsed old style mbox message", "Parsed old style mbox message '{0}'", filename);
 			}
-				#endif
+			#endif
 
-				if (gmsg == null)
-				{
-					DialogHelpers.ShowDialog(this, MessageType.Error, "Failed to parse message", "Failed to parse message from '{0}'", filename);
-					readStream.Close();
-					return;
-				}
-
-				if (m_dbgWnd != null)
-				{
-					var sw = new StringWriter();
-					GMimeHelpers.DumpStructure(gmsg, sw, 0);
-					var dump = sw.ToString();
-					m_dbgWnd.SetDump(dump);
-				}
-
-				messagewidget1.ShowEmail(msg, gmsg);
-
-				// GMime.StreamFs is buggy. Dispose doesn't close the fd.
-				readStream.Close();
-			}
+			messagewidget1.ShowEmail(nmmsg, mkmsg);
 		}
 	}
 	#if MBOX_PARSE_HACK
