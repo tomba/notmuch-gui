@@ -23,7 +23,7 @@ namespace NotMuchGUI
 					if (depth > 0)
 						sb.AppendFormat("<font color={0}>", "888888");
 
-					sb.Append(line);
+					sb.Append(System.Net.WebUtility.HtmlEncode(line));
 
 					if (depth > 0)
 						sb.Append("</font>");
