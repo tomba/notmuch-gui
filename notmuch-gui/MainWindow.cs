@@ -70,7 +70,7 @@ public partial class MainWindow: Gtk.Window
 			var iter = m_queryStore.Find(i => (string)m_queryStore.GetValue(i, 0) == key);
 
 			if (iter.UserData != IntPtr.Zero)
-				m_queryStore.SetValue(iter, unread ? 2 : 1, count);
+				m_queryStore.SetValue(iter, unread ? 1 : 2, count);
 		};
 
 		var queries = m_queryStore.AsEnumerable().Select(arr => (string)arr[0]).ToArray();
@@ -103,7 +103,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		Gtk.CellRendererText cell = (Gtk.CellRendererText)_cell;
 
-		int unread = (int)model.GetValue(iter, 2);
+		int unread = (int)model.GetValue(iter, 1);
 
 		cell.Weight = unread > 0 ? (int)Pango.Weight.Bold : (int)Pango.Weight.Normal;
 	}
@@ -118,11 +118,11 @@ public partial class MainWindow: Gtk.Window
 		re.Ellipsize = Pango.EllipsizeMode.Middle;
 		c.SetCellDataFunc(re, MyCellDataFunc);
 
-		c = queryTreeview.AppendColumn("C", new CellRendererText(), "text", 1);
+		c = queryTreeview.AppendColumn("Unread", new CellRendererText(), "text", 1);
 		c.Resizable = true;
 		c.Reorderable = true;
 
-		c = queryTreeview.AppendColumn("U", new CellRendererText(), "text", 2);
+		c = queryTreeview.AppendColumn("Count", new CellRendererText(), "text", 2);
 		c.Resizable = true;
 		c.Reorderable = true;
 
