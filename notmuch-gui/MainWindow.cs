@@ -12,10 +12,8 @@ using System.Linq;
 
 public partial class MainWindow: Gtk.Window
 {
-	ListStore m_queryStore;
 	DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
-	QueryCountUpdater m_queryCountUpdater;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -39,42 +37,20 @@ public partial class MainWindow: Gtk.Window
 
 		threadedAction.Active = true;
 
-		SetupQueryList();
-
 		using (var cdb = new CachedDB())
 		{
 			var db = cdb.Database;
 
 			foreach (var tag in db.GetAllTags())
-			{
 				m_allTags.Add(tag);
-				m_queryStore.AppendValues(String.Format("tag:{0}", tag), 0, 0);
-			}
 		}
 
 		tagsWidget.SetDBTags(m_allTags);
 		tagsWidget.MsgTagsUpdatedEvent += messageListWidget.RefreshMessages;
 
-		GLib.Idle.Add(() =>
-		{
-			// select first items
-			queryTreeview.SetCursor(TreePath.NewFirst(), null, false);
-			messageListWidget.MyFocus();
-			return false;
-		});
+		querywidget.QuerySelected += OnQuerySelected;
 
-		m_queryCountUpdater = new QueryCountUpdater();
-
-		m_queryCountUpdater.QueryCountCalculated += (key, count, unread) =>
-		{
-			var iter = m_queryStore.Find(i => (string)m_queryStore.GetValue(i, 0) == key);
-
-			if (iter.UserData != IntPtr.Zero)
-				m_queryStore.SetValue(iter, unread ? 1 : 2, count);
-		};
-
-		var queries = m_queryStore.AsEnumerable().Select(arr => (string)arr[0]).ToArray();
-		m_queryCountUpdater.Start(queries);
+		messageListWidget.MyFocus();
 	}
 
 	protected override bool OnKeyPressEvent(Gdk.EventKey evnt)
@@ -99,68 +75,18 @@ public partial class MainWindow: Gtk.Window
 		}
 	}
 
-	void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer _cell, Gtk.TreeModel model, Gtk.TreeIter iter)
-	{
-		Gtk.CellRendererText cell = (Gtk.CellRendererText)_cell;
-
-		int unread = (int)model.GetValue(iter, 1);
-
-		cell.Weight = unread > 0 ? (int)Pango.Weight.Bold : (int)Pango.Weight.Normal;
-	}
-
-	void SetupQueryList()
-	{
-		var re = new CellRendererText();
-		var c = queryTreeview.AppendColumn("Query", re, "text", 0);
-		c.Expand = true;
-		c.Resizable = true;
-		c.Reorderable = true;
-		re.Ellipsize = Pango.EllipsizeMode.Middle;
-		c.SetCellDataFunc(re, MyCellDataFunc);
-
-		c = queryTreeview.AppendColumn("Unread", new CellRendererText(), "text", 1);
-		c.Resizable = true;
-		c.Reorderable = true;
-
-		c = queryTreeview.AppendColumn("Count", new CellRendererText(), "text", 2);
-		c.Resizable = true;
-		c.Reorderable = true;
-
-		var queryStore = new Gtk.ListStore(typeof(string), typeof(int), typeof(int));
-
-		queryTreeview.Model = queryStore;
-
-		var uiTags = MainClass.AppKeyFile.GetStringListOrNull("ui", "queries");
-		if (uiTags != null)
-		{
-			foreach (var tag in uiTags)
-				queryStore.AppendValues(tag, 0, 0);
-		}
-
-		m_queryStore = queryStore;
-	}
-
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
-		m_queryCountUpdater.Cancel();
+		querywidget.CancelUpdate();
 		messageListWidget.Cancel();
 
 		Application.Quit();
 		a.RetVal = true;
 	}
 
-	protected void OnQueryTreeviewCursorChanged(object sender, EventArgs e)
+	void OnQuerySelected(string query)
 	{
-		TreeSelection selection = (sender as TreeView).Selection;
-		TreeModel model;
-		TreeIter iter;
-
-		string queryString = "";
-
-		if (selection.GetSelected(out model, out iter))
-			queryString = (string)model.GetValue(iter, 0);
-
-		queryEntry.Text = queryString;
+		queryEntry.Text = query;
 		queryEntry.Activate();
 	}
 

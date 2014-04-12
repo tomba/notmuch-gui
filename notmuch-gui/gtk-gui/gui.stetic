@@ -215,19 +215,9 @@
             <property name="CanFocus">True</property>
             <property name="Position">353</property>
             <child>
-              <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+              <widget class="NotMuchGUI.QueryWidget" id="querywidget">
                 <property name="MemberName" />
-                <property name="HscrollbarPolicy">Never</property>
-                <property name="ShadowType">In</property>
-                <child>
-                  <widget class="Gtk.TreeView" id="queryTreeview">
-                    <property name="MemberName" />
-                    <property name="CanFocus">True</property>
-                    <property name="ShowScrollbars">True</property>
-                    <property name="EnableSearch">False</property>
-                    <signal name="CursorChanged" handler="OnQueryTreeviewCursorChanged" />
-                  </widget>
-                </child>
+                <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
                 <property name="Resize">False</property>
@@ -958,6 +948,35 @@
         </child>
         <child>
           <placeholder />
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="NotMuchGUI.QueryWidget" design-size="300 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox2">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gtk.TreeView" id="queryTreeview">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+                <property name="EnableSearch">False</property>
+                <signal name="CursorChanged" handler="OnQueryTreeviewCursorChanged" />
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+          </packing>
         </child>
       </widget>
     </child>
