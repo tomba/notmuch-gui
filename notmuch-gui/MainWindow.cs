@@ -332,7 +332,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		var dlg = new FetchDialog();
 		dlg.ParentWindow = this.RootWindow;
-		dlg.Start();
+		dlg.Start(MainClass.NotmuchExe, "new");
 		var resp = (ResponseType)dlg.Run();
 
 		Console.WriteLine("got resp {0}", resp);

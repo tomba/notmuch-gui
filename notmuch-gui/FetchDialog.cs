@@ -1,12 +1,12 @@
 using System;
 using Mono.Unix.Native;
+using System.Collections.Generic;
 
 namespace NotMuchGUI
 {
 	public partial class FetchDialog : Gtk.Dialog
 	{
 		Vte.Terminal m_term;
-
 		int m_pid = -1;
 
 		public FetchDialog()
@@ -33,9 +33,14 @@ namespace NotMuchGUI
 			m_term.Sensitive = false;
 		}
 
-		public void Start()
+		public void Start(string cmd, params string[] args)
 		{
-			m_pid = m_term.ForkCommand(MainClass.NotmuchExe, new string[] { "notmuch", "new", null },
+			var l = new List<string>();
+			l.Add(System.IO.Path.GetFileName(cmd));
+			l.AddRange(args);
+			l.Add(null);
+
+			m_pid = m_term.ForkCommand(cmd, l.ToArray(),
 				null,
 				Environment.GetEnvironmentVariable("HOME"),
 				false, false, false);
