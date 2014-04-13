@@ -812,7 +812,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="NotMuchGUI.FetchDialog" design-size="757 403">
+  <widget class="Gtk.Dialog" id="NotMuchGUI.TermDialog" design-size="757 403">
     <property name="MemberName" />
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Buttons">1</property>

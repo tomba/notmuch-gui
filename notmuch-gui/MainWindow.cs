@@ -330,7 +330,7 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnFetchActionActivated(object sender, EventArgs e)
 	{
-		var dlg = new FetchDialog();
+		var dlg = new TermDialog();
 		dlg.ParentWindow = this.RootWindow;
 		dlg.Start(MainClass.NotmuchExe, "new");
 		var resp = (ResponseType)dlg.Run();

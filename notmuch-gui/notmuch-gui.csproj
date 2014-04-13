@@ -86,8 +86,6 @@
     <Compile Include="KeyFileExtensions.cs" />
     <Compile Include="CachedDB.cs" />
     <Compile Include="MessageTreeStore.cs" />
-    <Compile Include="FetchDialog.cs" />
-    <Compile Include="gtk-gui\NotMuchGUI.FetchDialog.cs" />
     <Compile Include="QueryHistoryItem.cs" />
     <Compile Include="MimeKitHelpers.cs" />
     <Compile Include="TextToHtml.cs" />
@@ -97,6 +95,8 @@
     <Compile Include="gtk-gui\NotMuchGUI.ComposeWindow.cs" />
     <Compile Include="QueryWidget.cs" />
     <Compile Include="gtk-gui\NotMuchGUI.QueryWidget.cs" />
+    <Compile Include="TermDialog.cs" />
+    <Compile Include="gtk-gui\NotMuchGUI.TermDialog.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace NotMuchGUI
 {
-	public partial class FetchDialog : Gtk.Dialog
+	public partial class TermDialog : Gtk.Dialog
 	{
 		Vte.Terminal m_term;
 		int m_pid = -1;
 
-		public FetchDialog()
+		public TermDialog()
 		{
 			this.Build();
 
