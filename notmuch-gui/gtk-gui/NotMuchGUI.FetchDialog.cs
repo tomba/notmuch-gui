@@ -46,8 +46,8 @@ namespace NotMuchGUI
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 400;
-			this.DefaultHeight = 300;
+			this.DefaultWidth = 757;
+			this.DefaultHeight = 403;
 			this.Show ();
 			this.buttonCancel.Clicked += new global::System.EventHandler (this.OnButtonCancelClicked);
 		}
