@@ -223,10 +223,18 @@ public partial class MainWindow: Gtk.Window
 	{
 		var wnd = new ComposeWindow();
 		wnd.ParentWindow = this.GdkWindow;
-		wnd.Show();
 
 		var msgId = messageListWidget.GetCurrentMessageID();
 		wnd.Reply(msgId, replyAll);
+
+		wnd.Show();
+	}
+
+	protected void OnNewActionActivated(object sender, EventArgs e)
+	{
+		var wnd = new ComposeWindow();
+		wnd.ParentWindow = this.GdkWindow;
+		wnd.Show();
 	}
 
 	protected void OnQueryEntryChanged(object sender, EventArgs e)
@@ -424,12 +432,5 @@ public partial class MainWindow: Gtk.Window
 		threadedAction.Active = m_currentItem.Value.Threaded;
 
 		m_skipExecute = false;
-	}
-
-	protected void OnNewActionActivated(object sender, EventArgs e)
-	{
-		var wnd = new ComposeWindow();
-		wnd.ParentWindow = this.GdkWindow;
-		wnd.Show();
 	}
 }

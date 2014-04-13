@@ -36,58 +36,7 @@ namespace NotMuchGUI
 				msg = MK.MimeMessage.Load(filename);
 			}
 
-			var reply = new MK.MimeMessage();
-
-			reply.InReplyTo = msg.MessageId;
-
-			foreach (var r in msg.References)
-				reply.References.Add(r);
-			reply.References.Add(msg.MessageId);
-
-			reply.Subject = "Re: " + msg.Subject;
-
-			reply.From.Add(Globals.MyAddresses.First());	// XXX
-			reply.To.AddRange(msg.From);
-
-			if (replyAll)
-			{
-				var comparer = new AddressComparer();
-
-				reply.To.AddRange(msg.To.Except(Globals.MyAddresses, comparer));
-
-				var cc = msg.Cc
-					.Except(Globals.MyAddresses, comparer)
-					.Except(reply.To, comparer).ToArray();
-
-				if (cc.Length > 0)
-					reply.Cc.AddRange(cc);
-			}
-
-			var textpart = msg.BodyParts.OfType<MK.TextPart>()
-				.FirstOrDefault(p => p.ContentType.Matches("text", "plain"));
-
-			var sb = new StringBuilder();
-
-			sb.AppendFormat("On {1}, {0} wrote:\n\n",
-				msg.From.First().Name,
-				msg.Date.ToString("u"));
-
-			using (StringReader reader = new StringReader(textpart.Text))
-			{
-				string prefix = "> ";
-				string line;
-
-				while ((line = reader.ReadLine()) != null)
-				{
-					sb.Append(prefix);
-					sb.AppendLine(line);
-				}
-			}
-
-			reply.Body = new MK.TextPart("plain")
-			{
-				Text = sb.ToString(),
-			};
+			var reply = MimeKitHelpers.CreateReply(msg, replyAll);
 
 			messagewidget1.ShowEmail(reply, "", "");
 
