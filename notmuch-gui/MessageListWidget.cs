@@ -12,6 +12,7 @@ namespace NotMuchGUI
 	{
 		public event EventHandler MessageSelected;
 		public event EventHandler CountsChanged;
+		public event Action<string> FocusThreadEvent;
 
 		public int TotalCount { get; private set; }
 
@@ -281,6 +282,37 @@ namespace NotMuchGUI
 				m_work.Cancel();
 				m_work = null;
 			}
+		}
+
+		[GLib.ConnectBeforeAttribute]
+		protected void OnMessagesTreeviewButtonPressEvent(object o, ButtonPressEventArgs args)
+		{
+			/* right click */
+			if (args.Event.Button == 3)
+			{
+				Menu m = new Menu();
+				MenuItem item = new MenuItem("Focus Thread");
+				item.ButtonPressEvent += OnFocusThreadSelected;
+				m.Add(item);
+				m.ShowAll();
+				m.Popup();
+			}
+		}
+
+		protected void OnFocusThreadSelected(object sender, ButtonPressEventArgs e)
+		{
+			var id = this.GetCurrentMessageID();
+
+			string threadID;
+
+			using (var cdb = new CachedDB())
+			{
+				var msg = cdb.Database.FindMessage(id);
+				threadID = msg.ThreadID;
+			}
+
+			if (this.FocusThreadEvent != null)
+				this.FocusThreadEvent(threadID);
 		}
 
 		class MyWork

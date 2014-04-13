@@ -50,6 +50,12 @@ public partial class MainWindow: Gtk.Window
 
 		querywidget.QuerySelected += OnQuerySelected;
 
+		messageListWidget.FocusThreadEvent += (tid) =>
+		{
+			queryEntry.Text = string.Format("thread:{0}", tid);
+			queryEntry.Activate();
+		};
+
 		messageListWidget.MyFocus();
 	}
 

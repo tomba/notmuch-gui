@@ -31,6 +31,7 @@ namespace NotMuchGUI
 				this.Child.ShowAll ();
 			}
 			this.Hide ();
+			this.messagesTreeview.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler (this.OnMessagesTreeviewButtonPressEvent);
 		}
 	}
 }

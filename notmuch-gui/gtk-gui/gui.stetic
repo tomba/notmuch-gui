@@ -806,6 +806,7 @@
             <property name="ShowScrollbars">True</property>
             <property name="EnableSearch">False</property>
             <property name="FixedHeightMode">True</property>
+            <signal name="ButtonPressEvent" handler="OnMessagesTreeviewButtonPressEvent" />
           </widget>
         </child>
       </widget>
