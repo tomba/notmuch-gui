@@ -19,6 +19,16 @@ namespace NotMuchGUI
 			this.Build();
 		}
 
+		public MK.MimeMessage Message
+		{
+			get { return m_message; }
+			set
+			{
+				m_message = value;
+				messagewidget1.ShowEmail(m_message, "", "");
+			}
+		}
+
 		public void Reply(string msgId, bool replyAll)
 		{
 			if (msgId == null)
@@ -38,9 +48,15 @@ namespace NotMuchGUI
 
 			var reply = MimeKitHelpers.CreateReply(msg, replyAll);
 
-			messagewidget1.ShowEmail(reply, "", "");
+			this.Message = reply;
+		}
 
-			m_message = reply;
+		public void New()
+		{
+			var msg = new MK.MimeMessage();
+			msg.Body = new MK.TextPart() { Text = "" };
+
+			this.Message = msg;
 		}
 
 		static int FindFirstBlankLine(string filename)
@@ -125,18 +141,20 @@ namespace NotMuchGUI
 
 			var loadedMsg = MK.MimeMessage.Load(tmpFile);
 
-			((MK.TextPart)m_message.Body).Text = ((MK.TextPart)loadedMsg.Body).Text;
-			m_message.Subject = loadedMsg.Subject;
-			m_message.To.Clear();
-			m_message.To.AddRange(loadedMsg.To);
-			m_message.From.Clear();
-			m_message.From.AddRange(loadedMsg.From);
-			m_message.Cc.Clear();
-			m_message.Cc.AddRange(loadedMsg.Cc);
-
-			messagewidget1.ShowEmail(m_message, "", "");
-
 			File.Delete(tmpFile);
+
+			var msg = m_message;
+
+			((MK.TextPart)msg.Body).Text = ((MK.TextPart)loadedMsg.Body).Text;
+			msg.Subject = loadedMsg.Subject;
+			msg.To.Clear();
+			msg.To.AddRange(loadedMsg.To);
+			msg.From.Clear();
+			msg.From.AddRange(loadedMsg.From);
+			msg.Cc.Clear();
+			msg.Cc.AddRange(loadedMsg.Cc);
+
+			this.Message = msg;
 		}
 	}
 }

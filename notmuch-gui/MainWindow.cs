@@ -234,6 +234,9 @@ public partial class MainWindow: Gtk.Window
 	{
 		var wnd = new ComposeWindow();
 		wnd.ParentWindow = this.GdkWindow;
+
+		wnd.New();
+
 		wnd.Show();
 	}
 
