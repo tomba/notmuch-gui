@@ -25,7 +25,7 @@ namespace NotMuchGUI
 			set
 			{
 				m_message = value;
-				messagewidget1.ShowEmail(m_message, "", "");
+				messagewidget1.ShowEmail(m_message, null, null);
 			}
 		}
 
