@@ -94,6 +94,7 @@ namespace NotMuchGUI
 			labelSubject.Text = msg.Subject;
 			labelDate.Text = msg.Date.ToLocalTime().ToString("g");
 			labelMsgID.Text = "id:" + msg.MessageId;
+
 			if (string.IsNullOrEmpty(threadID))
 			{
 				labelThreadID.Visible = false;

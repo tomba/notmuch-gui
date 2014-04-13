@@ -54,6 +54,7 @@ namespace NotMuchGUI
 		public void New()
 		{
 			var msg = new MK.MimeMessage();
+			msg.From.Add(Globals.MyAddresses.First());	// XXX
 			msg.Body = new MK.TextPart() { Text = "" };
 
 			this.Message = msg;
