@@ -34,6 +34,15 @@ namespace NotMuch
 			}
 		}
 
+		public FileNames GetFileNames()
+		{
+			Debug.Assert(m_handle != IntPtr.Zero);
+
+			IntPtr filenames = notmuch_message_get_filenames(m_handle);
+
+			return new FileNames(filenames);
+		}
+
 		public Tags GetTags()
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
@@ -153,6 +162,9 @@ namespace NotMuch
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_message_get_filename(IntPtr message);
+
+		[DllImport("libnotmuch")]
+		static extern IntPtr notmuch_message_get_filenames(IntPtr message);
 
 		[DllImport("libnotmuch")]
 		static extern IntPtr notmuch_message_get_header(IntPtr message, string header);
