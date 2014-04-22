@@ -83,21 +83,16 @@ namespace NotMuchGUI
 		{
 			var tmpFile = System.IO.Path.GetTempFileName();
 
-			var formatOptions = new MK.FormatOptions();
-			formatOptions.HiddenHeaders.Add(MK.HeaderId.MimeVersion);
-			formatOptions.HiddenHeaders.Add(MK.HeaderId.MessageId);
-			formatOptions.HiddenHeaders.Add(MK.HeaderId.ContentType);
-
-			var savedMsg = new MK.MimeMessage();
-			savedMsg.Subject = m_message.Subject;
-			savedMsg.Body = m_message.Body;
-			savedMsg.From.AddRange(m_message.From);
-			savedMsg.To.AddRange(m_message.To);
-			if (m_message.Cc.Count > 0)
-				savedMsg.Cc.AddRange(m_message.Cc);
-
-			using (var stream = File.OpenWrite(tmpFile))
-				savedMsg.WriteTo(formatOptions, stream);
+			using (var writer = File.CreateText(tmpFile))
+			{
+				writer.WriteLine("From: {0}", m_message.From);
+				writer.WriteLine("To: {0}", m_message.To);
+				if (m_message.Cc.Count > 0)
+					writer.WriteLine("Cc: {0}", m_message.Cc);
+				writer.WriteLine("Subject: {0}", m_message.Subject);
+				writer.WriteLine();
+				writer.Write(((MK.TextPart)m_message.Body).Text);
+			}
 
 			int lineNum = FindFirstBlankLine(tmpFile) + 1;
 
@@ -130,7 +125,9 @@ namespace NotMuchGUI
 					process.Kill();
 				};
 
-				process.Start();
+				bool b = process.Start();
+				if (!b)
+					Console.WriteLine("Failed to edit start edit process");
 
 				dlg.Run();
 
@@ -140,22 +137,90 @@ namespace NotMuchGUI
 					Console.WriteLine("Failed to edit reply");
 			}
 
-			var loadedMsg = MK.MimeMessage.Load(tmpFile);
+			using (var reader = File.OpenText(tmpFile))
+			{
+				string line;
+
+				while ((line = reader.ReadLine()) != null)
+				{
+					if (line.Length == 0)
+						break;
+
+					var parts = line.Split(new[] {": "}, 2, StringSplitOptions.RemoveEmptyEntries);
+
+					switch (parts.Length)
+					{
+						case 1:
+							// empty
+							continue;
+
+						case 2:
+							// normal
+							break;
+
+						default:
+							throw new Exception("bad header");
+					}
+
+					MK.HeaderId hid;
+
+					switch (parts[0])
+					{
+						case "To":
+							hid = MK.HeaderId.To;
+							break;
+
+						case "From":
+							hid = MK.HeaderId.From;
+							break;
+
+						case "Cc":
+							hid = MK.HeaderId.Cc;
+							break;
+
+						case "Subject":
+							hid = MK.HeaderId.Subject;
+							break;
+
+						default:
+							continue;
+					}
+
+
+					m_message.Headers[hid] = parts[1];
+				}
+
+				var bodyText = reader.ReadToEnd();
+				var part = new MK.TextPart();
+				part.SetText(Encoding.UTF8, bodyText);
+
+				m_message.Body = part;
+
+				this.Message = m_message;
+			}
 
 			File.Delete(tmpFile);
+		}
 
-			var msg = m_message;
+		protected void OnSendButtonClicked(object sender, EventArgs e)
+		{
+			var exe = MainClass.AppKeyFile.GetStringOrNull("send", "cmd");
+			if (exe == null)
+				throw new Exception();
 
-			((MK.TextPart)msg.Body).Text = ((MK.TextPart)loadedMsg.Body).Text;
-			msg.Subject = loadedMsg.Subject;
-			msg.To.Clear();
-			msg.To.AddRange(loadedMsg.To);
-			msg.From.Clear();
-			msg.From.AddRange(loadedMsg.From);
-			msg.Cc.Clear();
-			msg.Cc.AddRange(loadedMsg.Cc);
+			var tmpFile = System.IO.Path.GetTempFileName();
 
-			this.Message = msg;
+			using (var stream = File.OpenWrite(tmpFile))
+				m_message.WriteTo(stream);
+
+			var dlg = new TermDialog();
+			dlg.ParentWindow = this.RootWindow;
+			dlg.Start(exe, tmpFile);
+			var resp = (ResponseType)dlg.Run();
+
+			Console.WriteLine("got resp {0}", resp);
+
+			dlg.Destroy();
 		}
 	}
 }

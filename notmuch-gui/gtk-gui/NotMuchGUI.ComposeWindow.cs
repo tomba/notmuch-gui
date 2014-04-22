@@ -79,6 +79,7 @@ namespace NotMuchGUI
 			this.DefaultHeight = 455;
 			this.Show ();
 			this.editButton.Clicked += new global::System.EventHandler (this.OnEditButtonClicked);
+			this.sendButton.Clicked += new global::System.EventHandler (this.OnSendButtonClicked);
 		}
 	}
 }

@@ -904,6 +904,7 @@
                 <property name="Type">TextOnly</property>
                 <property name="Label" translatable="yes">Send</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnSendButtonClicked" />
               </widget>
               <packing>
                 <property name="Position">1</property>
