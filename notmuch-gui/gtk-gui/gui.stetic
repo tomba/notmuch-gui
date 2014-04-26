@@ -111,6 +111,12 @@
         <property name="StockId">gtk-new</property>
         <signal name="Activated" handler="OnNewActionActivated" />
       </action>
+      <action id="processAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Process</property>
+        <property name="ShortLabel" translatable="yes">Process</property>
+        <signal name="Activated" handler="OnProcessActionActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
@@ -154,6 +160,7 @@
               <node type="Toolitem" action="dbgAction" />
               <node type="Toolitem" action="msgSrcAction" />
               <node type="Toolitem" action="fetchAction" />
+              <node type="Toolitem" action="processAction" />
               <node type="Toolitem" action="DeleteAction" />
               <node type="Toolitem" action="refreshAction" />
               <node type="Toolitem" action="toggleReadAction" />

@@ -330,6 +330,22 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnFetchActionActivated(object sender, EventArgs e)
 	{
+		var exe = MainClass.AppKeyFile.GetStringOrNull("fetch", "cmd");
+		if (exe == null)
+			throw new Exception();
+
+		var dlg = new TermDialog();
+		dlg.ParentWindow = this.RootWindow;
+		dlg.Start(exe);
+		var resp = (ResponseType)dlg.Run();
+
+		Console.WriteLine("got resp {0}", resp);
+
+		dlg.Destroy();
+	}
+
+	protected void OnProcessActionActivated (object sender, EventArgs e)
+	{
 		var dlg = new TermDialog();
 		dlg.ParentWindow = this.RootWindow;
 		dlg.Start(MainClass.NotmuchExe, "new");
