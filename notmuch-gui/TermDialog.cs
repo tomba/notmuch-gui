@@ -28,6 +28,7 @@ namespace NotMuchGUI
 			m_pid = -1;
 
 			buttonCancel.Label = "Close";
+			buttonCancel.GrabFocus();
 
 			m_term.Feed("<Process ended>\r\n");
 			m_term.Sensitive = false;
