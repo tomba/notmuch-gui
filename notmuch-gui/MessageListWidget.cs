@@ -414,7 +414,7 @@ namespace NotMuchGUI
 				sw.Stop();
 
 				Console.WriteLine("Added {0} msgs in {1}, {2}, {3}, {4} = {5} ms '{6}'",
-					count, t1, t2 - t1, t3 - t2, t4 - t3, t4, m_queryString);
+				                  count, t1, t2 - t1, t3 - t2, t4 - t3, t4, m_queryString);
 			}
 
 			void SearchMessages(NM.Query query, MessageTreeStore model, out int count)
@@ -530,12 +530,19 @@ namespace NotMuchGUI
 
 				var path = model.GetPath(iter);
 
-				m_parent.messagesTreeview.ExpandToPath(path);
+				// XXX for some reason scrolling to last has to be done asyncronously,
+				// otherwise the treeview scrolls to the second last item...
+				GLib.Idle.Add(() =>
+				{
+					m_parent.messagesTreeview.ExpandToPath(path);
 
-				m_parent.messagesTreeview.Selection.UnselectAll();
-				m_parent.messagesTreeview.Selection.SelectPath(path);
+					m_parent.messagesTreeview.Selection.UnselectAll();
+					m_parent.messagesTreeview.Selection.SelectPath(path);
 
-				m_parent.messagesTreeview.ScrollToCell(path, null, false, 0, 0);
+					m_parent.messagesTreeview.ScrollToCell(path, null, false, 0, 0);
+
+					return false;
+				});
 			}
 
 			void SelectOldMessages(MessageTreeStore model)
