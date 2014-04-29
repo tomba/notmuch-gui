@@ -120,6 +120,7 @@
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
+    <property name="Icon">resource:NotMuchGUI.mail.png</property>
     <property name="WindowPosition">Center</property>
     <property name="AllowShrink">True</property>
     <property name="DefaultWidth">1300</property>

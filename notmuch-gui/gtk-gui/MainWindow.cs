@@ -90,6 +90,7 @@ public partial class MainWindow
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString ("MainWindow");
+		this.Icon = global::Gdk.Pixbuf.LoadFromResource ("NotMuchGUI.mail.png");
 		this.WindowPosition = ((global::Gtk.WindowPosition)(1));
 		this.AllowShrink = true;
 		this.DefaultWidth = 1300;
