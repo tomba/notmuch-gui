@@ -9,15 +9,29 @@ using NM = NotMuch;
 using WebKit;
 using System.Collections.Generic;
 using System.Linq;
+using UI = Gtk.Builder.ObjectAttribute;
 
 public partial class MainWindow: Gtk.Window
 {
 	DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
 
-	public MainWindow() : base(Gtk.WindowType.Toplevel)
+	[UI] Label label1;
+	[UI] Label label3;
+	[UI] Entry queryEntry;
+	[UI] TagsWidget tagsWidget;
+	[UI] QueryWidget querywidget;
+	[UI] MessageListWidget messageListWidget;
+	[UI] MessageWidget messagewidget1;
+	[UI] Gtk.Action goBackAction;
+	[UI] Gtk.Action goForwardAction;
+	[UI] Gtk.ToggleAction dbgAction;
+	[UI] Gtk.ToggleAction threadedAction;
+	[UI] Gtk.ToggleAction msgSrcAction;
+
+	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
-		Build();
+		builder.Autoconnect (this);
 
 		CachedDB.DBOpenEvent += (bool write) =>
 		{
@@ -222,7 +236,7 @@ public partial class MainWindow: Gtk.Window
 	void Reply(bool replyAll)
 	{
 		var wnd = new ComposeWindow();
-		wnd.ParentWindow = this.GdkWindow;
+		wnd.ParentWindow = this.Window;
 
 		var msgId = messageListWidget.GetCurrentMessageID();
 		wnd.Reply(msgId, replyAll);
@@ -233,7 +247,7 @@ public partial class MainWindow: Gtk.Window
 	protected void OnNewActionActivated(object sender, EventArgs e)
 	{
 		var wnd = new ComposeWindow();
-		wnd.ParentWindow = this.GdkWindow;
+		wnd.ParentWindow = this.Window;
 
 		wnd.New();
 

@@ -12,10 +12,10 @@ namespace NotMuchGUI
 
 		public event Action<string> QuerySelected;
 
+		TreeView queryTreeview;
+
 		public QueryWidget()
 		{
-			this.Build();
-
 			SetupQueryList();
 
 
@@ -55,7 +55,7 @@ namespace NotMuchGUI
 			m_queryCountUpdater.Cancel();
 		}
 
-		void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer _cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+		void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer _cell, Gtk.ITreeModel model, Gtk.TreeIter iter)
 		{
 			Gtk.CellRendererText cell = (Gtk.CellRendererText)_cell;
 
@@ -99,7 +99,7 @@ namespace NotMuchGUI
 		protected void OnQueryTreeviewCursorChanged(object sender, EventArgs e)
 		{
 			TreeSelection selection = (sender as TreeView).Selection;
-			TreeModel model;
+			ITreeModel model;
 			TreeIter iter;
 
 			string queryString = "";

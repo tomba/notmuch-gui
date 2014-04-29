@@ -47,7 +47,9 @@ namespace NotMuchGUI
 
 			System.Threading.SynchronizationContext.SetSynchronizationContext(new GLib.GLibSynchronizationContext());
 
-			MainClass.MainWindow = new MainWindow();
+
+			Builder builder = new Builder(null, "NotMuchGUI.UI.MainWindow.ui", null);
+			MainClass.MainWindow = new MainWindow(builder, builder.GetObject("MainWindow").Handle);
 			MainClass.MainWindow.Show();
 
 			Application.Run();

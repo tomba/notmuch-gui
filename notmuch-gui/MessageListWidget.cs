@@ -22,10 +22,10 @@ namespace NotMuchGUI
 
 		int m_maxMsgs;
 
+		TreeView messagesTreeview;
+
 		public MessageListWidget()
 		{
-			this.Build();
-
 			if (MainClass.AppKeyFile.GetIntegerOrFalse("ui", "max-msgs", out m_maxMsgs) == false)
 				m_maxMsgs = 1000;
 
@@ -106,7 +106,7 @@ namespace NotMuchGUI
 			cell.Strikethrough = (flags & MessageListFlags.Deleted) != 0 ? true : false;
 		}
 
-		void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel _model, Gtk.TreeIter iter)
+		void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.ITreeModel _model, Gtk.TreeIter iter)
 		{
 			var model = (MessageTreeStore)_model;
 			var c = (Gtk.CellRendererText)cell;
@@ -114,7 +114,7 @@ namespace NotMuchGUI
 			SetCommonCellSettings(column, c, model, ref iter);
 		}
 
-		void DateCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel _model, Gtk.TreeIter iter)
+		void DateCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.ITreeModel _model, Gtk.TreeIter iter)
 		{
 			var model = (MessageTreeStore)_model;
 			var c = (Gtk.CellRendererText)cell;
@@ -126,7 +126,7 @@ namespace NotMuchGUI
 			SetCommonCellSettings(column, c, model, ref iter);
 		}
 
-		void TagsCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel _model, Gtk.TreeIter iter)
+		void TagsCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.ITreeModel _model, Gtk.TreeIter iter)
 		{
 			var model = (MessageTreeStore)_model;
 			var c = (Gtk.CellRendererText)cell;

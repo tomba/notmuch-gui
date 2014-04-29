@@ -3,6 +3,7 @@ using Gtk;
 using System.Collections.Generic;
 using NM = NotMuch;
 using System.Linq;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
@@ -19,10 +20,11 @@ namespace NotMuchGUI
 		TreePath m_editPath;
 		CellRendererText m_crt;
 
+		[UI] TreeView tagsTreeview;
+		[UI] Gtk.Action applyButton;
+
 		public TagsWidget()
 		{
-			this.Build();
-
 			var c = new TreeViewColumn();
 			c.Title = "Tags";
 

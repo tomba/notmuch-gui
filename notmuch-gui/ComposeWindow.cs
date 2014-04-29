@@ -13,10 +13,11 @@ namespace NotMuchGUI
 	{
 		MK.MimeMessage m_message;
 
+		MessageWidget messagewidget1;
+
 		public ComposeWindow() : 
 			base(Gtk.WindowType.Toplevel)
 		{
-			this.Build();
 		}
 
 		public MK.MimeMessage Message

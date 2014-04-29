@@ -6,11 +6,12 @@ namespace NotMuchGUI
 {
 	public partial class TermDialog : Gtk.Dialog
 	{
-		Vte.Terminal m_term;
+		//Vte.Terminal m_term;
 		int m_pid = -1;
 
 		public TermDialog()
 		{
+			/*
 			this.Build();
 
 			m_term = new Vte.Terminal();
@@ -21,17 +22,18 @@ namespace NotMuchGUI
 			m_term.IsFocus = true;
 
 			m_term.ShowAll();
+			*/
 		}
 
 		void ChildExited(object sender, EventArgs e)
 		{
 			m_pid = -1;
-
+			/*
 			buttonCancel.Label = "Close";
 			buttonCancel.GrabFocus();
 
 			m_term.Feed("<Process ended>\r\n");
-			m_term.Sensitive = false;
+			m_term.Sensitive = false;*/
 		}
 
 		public void Start(string cmd, params string[] args)
@@ -40,7 +42,7 @@ namespace NotMuchGUI
 			l.Add(System.IO.Path.GetFileName(cmd));
 			l.AddRange(args);
 			l.Add(null);
-
+			/*
 			m_pid = m_term.ForkCommand(cmd, l.ToArray(),
 				null,
 				Environment.GetEnvironmentVariable("HOME"),
@@ -50,11 +52,12 @@ namespace NotMuchGUI
 			{
 				m_term.Feed("<Process start failed>\r\n");
 				throw new Exception("Process start failed");
-			}
+			}*/
 		}
 
 		protected void OnButtonCancelClicked(object sender, EventArgs e)
 		{
+			/*
 			if (m_pid >= 0)
 			{
 				m_term.Feed("<Abort>\r\n");
@@ -64,6 +67,7 @@ namespace NotMuchGUI
 			{
 				Respond(Gtk.ResponseType.Close);
 			}
+			*/
 		}
 	}
 }

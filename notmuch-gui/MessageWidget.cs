@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using NM = NotMuch;
 using MK = MimeKit;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
@@ -16,10 +17,21 @@ namespace NotMuchGUI
 
 		public string HtmlContent { get; private set; }
 
+		[UI] Gtk.Label labelFrom;
+		[UI] Gtk.Label labelTo;
+		[UI] Gtk.Label labelCc;
+		[UI] Gtk.Label labelSubject;
+		[UI] Gtk.Label labelDate;
+		[UI] Gtk.Label labelMsgID;
+		[UI] Gtk.Label labelContent;
+		[UI] Gtk.Label labelThreadID;
+
+		Gtk.ScrolledWindow scrolledwindowWeb;
+
+		Gtk.NodeView attachmentNodeview;
+
 		public MessageWidget()
 		{
-			this.Build();
-
 			m_webView = new WebKit.WebView();
 			m_webView.Editable = false;
 
@@ -81,7 +93,7 @@ namespace NotMuchGUI
 
 			// show/hide the parent, i.e. the ScolledWindow
 			if (idx == 0)
-				attachmentNodeview.Parent.HideAll();
+				attachmentNodeview.Parent.Hide();
 			else
 				attachmentNodeview.Parent.ShowAll();
 		}
