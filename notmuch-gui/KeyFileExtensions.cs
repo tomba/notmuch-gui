@@ -19,6 +19,20 @@ namespace NotMuchGUI
 			else
 				return null;
 		}
+
+		public static bool GetIntegerOrFalse(this KeyFile.GKeyFile file, string group_name, string key, out int value)
+		{
+			if (MainClass.AppKeyFile.HasGroup(group_name) && MainClass.AppKeyFile.HasKey(group_name, key))
+			{
+				value = file.GetInteger(group_name, key);
+				return true;
+			}
+			else
+			{
+				value = 0;
+				return false;
+			}
+		}
 	}
 }
 

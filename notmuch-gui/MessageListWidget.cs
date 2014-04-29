@@ -20,9 +20,14 @@ namespace NotMuchGUI
 
 		MyWork m_work;
 
+		int m_maxMsgs;
+
 		public MessageListWidget()
 		{
 			this.Build();
+
+			if (MainClass.AppKeyFile.GetIntegerOrFalse("ui", "max-msgs", out m_maxMsgs) == false)
+				m_maxMsgs = 1000;
 
 			messagesTreeview.Selection.Mode = SelectionMode.Multiple;
 
@@ -431,11 +436,11 @@ namespace NotMuchGUI
 
 					count++;
 
-					// XXX max 1000 msgs
-					if (count >= 1000)
+					if (count >= m_parent.m_maxMsgs)
 						break;
 
-					if (count % 1000 == 0)
+					// XXX
+					if (count % m_parent.m_maxMsgs == 0)
 					{
 						m_parent.TotalCount = m_parent.Count = count;
 
@@ -484,11 +489,11 @@ namespace NotMuchGUI
 						// if only gtktreeview would show things properly.
 					}
 
-					// XXX max 1000 msgs
-					if (msgCount > 1000)
+					if (msgCount > m_parent.m_maxMsgs)
 						break;
-					
-					if (msgCount - lastUpdate > 1000)
+
+					// XXX
+					if (msgCount - lastUpdate > m_parent.m_maxMsgs)
 					{
 						m_parent.Count = msgCount;
 						//m_parent.TotalCount = model.Count;
