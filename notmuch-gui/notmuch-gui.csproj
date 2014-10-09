@@ -104,9 +104,5 @@
       <Project>{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}</Project>
       <Name>notmuch-sharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MimeKit\MimeKit\MimeKitLite.Net40.csproj">
-      <Project>{87B25B2B-10E4-4A09-B682-7267CD3123BA}</Project>
-      <Name>MimeKitLite.Net40</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>
