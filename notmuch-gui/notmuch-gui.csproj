@@ -54,6 +54,15 @@
     <Reference Include="vte-sharp, Version=0.16.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Package>vte-sharp-0.16</Package>
     </Reference>
+    <Reference Include="BouncyCastle">
+      <HintPath>..\packages\MimeKit.0.97.0.0\lib\net45\BouncyCastle.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\packages\MimeKit.0.97.0.0\lib\net45\MimeKit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Security" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -104,5 +113,8 @@
       <Project>{F845BEF7-30ED-4EF3-A5E4-017CE8BA8334}</Project>
       <Name>notmuch-sharp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
