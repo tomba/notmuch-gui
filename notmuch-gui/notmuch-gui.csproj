@@ -54,15 +54,15 @@
     <Reference Include="vte-sharp, Version=0.16.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Package>vte-sharp-0.16</Package>
     </Reference>
-    <Reference Include="BouncyCastle">
-      <HintPath>..\packages\MimeKit.0.97.0.0\lib\net45\BouncyCastle.dll</HintPath>
-    </Reference>
-    <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.0.97.0.0\lib\net45\MimeKit.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Security" />
+    <Reference Include="BouncyCastle">
+      <HintPath>..\packages\MimeKit.1.0.0.0\lib\net45\BouncyCastle.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\packages\MimeKit.1.0.0.0\lib\net45\MimeKit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
