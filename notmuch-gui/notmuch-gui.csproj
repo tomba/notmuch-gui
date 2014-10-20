@@ -66,7 +66,6 @@
     <EmbeddedResource Include="mail.png">
       <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\MainWindow.ui" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindow.cs" />
@@ -105,5 +104,15 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UI\ComposeWindow.ui" />
+    <None Include="UI\DebugWindow.ui" />
+    <None Include="UI\MainWindow.ui" />
+    <None Include="UI\MessageListWidget.ui" />
+    <None Include="UI\MessageWidget.ui" />
+    <None Include="UI\QueryWidget.ui" />
+    <None Include="UI\TagsWidget.ui" />
+    <None Include="UI\TermDialog.ui" />
   </ItemGroup>
 </Project>
