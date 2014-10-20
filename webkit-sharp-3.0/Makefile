@@ -24,7 +24,7 @@ codegen: parser
 	$(GCODEGEN) --outdir=generated --generate=webkit-api.raw `pkg-config --cflags gtk-sharp-3.0`
 
 compile: codegen
-	gmcs -unsafe -pkg:gtk-sharp-3.0 -target:library -out:webkit-sharp-3.0.dll generated/*.cs
+	gmcs -unsafe -pkg:gtk-sharp-3.0 -target:library -out:webkit-sharp-3.0.dll generated/*/*.cs
 
 clean:
 	rm -rf generated webkit-api.raw *.dll webkitgtk-3.0
