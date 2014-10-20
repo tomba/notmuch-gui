@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using NM = NotMuch;
 using MK = MimeKit;
 using UI = Gtk.Builder.ObjectAttribute;
+using Gtk;
 
 namespace NotMuchGUI
 {
-	[System.ComponentModel.ToolboxItem(true)]
-	public partial class MessageWidget : Gtk.Bin
+	public class MessageWidget : Gtk.Bin
 	{
 		WebKit.WebView m_webView;
 		Gtk.ListStore m_attachmentStore;
@@ -26,27 +26,37 @@ namespace NotMuchGUI
 		[UI] Gtk.Label labelContent;
 		[UI] Gtk.Label labelThreadID;
 
-		Gtk.ScrolledWindow scrolledwindowWeb;
+		[UI] Gtk.ScrolledWindow scrolledwindowWeb;
 
 		Gtk.NodeView attachmentNodeview;
 
+		[UI] Box hbox1;
+
 		public MessageWidget()
 		{
+			Builder builder = new Gtk.Builder (null, "NotMuchGUI.UI.MessageWidget.ui", null);
+			builder.Autoconnect (this);
+			Add ((Box) builder.GetObject ("MessageWidget"));
+
 			m_webView = new WebKit.WebView();
 			m_webView.Editable = false;
 
-			scrolledwindowWeb.Add(m_webView);
+			//scrolledwindowWeb.Add(m_webView);
+			hbox1.Add(m_webView); // XXX
 
 			labelFrom.Ellipsize = Pango.EllipsizeMode.End;
 			labelTo.Ellipsize = Pango.EllipsizeMode.End;
 			labelCc.Ellipsize = Pango.EllipsizeMode.End;
 			labelSubject.Ellipsize = Pango.EllipsizeMode.End;
 
-			attachmentNodeview.AppendColumn("Attachment", new Gtk.CellRendererText(), "text", 0);
+
+			m_webView.LoadHtmlString("ASDASDASDA\n", null);
+
+			//attachmentNodeview.AppendColumn("Attachment", new Gtk.CellRendererText(), "text", 0);
 
 			// filename, index
-			m_attachmentStore = new Gtk.ListStore(typeof(string), typeof(int));
-			attachmentNodeview.Model = m_attachmentStore;
+			//m_attachmentStore = new Gtk.ListStore(typeof(string), typeof(int));
+			//attachmentNodeview.Model = m_attachmentStore;
 		}
 
 		public void Clear()

@@ -21,7 +21,6 @@ public partial class MainWindow: Gtk.Window
 	[UI] Entry queryEntry;
 	[UI] QueryWidget querywidget;
 	[UI] MessageListWidget messageListWidget;
-	[UI] MessageWidget messagewidget1;
 	[UI] Gtk.Action goBackAction;
 	[UI] Gtk.Action goForwardAction;
 	[UI] Gtk.ToggleAction dbgAction;
@@ -29,11 +28,15 @@ public partial class MainWindow: Gtk.Window
 	[UI] Gtk.ToggleAction msgSrcAction;
 	[UI] Box hbox3;
 
+	MessageWidget messagewidget1;
 	TagsWidget tagsWidget;
 
 	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
 		builder.Autoconnect (this);
+
+		messagewidget1 = new MessageWidget();
+		hbox3.Add(messagewidget1);
 
 		tagsWidget = new TagsWidget();
 		hbox3.Add(tagsWidget);

@@ -1,332 +1,250 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<interface><!-- interface-requires gtk+ 3.0 --><object class="GtkBox" id="MessageWidget">
-      <property name="member_name"/>
-      <property name="visible">False</property>
-      <child>
-         <object class="GtkBox" id="vbox3">
-            <property name="orientation">vertical</property>
-            <property name="member_name"/>
+<!-- Generated with glade 3.16.1 -->
+<interface>
+  <requires lib="gtk+" version="3.0"/>
+  <object class="GtkBox" id="MessageWidget">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkBox" id="vbox3">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="GtkGrid" id="table1">
+            <property name="can_focus">False</property>
+            <property name="border_width">4</property>
+            <property name="row_spacing">6</property>
+            <property name="column_spacing">10</property>
+            <child>
+              <object class="GtkLabel" id="label4">
+                <property name="can_focus">False</property>
+                <property name="xalign">1</property>
+                <property name="label" translatable="yes">From</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="labelCc">
+                <property name="can_focus">False</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">labelCc</property>
+                <property name="selectable">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">3</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="labelContent">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">contentType</property>
+                <property name="selectable">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">3</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="labelDate">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">date</property>
+                <property name="selectable">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">3</property>
+                <property name="top_attach">1</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="labelFrom">
+                <property name="can_focus">False</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">labelFrom</property>
+                <property name="selectable">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="labelMsgID">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">msgID</property>
+                <property name="selectable">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="labelThreadID">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">threadID</property>
+                <property name="selectable">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="labelTo">
+                <property name="can_focus">False</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">labelTo</property>
+                <property name="selectable">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">2</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="labelSubject">
+                <property name="can_focus">False</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">labelSubject</property>
+                <property name="selectable">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">1</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label5">
+                <property name="can_focus">False</property>
+                <property name="xalign">1</property>
+                <property name="label" translatable="yes">Subject</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label6">
+                <property name="can_focus">False</property>
+                <property name="xalign">1</property>
+                <property name="label" translatable="yes">To</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">2</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label9">
+                <property name="can_focus">False</property>
+                <property name="xalign">1</property>
+                <property name="label" translatable="yes">Cc</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">3</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="hbox1">
+            <property name="can_focus">False</property>
             <property name="spacing">6</property>
             <child>
-               <object class="GtkTable" id="table1">
-                  <property name="member_name"/>
-                  <property name="n_rows">4</property>
-                  <property name="n_columns">4</property>
-                  <property name="row_spacing">6</property>
-                  <property name="column_spacing">10</property>
-                  <property name="border_width">4</property>
-                  <child>
-                     <object class="GtkLabel" id="label4">
-                        <property name="member_name"/>
-                        <property name="xalign">1</property>
-                        <property name="label" translatable="yes">From</property>
-                     </object>
-                     <packing>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="label5">
-                        <property name="member_name"/>
-                        <property name="xalign">1</property>
-                        <property name="label" translatable="yes">Subject</property>
-                     </object>
-                     <packing>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="label6">
-                        <property name="member_name"/>
-                        <property name="xalign">1</property>
-                        <property name="label" translatable="yes">To</property>
-                     </object>
-                     <packing>
-                        <property name="top_attach">2</property>
-                        <property name="bottom_attach">3</property>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="label9">
-                        <property name="member_name"/>
-                        <property name="xalign">1</property>
-                        <property name="label" translatable="yes">Cc</property>
-                     </object>
-                     <packing>
-                        <property name="top_attach">3</property>
-                        <property name="bottom_attach">4</property>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="labelCc">
-                        <property name="member_name"/>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">labelCc</property>
-                        <property name="selectable">True</property>
-                     </object>
-                     <packing>
-                        <property name="top_attach">3</property>
-                        <property name="bottom_attach">4</property>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">4</property>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="labelContent">
-                        <property name="member_name"/>
-                        <property name="label" translatable="yes">contentType</property>
-                        <property name="selectable">True</property>
-                     </object>
-                     <packing>
-                        <property name="left_attach">3</property>
-                        <property name="right_attach">4</property>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="labelDate">
-                        <property name="member_name"/>
-                        <property name="label" translatable="yes">date</property>
-                        <property name="selectable">True</property>
-                     </object>
-                     <packing>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
-                        <property name="left_attach">3</property>
-                        <property name="right_attach">4</property>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="labelFrom">
-                        <property name="member_name"/>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">labelFrom</property>
-                        <property name="selectable">True</property>
-                     </object>
-                     <packing>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">2</property>
-                        <property name="auto_size">False</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">True</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="labelMsgID">
-                        <property name="member_name"/>
-                        <property name="label" translatable="yes">msgID</property>
-                        <property name="selectable">True</property>
-                     </object>
-                     <packing>
-                        <property name="left_attach">2</property>
-                        <property name="right_attach">3</property>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="labelSubject">
-                        <property name="member_name"/>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">labelSubject</property>
-                        <property name="selectable">True</property>
-                     </object>
-                     <packing>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">2</property>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="labelThreadID">
-                        <property name="member_name"/>
-                        <property name="label" translatable="yes">threadID</property>
-                        <property name="selectable">True</property>
-                     </object>
-                     <packing>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
-                        <property name="left_attach">2</property>
-                        <property name="right_attach">3</property>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkLabel" id="labelTo">
-                        <property name="member_name"/>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">labelTo</property>
-                        <property name="selectable">True</property>
-                     </object>
-                     <packing>
-                        <property name="top_attach">2</property>
-                        <property name="bottom_attach">3</property>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">4</property>
-                        <property name="auto_size">True</property>
-                        <property name="x_options">Fill</property>
-                        <property name="y_options">Fill</property>
-                        <property name="x_expand">False</property>
-                        <property name="x_fill">True</property>
-                        <property name="x_shrink">False</property>
-                        <property name="y_expand">False</property>
-                        <property name="y_fill">True</property>
-                        <property name="y_shrink">False</property>
-                     </packing>
-                  </child>
-               </object>
-               <packing>
-                  <property name="position">0</property>
-                  <property name="auto_size">True</property>
-                  <property name="expand">False</property>
-                  <property name="fill">False</property>
-               </packing>
+              <object class="GtkScrolledWindow" id="scrolledwindowWeb">
+                <property name="can_focus">True</property>
+                <property name="vscrollbar_policy">always</property>
+                <child>
+                  <object class="GtkViewport" id="GtkViewport">
+                    <property name="can_focus">False</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-               <object class="GtkHBox" id="hbox1">
-                  <property name="member_name"/>
-                  <property name="spacing">6</property>
-                  <child>
-                     <object class="GtkScrolledWindow" id="scrolledwindowWeb">
-                        <property name="member_name"/>
-                        <property name="can_focus">True</property>
-                        <property name="vscrollbar_policy">Always</property>
-                        <property name="shadow_type">In</property>
-                        <child>
-                           <object class="GtkViewport" id="GtkViewport">
-                              <property name="member_name"/>
-                              <property name="shadow_type">None</property>
-                              <child/>
-                           </object>
-                        </child>
-                     </object>
-                     <packing>
-                        <property name="position">0</property>
-                        <property name="auto_size">True</property>
-                     </packing>
-                  </child>
-                  <child>
-                     <object class="GtkScrolledWindow" id="GtkScrolledWindow">
-                        <property name="member_name"/>
-                        <property name="width_request">150</property>
-                        <property name="shadow_type">In</property>
-                        <child>
-                           <object class="GtkNodeView" id="attachmentNodeview">
-                              <property name="member_name"/>
-                              <property name="can_focus">True</property>
-                              <property name="show_scrollbars">True</property>
-                              <signal name="RowActivated"
-                                      handler="OnAttachmentNodeviewRowActivated"
-                                      swapped="no"/>
-                           </object>
-                        </child>
-                     </object>
-                     <packing>
-                        <property name="position">1</property>
-                        <property name="auto_size">False</property>
-                        <property name="expand">False</property>
-                     </packing>
-                  </child>
-               </object>
-               <packing>
-                  <property name="pack_type">End</property>
-                  <property name="position">1</property>
-                  <property name="auto_size">True</property>
-               </packing>
+              <object class="GtkScrolledWindow" id="GtkScrolledWindow">
+                <property name="width_request">150</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
-         </object>
-      </child>
-   </object>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+  </object>
 </interface>
