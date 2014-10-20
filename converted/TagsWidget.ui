@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface><!-- interface-requires gtk+ 3.0 --><object class="GtkBox" id="TagsWidget">
+      <property name="member_name"/>
+      <property name="visible">False</property>
+      <child>
+         <object class="GtkBox" id="vbox2">
+            <property name="orientation">vertical</property>
+            <property name="member_name"/>
+            <property name="spacing">6</property>
+            <child>
+               <object class="GtkScrolledWindow" id="GtkScrolledWindow">
+                  <property name="member_name"/>
+                  <property name="shadow_type">In</property>
+                  <child>
+                     <object class="GtkTreeView" id="tagsTreeview">
+                        <property name="member_name"/>
+                        <property name="can_focus">True</property>
+                        <property name="show_scrollbars">True</property>
+                     </object>
+                  </child>
+               </object>
+               <packing>
+                  <property name="position">0</property>
+                  <property name="auto_size">True</property>
+               </packing>
+            </child>
+            <child>
+               <object class="GtkHBox" id="hbox1">
+                  <property name="member_name"/>
+                  <property name="spacing">6</property>
+                  <child>
+                     <object class="GtkButton" id="newButton">
+                        <property name="member_name"/>
+                        <property name="can_focus">True</property>
+                        <property name="type">TextOnly</property>
+                        <property name="label" translatable="yes">New</property>
+                        <property name="use_underline">True</property>
+                        <signal name="Clicked" handler="OnNewButtonClicked" swapped="no"/>
+                     </object>
+                     <packing>
+                        <property name="pack_type">End</property>
+                        <property name="position">0</property>
+                        <property name="auto_size">True</property>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                     </packing>
+                  </child>
+                  <child>
+                     <object class="GtkButton" id="resetButton">
+                        <property name="member_name"/>
+                        <property name="can_focus">True</property>
+                        <property name="type">TextOnly</property>
+                        <property name="label" translatable="yes">Reset</property>
+                        <property name="use_underline">True</property>
+                        <signal name="Clicked" handler="OnResetButtonClicked" swapped="no"/>
+                     </object>
+                     <packing>
+                        <property name="pack_type">End</property>
+                        <property name="position">1</property>
+                        <property name="auto_size">True</property>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                     </packing>
+                  </child>
+                  <child>
+                     <object class="GtkButton" id="applyButton">
+                        <property name="member_name"/>
+                        <property name="can_focus">True</property>
+                        <property name="type">TextOnly</property>
+                        <property name="label" translatable="yes">Apply</property>
+                        <property name="use_underline">True</property>
+                        <signal name="Clicked" handler="OnApplyButtonClicked" swapped="no"/>
+                     </object>
+                     <packing>
+                        <property name="pack_type">End</property>
+                        <property name="position">2</property>
+                        <property name="auto_size">True</property>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                     </packing>
+                  </child>
+               </object>
+               <packing>
+                  <property name="position">1</property>
+                  <property name="auto_size">True</property>
+                  <property name="expand">False</property>
+                  <property name="fill">False</property>
+               </packing>
+            </child>
+         </object>
+      </child>
+   </object>
+</interface>
