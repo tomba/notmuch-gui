@@ -50,8 +50,8 @@ namespace NotMuchGUI
 
 			Builder builder = new Builder(null, "NotMuchGUI.UI.MainWindow.ui", null);
 			MainClass.MainWindow = new MainWindow(builder, builder.GetObject("MainWindow").Handle);
-			MainClass.MainWindow.Show();
-
+			MainClass.MainWindow.ShowAll();
+			
 			Application.Run();
 		}
 

@@ -1,23 +1,27 @@
 using System;
+using Gtk;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	public partial class DebugWindow : Gtk.Window
+	public class DebugWindow : Gtk.Window
 	{
-		public DebugWindow() : 
-			base(Gtk.WindowType.Toplevel)
+		[UI] TextView textviewDump;
+		[UI] TextView textviewSrc;
+
+		public DebugWindow(Builder builder, IntPtr handle) : base(handle)
 		{
-			//this.Build();
+			builder.Autoconnect(this);
 		}
 
 		public void SetDump(string txt)
 		{
-			//textviewDump.Buffer.Text = txt;
+			textviewDump.Buffer.Text = txt;
 		}
 
 		public void SetSrc(string txt)
 		{
-			//textviewSrc.Buffer.Text = txt;
+			textviewSrc.Buffer.Text = txt;
 		}
 	}
 }

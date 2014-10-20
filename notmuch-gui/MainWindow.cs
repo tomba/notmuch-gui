@@ -49,6 +49,10 @@ public partial class MainWindow: Gtk.Window
 			});
 		};
 
+		this.DeleteEvent += OnDeleteEvent;
+
+		return;
+
 		threadedAction.Active = true;
 
 		using (var cdb = new CachedDB())
@@ -71,6 +75,7 @@ public partial class MainWindow: Gtk.Window
 		};
 
 		messageListWidget.MyFocus();
+
 	}
 
 	protected override bool OnKeyPressEvent(Gdk.EventKey evnt)
@@ -97,8 +102,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
-		querywidget.CancelUpdate();
-		messageListWidget.Cancel();
+		//querywidget.CancelUpdate();
+		//messageListWidget.Cancel();
 
 		Application.Quit();
 		a.RetVal = true;
@@ -332,7 +337,7 @@ public partial class MainWindow: Gtk.Window
 
 		if (dbgAction.Active)
 		{
-			m_dbgWnd = new DebugWindow();
+			//m_dbgWnd = new DebugWindow();
 			m_dbgWnd.ShowAll();
 		}
 	}
