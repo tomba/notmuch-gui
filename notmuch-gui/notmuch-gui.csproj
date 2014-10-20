@@ -68,6 +68,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\DebugWindow.ui" />
     <EmbeddedResource Include="UI\MainWindow.ui" />
+    <EmbeddedResource Include="UI\TagsWidget.ui" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindow.cs" />
@@ -112,7 +113,6 @@
     <None Include="UI\MessageListWidget.ui" />
     <None Include="UI\MessageWidget.ui" />
     <None Include="UI\QueryWidget.ui" />
-    <None Include="UI\TagsWidget.ui" />
     <None Include="UI\TermDialog.ui" />
   </ItemGroup>
 </Project>

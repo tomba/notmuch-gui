@@ -7,8 +7,7 @@ using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	[System.ComponentModel.ToolboxItem(true)]
-	public partial class TagsWidget : Gtk.Bin
+	public class TagsWidget : Gtk.Bin
 	{
 		ListStore m_tagsStore;
 		string[] m_tags = new string[0];
@@ -21,10 +20,16 @@ namespace NotMuchGUI
 		CellRendererText m_crt;
 
 		[UI] TreeView tagsTreeview;
-		[UI] Gtk.Action applyButton;
+		[UI] Button newButton;
+		[UI] Button resetButton;
+		[UI] Button applyButton;
 
 		public TagsWidget()
 		{
+			Builder builder = new Gtk.Builder (null, "NotMuchGUI.UI.TagsWidget.ui", null);
+			builder.Autoconnect (this);
+			Add ((Box) builder.GetObject ("TagsWidget"));
+
 			var c = new TreeViewColumn();
 			c.Title = "Tags";
 

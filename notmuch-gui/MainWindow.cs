@@ -19,7 +19,6 @@ public partial class MainWindow: Gtk.Window
 	[UI] Label label1;
 	[UI] Label label3;
 	[UI] Entry queryEntry;
-	[UI] TagsWidget tagsWidget;
 	[UI] QueryWidget querywidget;
 	[UI] MessageListWidget messageListWidget;
 	[UI] MessageWidget messagewidget1;
@@ -28,10 +27,16 @@ public partial class MainWindow: Gtk.Window
 	[UI] Gtk.ToggleAction dbgAction;
 	[UI] Gtk.ToggleAction threadedAction;
 	[UI] Gtk.ToggleAction msgSrcAction;
+	[UI] Box hbox3;
+
+	TagsWidget tagsWidget;
 
 	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
 		builder.Autoconnect (this);
+
+		tagsWidget = new TagsWidget();
+		hbox3.Add(tagsWidget);
 
 		CachedDB.DBOpenEvent += (bool write) =>
 		{
