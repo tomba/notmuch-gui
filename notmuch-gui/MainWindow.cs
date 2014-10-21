@@ -70,7 +70,7 @@ public partial class MainWindow: Gtk.Window
 
 		this.DeleteEvent += OnDeleteEvent;
 
-		//threadedAction.Active = true;
+		threadedAction.Active = true;
 
 		using (var cdb = new CachedDB())
 		{
