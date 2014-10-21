@@ -20,6 +20,8 @@ namespace NotMuchGUI
 			builder.Autoconnect (this);
 			Add ((Box) builder.GetObject ("QueryWidget"));
 
+			queryTreeview.CursorChanged += OnQueryTreeviewCursorChanged;
+
 			SetupQueryList();
 
 
@@ -99,8 +101,8 @@ namespace NotMuchGUI
 
 			m_queryStore = queryStore;
 		}
-
-		protected void OnQueryTreeviewCursorChanged(object sender, EventArgs e)
+			
+		void OnQueryTreeviewCursorChanged(object sender, EventArgs e)
 		{
 			TreeSelection selection = (sender as TreeView).Selection;
 			ITreeModel model;

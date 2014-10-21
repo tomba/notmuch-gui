@@ -50,6 +50,8 @@ public partial class MainWindow: Gtk.Window
 		tagsWidget = new TagsWidget();
 		hbox3.Add(tagsWidget);
 
+		queryEntry.Activated += OnQueryEntryActivated;
+
 		CachedDB.DBOpenEvent += (bool write) =>
 		{
 			Application.Invoke((s, o) =>
@@ -117,8 +119,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
-		//querywidget.CancelUpdate();
-		//messageListWidget.Cancel();
+		querywidget.CancelUpdate();
+		messageListWidget.Cancel();
 
 		Application.Quit();
 		a.RetVal = true;
