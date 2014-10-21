@@ -19,14 +19,17 @@ public partial class MainWindow: Gtk.Window
 	[UI] Label label1;
 	[UI] Label label3;
 	[UI] Entry queryEntry;
-	[UI] QueryWidget querywidget;
-	[UI] MessageListWidget messageListWidget;
 	[UI] Gtk.Action goBackAction;
 	[UI] Gtk.Action goForwardAction;
 	[UI] Gtk.ToggleAction dbgAction;
 	[UI] Gtk.ToggleAction threadedAction;
 	[UI] Gtk.ToggleAction msgSrcAction;
+
 	[UI] Box hbox3;
+	[UI] Paned hpaned1;
+
+	QueryWidget querywidget;
+	MessageListWidget messageListWidget;
 
 	MessageWidget messagewidget1;
 	TagsWidget tagsWidget;
@@ -34,6 +37,12 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
 		builder.Autoconnect (this);
+
+		querywidget = new QueryWidget();
+		hpaned1.Add(querywidget);
+
+		messageListWidget = new MessageListWidget();
+		hpaned1.Add(messageListWidget);
 
 		messagewidget1 = new MessageWidget();
 		hbox3.Add(messagewidget1);
@@ -59,9 +68,7 @@ public partial class MainWindow: Gtk.Window
 
 		this.DeleteEvent += OnDeleteEvent;
 
-		return;
-
-		threadedAction.Active = true;
+		//threadedAction.Active = true;
 
 		using (var cdb = new CachedDB())
 		{

@@ -1,21 +1,25 @@
 using System;
-using Gtk;
 using System.Linq;
+using Gtk;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	[System.ComponentModel.ToolboxItem(true)]
-	public partial class QueryWidget : Gtk.Bin
+	public partial class QueryWidget : Bin
 	{
 		ListStore m_queryStore;
 		QueryCountUpdater m_queryCountUpdater;
 
 		public event Action<string> QuerySelected;
 
-		TreeView queryTreeview;
+		[UI] TreeView queryTreeview;
 
 		public QueryWidget()
 		{
+			Builder builder = new Gtk.Builder (null, "NotMuchGUI.UI.QueryWidget.ui", null);
+			builder.Autoconnect (this);
+			Add ((Box) builder.GetObject ("QueryWidget"));
+
 			SetupQueryList();
 
 

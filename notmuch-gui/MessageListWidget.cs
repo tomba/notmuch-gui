@@ -4,10 +4,10 @@ using System.Diagnostics;
 using NM = NotMuch;
 using System.Linq;
 using System.Collections.Generic;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class MessageListWidget : Gtk.Bin
 	{
 		public event EventHandler MessageSelected;
@@ -22,10 +22,14 @@ namespace NotMuchGUI
 
 		int m_maxMsgs;
 
-		TreeView messagesTreeview;
+		[UI] TreeView messagesTreeview;
 
 		public MessageListWidget()
 		{
+			Builder builder = new Gtk.Builder (null, "NotMuchGUI.UI.MessageListWidget.ui", null);
+			builder.Autoconnect (this);
+			Add ((Box) builder.GetObject ("MessageListWidget"));
+
 			if (MainClass.AppKeyFile.GetIntegerOrFalse("ui", "max-msgs", out m_maxMsgs) == false)
 				m_maxMsgs = 1000;
 

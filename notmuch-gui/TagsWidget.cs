@@ -7,7 +7,7 @@ using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	public class TagsWidget : Gtk.Bin
+	public class TagsWidget : Bin
 	{
 		ListStore m_tagsStore;
 		string[] m_tags = new string[0];
