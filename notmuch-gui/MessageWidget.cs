@@ -146,7 +146,7 @@ namespace NotMuchGUI
 
 			this.HtmlContent = html;
 
-			m_webView.LoadHtmlString(html, null);
+			m_webView.LoadString(html, null, null, null);
 		}
 
 		public bool ShowHtmlSource
@@ -156,7 +156,7 @@ namespace NotMuchGUI
 			{
 				m_webView.ViewSourceMode = value;
 				if (this.HtmlContent != null)
-					m_webView.LoadHtmlString(this.HtmlContent, null);
+					m_webView.LoadString(this.HtmlContent, null, null, null);
 			}
 		}
 
