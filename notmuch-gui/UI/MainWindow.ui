@@ -6,7 +6,7 @@
     <child>
       <object class="GtkToggleAction" id="threadedAction">
         <property name="label" translatable="yes">Threaded</property>
-        <property name="short_label" translatable="yes">Threaded</property>
+        <property name="stock_id">gtk-justify-right</property>
       </object>
     </child>
     <child>
@@ -47,11 +47,13 @@
     <child>
       <object class="GtkAction" id="goBackAction">
         <property name="label" translatable="yes">Back</property>
+        <property name="stock_id">gtk-go-back</property>
       </object>
     </child>
     <child>
       <object class="GtkAction" id="goForwardAction">
         <property name="label" translatable="yes">Forward</property>
+        <property name="stock_id">gtk-go-forward</property>
       </object>
     </child>
     <child>
@@ -130,11 +132,9 @@
             <property name="show_arrow">False</property>
             <child>
               <object class="GtkToolButton" id="toolbutton3">
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">GCAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton3</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -148,7 +148,6 @@
                 <property name="related_action">newAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton4</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -162,7 +161,6 @@
                 <property name="related_action">replyAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton5</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -176,7 +174,6 @@
                 <property name="related_action">replyAllAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton6</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -190,7 +187,6 @@
                 <property name="related_action">dbgAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton7</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -200,9 +196,9 @@
             </child>
             <child>
               <object class="GtkToggleToolButton" id="toolbutton8">
+                <property name="related_action">msgSrcAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton8</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -216,7 +212,6 @@
                 <property name="related_action">fetchAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton9</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -230,7 +225,6 @@
                 <property name="related_action">processAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton10</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -244,7 +238,6 @@
                 <property name="related_action">deleteAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton11</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -258,7 +251,6 @@
                 <property name="related_action">refreshAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton12</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -272,7 +264,6 @@
                 <property name="related_action">toggleReadAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">toolbutton11</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -297,13 +288,10 @@
                 <property name="show_arrow">False</property>
                 <child>
                   <object class="GtkToolButton" id="toolbuttonBack">
-                    <property name="use_action_appearance">False</property>
                     <property name="related_action">goBackAction</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">toolbutton1</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-go-back</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -312,13 +300,10 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="toolbuttonForward">
-                    <property name="use_action_appearance">False</property>
                     <property name="related_action">goForwardAction</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">toolbutton2</property>
                     <property name="use_underline">True</property>
-                    <property name="icon_name">go-next</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

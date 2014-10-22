@@ -19,11 +19,22 @@ public partial class MainWindow: Gtk.Window
 	[UI] Label label1;
 	[UI] Label label3;
 	[UI] Entry queryEntry;
+
 	[UI] Gtk.Action goBackAction;
 	[UI] Gtk.Action goForwardAction;
-	[UI] Gtk.ToggleAction dbgAction;
-	[UI] Gtk.ToggleAction threadedAction;
-	[UI] Gtk.ToggleAction msgSrcAction;
+	[UI] ToggleAction threadedAction;
+
+	[UI] Gtk.Action GCAction;
+	[UI] Gtk.Action newAction;
+	[UI] Gtk.Action replyAction;
+	[UI] Gtk.Action replyAllAction;
+	[UI] ToggleAction dbgAction;
+	[UI] ToggleAction msgSrcAction;
+	[UI] Gtk.Action fetchAction;
+	[UI] Gtk.Action processAction;
+	[UI] Gtk.Action deleteAction;
+	[UI] Gtk.Action refreshAction;
+	[UI] ToggleAction toggleReadAction;
 
 	[UI] Box hbox3;
 	[UI] Paned hpaned1;
@@ -37,6 +48,24 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
 		builder.Autoconnect (this);
+
+		this.DeleteEvent += OnDeleteEvent;
+
+		goBackAction.Activated += OnGoBackActionActivated;
+		goForwardAction.Activated += OnGoForwardActionActivated;
+		threadedAction.Activated += OnThreadedActionActivated;
+
+		GCAction.Activated += OnGcActionActivated;
+		newAction.Activated += OnNewActionActivated;
+		replyAction.Activated += OnReplyActionActivated;
+		replyAllAction.Activated += OnReplyAllActionActivated;
+		dbgAction.Activated += OnDbgActionActivated;
+		msgSrcAction.Activated += OnMsgSrcActionActivated;
+		fetchAction.Activated += OnFetchActionActivated;
+		processAction.Activated += OnProcessActionActivated;
+		deleteAction.Activated += OnDeleteActionActivated;
+		refreshAction.Activated += OnRefreshActionActivated;
+		toggleReadAction.Activated += OnToggleReadActionActivated;
 
 		querywidget = new QueryWidget();
 		hpaned1.Add(querywidget);
@@ -70,8 +99,6 @@ public partial class MainWindow: Gtk.Window
 				label1.Text = "";
 			});
 		};
-
-		this.DeleteEvent += OnDeleteEvent;
 
 		threadedAction.Active = true;
 
@@ -120,7 +147,7 @@ public partial class MainWindow: Gtk.Window
 		}
 	}
 
-	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
+	void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
 		querywidget.CancelUpdate();
 		messageListWidget.Cancel();
@@ -135,12 +162,12 @@ public partial class MainWindow: Gtk.Window
 		queryEntry.Activate();
 	}
 
-	protected void OnMessageListWidgetCountsChanged(object sender, EventArgs e)
+	void OnMessageListWidgetCountsChanged(object sender, EventArgs e)
 	{
 		label3.Text = String.Format("{0}/{1} msgs", messageListWidget.Count, messageListWidget.TotalCount);
 	}
 
-	protected void OnMessageListWidgetMessageSelected(object sender, EventArgs e)
+	void OnMessageListWidgetMessageSelected(object sender, EventArgs e)
 	{
 		var ids = messageListWidget.GetSelectedMessageIDs();
 
@@ -236,7 +263,7 @@ public partial class MainWindow: Gtk.Window
 		return gmsg;
 	}
 	#endif
-	protected void OnGcActionActivated(object sender, EventArgs e)
+	void OnGcActionActivated(object sender, EventArgs e)
 	{
 		var sw = Stopwatch.StartNew();
 
@@ -248,12 +275,12 @@ public partial class MainWindow: Gtk.Window
 		Console.WriteLine("GC in {0} ms", sw.ElapsedMilliseconds);
 	}
 
-	protected void OnReplyAllActionActivated(object sender, EventArgs e)
+	void OnReplyAllActionActivated(object sender, EventArgs e)
 	{
 		Reply(true);
 	}
 
-	protected void OnReplyActionActivated(object sender, EventArgs e)
+	void OnReplyActionActivated(object sender, EventArgs e)
 	{
 		Reply(false);
 	}
@@ -269,7 +296,7 @@ public partial class MainWindow: Gtk.Window
 		wnd.Show();
 	}
 
-	protected void OnNewActionActivated(object sender, EventArgs e)
+	void OnNewActionActivated(object sender, EventArgs e)
 	{
 		var wnd = new ComposeWindow();
 		wnd.ParentWindow = this.Window;
@@ -279,7 +306,7 @@ public partial class MainWindow: Gtk.Window
 		wnd.Show();
 	}
 
-	protected void OnQueryEntryChanged(object sender, EventArgs e)
+	void OnQueryEntryChanged(object sender, EventArgs e)
 	{
 		//var queryStr = queryEntry.Text;
 
@@ -295,7 +322,7 @@ public partial class MainWindow: Gtk.Window
 		messageListWidget.ExecuteQuery(item.Query, item.Threaded, retainSelection);
 	}
 
-	protected void OnQueryEntryActivated(object sender, EventArgs e)
+	void OnQueryEntryActivated(object sender, EventArgs e)
 	{
 		if (m_skipExecute)
 			return;
@@ -303,7 +330,7 @@ public partial class MainWindow: Gtk.Window
 		ExecuteNewUIQuery(false);
 	}
 
-	protected void OnThreadedActionActivated(object sender, EventArgs e)
+	void OnThreadedActionActivated(object sender, EventArgs e)
 	{
 		if (m_skipExecute)
 			return;
@@ -342,12 +369,12 @@ public partial class MainWindow: Gtk.Window
 		goForwardAction.Sensitive = m_currentItem.Next != null;
 	}
 
-	protected void OnRefreshActionActivated(object sender, EventArgs e)
+	void OnRefreshActionActivated(object sender, EventArgs e)
 	{
 		ExecuteQuery(m_currentItem.Value, true);
 	}
 
-	protected void OnDbgActionActivated(object sender, EventArgs e)
+	void OnDbgActionActivated(object sender, EventArgs e)
 	{
 		if (m_dbgWnd != null)
 		{
@@ -362,12 +389,12 @@ public partial class MainWindow: Gtk.Window
 		}
 	}
 
-	protected void OnMsgSrcActionActivated(object sender, EventArgs e)
+	void OnMsgSrcActionActivated(object sender, EventArgs e)
 	{
 		messagewidget1.ShowHtmlSource = msgSrcAction.Active;
 	}
 
-	protected void OnFetchActionActivated(object sender, EventArgs e)
+	void OnFetchActionActivated(object sender, EventArgs e)
 	{
 		var exe = MainClass.AppKeyFile.GetStringOrNull("fetch", "cmd");
 		if (exe == null)
@@ -383,7 +410,7 @@ public partial class MainWindow: Gtk.Window
 		dlg.Destroy();
 	}
 
-	protected void OnProcessActionActivated (object sender, EventArgs e)
+	void OnProcessActionActivated (object sender, EventArgs e)
 	{
 		var dlg = new TermDialog();
 		dlg.ParentWindow = this.RootWindow;
@@ -397,7 +424,7 @@ public partial class MainWindow: Gtk.Window
 		OnRefreshActionActivated(null, null);
 	}
 
-	protected void OnToggleReadActionActivated(object sender, EventArgs e)
+	void OnToggleReadActionActivated(object sender, EventArgs e)
 	{
 		var ids = messageListWidget.GetSelectedMessageIDs();
 
@@ -431,7 +458,7 @@ public partial class MainWindow: Gtk.Window
 		tagsWidget.UpdateTagsView(ids);
 	}
 
-	protected void OnDeleteActionActivated(object sender, EventArgs e)
+	void OnDeleteActionActivated(object sender, EventArgs e)
 	{
 		var ids = messageListWidget.GetSelectedMessageIDs();
 
@@ -465,13 +492,13 @@ public partial class MainWindow: Gtk.Window
 		tagsWidget.UpdateTagsView(ids);
 	}
 
-	protected void OnGoBackActionActivated(object sender, EventArgs e)
+	void OnGoBackActionActivated(object sender, EventArgs e)
 	{
 		m_currentItem = m_currentItem.Previous;
 		UpdateAfterCurrentItemChange();
 	}
 
-	protected void OnGoForwardActionActivated(object sender, EventArgs e)
+	void OnGoForwardActionActivated(object sender, EventArgs e)
 	{
 		m_currentItem = m_currentItem.Next;
 		UpdateAfterCurrentItemChange();
