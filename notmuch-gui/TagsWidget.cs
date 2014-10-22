@@ -30,6 +30,10 @@ namespace NotMuchGUI
 			builder.Autoconnect (this);
 			Add ((Box) builder.GetObject ("TagsWidget"));
 
+			newButton.Clicked += OnNewButtonClicked;
+			resetButton.Clicked += OnResetButtonClicked;
+			applyButton.Clicked += OnApplyButtonClicked;
+
 			var c = new TreeViewColumn();
 			c.Title = "Tags";
 
@@ -125,7 +129,7 @@ namespace NotMuchGUI
 			}
 		}
 
-		protected void OnApplyButtonClicked(object sender, EventArgs e)
+		void OnApplyButtonClicked(object sender, EventArgs e)
 		{
 			if (m_idTagsMap == null)
 				return;
@@ -181,7 +185,7 @@ namespace NotMuchGUI
 			UpdateTagsView(m_idTagsMap.Keys.ToArray());
 		}
 
-		protected void OnResetButtonClicked(object sender, EventArgs e)
+		void OnResetButtonClicked(object sender, EventArgs e)
 		{
 			if (m_idTagsMap == null)
 				return;
@@ -189,7 +193,7 @@ namespace NotMuchGUI
 			UpdateTagsView(m_idTagsMap.Keys.ToArray());
 		}
 
-		protected void OnNewButtonClicked(object sender, EventArgs e)
+		void OnNewButtonClicked(object sender, EventArgs e)
 		{
 			if (m_idTagsMap == null)
 				return;

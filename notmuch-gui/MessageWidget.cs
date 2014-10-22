@@ -41,11 +41,6 @@ namespace NotMuchGUI
 
 			scrolledwindowWeb.Add(m_webView);
 
-			labelFrom.Ellipsize = Pango.EllipsizeMode.End;
-			labelTo.Ellipsize = Pango.EllipsizeMode.End;
-			labelCc.Ellipsize = Pango.EllipsizeMode.End;
-			labelSubject.Ellipsize = Pango.EllipsizeMode.End;
-
 
 			attachmentTreeview.AppendColumn("Attachment", new Gtk.CellRendererText(), "text", 0);
 
