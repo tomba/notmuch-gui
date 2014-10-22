@@ -83,8 +83,8 @@
   <object class="GtkWindow" id="MainWindow">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">MainWindow</property>
-    <property name="default_width">1024</property>
-    <property name="default_height">600</property>
+    <property name="default_width">1200</property>
+    <property name="default_height">800</property>
     <property name="icon">resource:NotMuchGUI.mail.png</property>
     <child>
       <object class="GtkBox" id="vbox2">
@@ -294,7 +294,6 @@
             <child>
               <object class="GtkToolbar" id="toolbar2">
                 <property name="can_focus">False</property>
-                <property name="toolbar_style">both</property>
                 <property name="show_arrow">False</property>
                 <child>
                   <object class="GtkToolButton" id="toolbuttonBack">
@@ -352,7 +351,7 @@
                 <property name="invisible_char">•</property>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>

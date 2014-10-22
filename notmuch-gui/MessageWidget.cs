@@ -27,10 +27,7 @@ namespace NotMuchGUI
 		[UI] Gtk.Label labelThreadID;
 
 		[UI] Gtk.ScrolledWindow scrolledwindowWeb;
-
-		Gtk.NodeView attachmentNodeview;
-
-		[UI] Box hbox1;
+		[UI] TreeView attachmentTreeview;
 
 		public MessageWidget()
 		{
@@ -40,9 +37,9 @@ namespace NotMuchGUI
 
 			m_webView = new WebKit.WebView();
 			m_webView.Editable = false;
+			m_webView.Expand = true;
 
-			//scrolledwindowWeb.Add(m_webView);
-			hbox1.Add(m_webView); // XXX
+			scrolledwindowWeb.Add(m_webView);
 
 			labelFrom.Ellipsize = Pango.EllipsizeMode.End;
 			labelTo.Ellipsize = Pango.EllipsizeMode.End;
@@ -50,13 +47,11 @@ namespace NotMuchGUI
 			labelSubject.Ellipsize = Pango.EllipsizeMode.End;
 
 
-			m_webView.LoadHtmlString("ASDASDASDA\n", null);
-
-			//attachmentNodeview.AppendColumn("Attachment", new Gtk.CellRendererText(), "text", 0);
+			attachmentTreeview.AppendColumn("Attachment", new Gtk.CellRendererText(), "text", 0);
 
 			// filename, index
-			//m_attachmentStore = new Gtk.ListStore(typeof(string), typeof(int));
-			//attachmentNodeview.Model = m_attachmentStore;
+			m_attachmentStore = new Gtk.ListStore(typeof(string), typeof(int));
+			attachmentTreeview.Model = m_attachmentStore;
 		}
 
 		public void Clear()
@@ -103,9 +98,9 @@ namespace NotMuchGUI
 
 			// show/hide the parent, i.e. the ScolledWindow
 			if (idx == 0)
-				attachmentNodeview.Parent.Hide();
+				attachmentTreeview.Parent.Hide();
 			else
-				attachmentNodeview.Parent.ShowAll();
+				attachmentTreeview.Parent.ShowAll();
 		}
 
 		void ShowBody(MK.MimeMessage msg, string threadID)

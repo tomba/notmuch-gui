@@ -52,6 +52,9 @@ public partial class MainWindow: Gtk.Window
 
 		queryEntry.Activated += OnQueryEntryActivated;
 
+		messageListWidget.MessageSelected += OnMessageListWidgetMessageSelected;
+		messageListWidget.CountsChanged += OnMessageListWidgetCountsChanged;
+
 		CachedDB.DBOpenEvent += (bool write) =>
 		{
 			Application.Invoke((s, o) =>
