@@ -46,10 +46,6 @@
     <Reference Include="webkit-sharp-3.0">
       <HintPath>..\webkit-sharp-3.0\webkit-sharp-3.0.dll</HintPath>
     </Reference>
-    <Reference Include="gkeyfile-sharp">
-      <HintPath>..\..\..\..\opt\gkeyfile-sharp\lib\mono\gkeyfile-sharp\gkeyfile-sharp.dll</HintPath>
-      <Package>gkeyfile-sharp</Package>
-    </Reference>
     <Reference Include="gdk-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="gio-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="System.Core" />
@@ -60,6 +56,9 @@
     </Reference>
     <Reference Include="MimeKit">
       <HintPath>..\packages\MimeKit.1.0.0.0\lib\net45\MimeKit.dll</HintPath>
+    </Reference>
+    <Reference Include="INIFileParser">
+      <HintPath>..\packages\ini-parser.2.1.1\lib\INIFileParser.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -86,7 +85,6 @@
     <Compile Include="MessageListWidget.cs" />
     <Compile Include="QueryCountUpdater.cs" />
     <Compile Include="MessageListColumns.cs" />
-    <Compile Include="KeyFileExtensions.cs" />
     <Compile Include="CachedDB.cs" />
     <Compile Include="MessageTreeStore.cs" />
     <Compile Include="QueryHistoryItem.cs" />
@@ -97,6 +95,7 @@
     <Compile Include="ComposeWindow.cs" />
     <Compile Include="QueryWidget.cs" />
     <Compile Include="TermDialog.cs" />
+    <Compile Include="MyKeyFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

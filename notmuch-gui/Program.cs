@@ -14,7 +14,7 @@ namespace NotMuchGUI
 
 		static System.Threading.Thread s_mainThread;
 
-		public static KeyFile.GKeyFile AppKeyFile { get; private set; }
+		public static MyKeyFile AppKeyFile { get; private set; }
 
 		public static MainWindow MainWindow { get; private set; }
 
@@ -78,7 +78,7 @@ namespace NotMuchGUI
 					;
 			}
 
-			MainClass.AppKeyFile = new KeyFile.GKeyFile(filename);
+			MainClass.AppKeyFile = new MyKeyFile(filename);
 
 			var exe = MainClass.AppKeyFile.GetStringOrNull("notmuch", "executable");
 			if (exe != null)
