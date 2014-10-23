@@ -47,7 +47,9 @@ public partial class MainWindow: Gtk.Window
 
 	public MainWindow(Builder builder, IntPtr handle) : base(handle)
 	{
-		builder.Autoconnect (this);
+		builder.Autoconnect(this);
+
+		this.Icon = Gdk.Pixbuf.LoadFromResource("NotMuchGUI.mail.png");
 
 		this.DeleteEvent += OnDeleteEvent;
 
