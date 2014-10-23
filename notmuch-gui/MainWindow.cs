@@ -400,7 +400,7 @@ public partial class MainWindow: Gtk.Window
 		if (exe == null)
 			throw new Exception();
 
-		var dlg = new TermDialog();
+		var dlg = TermDialog.Create();
 		dlg.ParentWindow = this.RootWindow;
 		dlg.Start(exe);
 		var resp = (ResponseType)dlg.Run();
@@ -412,7 +412,7 @@ public partial class MainWindow: Gtk.Window
 
 	void OnProcessActionActivated (object sender, EventArgs e)
 	{
-		var dlg = new TermDialog();
+		var dlg = TermDialog.Create();
 		dlg.ParentWindow = this.RootWindow;
 		dlg.Start(MainClass.NotmuchExe, "new");
 		var resp = (ResponseType)dlg.Run();

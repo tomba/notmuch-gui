@@ -1,6 +1,7 @@
 using System;
 using Mono.Unix.Native;
 using System.Collections.Generic;
+using Gtk;
 
 namespace NotMuchGUI
 {
@@ -9,11 +10,19 @@ namespace NotMuchGUI
 		//Vte.Terminal m_term;
 		int m_pid = -1;
 
-		public TermDialog()
+		public static TermDialog Create()
 		{
-			/*
-			this.Build();
+			Builder builder = new Builder(null, "NotMuchGUI.UI.TermDialog.ui", null);
+			var dlg = new TermDialog(builder, builder.GetObject("TermDialog").Handle);
+			dlg.ShowAll();
+			return dlg;
+		}
 
+		TermDialog(Builder builder, IntPtr handle) : base(handle)
+		{
+			builder.Autoconnect (this);
+
+			/*
 			m_term = new Vte.Terminal();
 			termScrolledwindow.Child = m_term;
 

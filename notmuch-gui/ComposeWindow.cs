@@ -214,7 +214,7 @@ namespace NotMuchGUI
 			using (var stream = File.OpenWrite(tmpFile))
 				m_message.WriteTo(stream);
 
-			var dlg = new TermDialog();
+			var dlg = TermDialog.Create();
 			dlg.ParentWindow = this.RootWindow;
 			dlg.Start(exe, tmpFile);
 			var resp = (ResponseType)dlg.Run();
