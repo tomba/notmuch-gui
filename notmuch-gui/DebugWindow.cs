@@ -4,10 +4,10 @@ using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	public class DebugWindow : Gtk.Window
+	public class DebugWindow : Window
 	{
-		[UI] TextView textviewDump;
-		[UI] TextView textviewSrc;
+		[UI] readonly TextView textviewDump;
+		[UI] readonly TextView textviewSrc;
 
 		public DebugWindow(Builder builder, IntPtr handle) : base(handle)
 		{

@@ -39,6 +39,9 @@ namespace NotMuchGUI
 
 				p.ErrorDataReceived += (sender, e) =>
 				{
+					if (string.IsNullOrEmpty(e.Data))
+						return;
+
 					lock (lockOb)
 					{
 						if (killed)
@@ -65,6 +68,9 @@ namespace NotMuchGUI
 
 				p.OutputDataReceived += (sender, e) =>
 				{
+					if (string.IsNullOrEmpty(e.Data))
+						return;
+
 					lock (lockOb)
 					{
 						if (killed)
