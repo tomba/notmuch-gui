@@ -9,7 +9,7 @@ namespace NotMuchGUI
 {
 	public class TagsWidget : Bin
 	{
-		ListStore m_tagsStore;
+		readonly ListStore m_tagsStore;
 		string[] m_tags = new string[0];
 		// msgid -> tags[]
 		Dictionary<string, string[]> m_idTagsMap;
@@ -17,18 +17,18 @@ namespace NotMuchGUI
 		public event Action<IEnumerable<string>> MsgTagsUpdatedEvent;
 
 		TreePath m_editPath;
-		CellRendererText m_crt;
+		readonly CellRendererText m_crt;
 
-		[UI] TreeView tagsTreeview;
-		[UI] Button newButton;
-		[UI] Button resetButton;
-		[UI] Button applyButton;
+		[UI] readonly TreeView tagsTreeview;
+		[UI] readonly Button newButton;
+		[UI] readonly Button resetButton;
+		[UI] readonly Button applyButton;
 
 		public TagsWidget()
 		{
-			Builder builder = new Gtk.Builder (null, "NotMuchGUI.UI.TagsWidget.ui", null);
-			builder.Autoconnect (this);
-			Add ((Box) builder.GetObject ("TagsWidget"));
+			var builder = new Builder(null, "NotMuchGUI.UI.TagsWidget.ui", null);
+			builder.Autoconnect(this);
+			Add((Box)builder.GetObject("TagsWidget"));
 
 			newButton.Clicked += OnNewButtonClicked;
 			resetButton.Clicked += OnResetButtonClicked;
@@ -37,7 +37,7 @@ namespace NotMuchGUI
 			var c = new TreeViewColumn();
 			c.Title = "Tags";
 
-			var crToggle = new Gtk.CellRendererToggle();
+			var crToggle = new CellRendererToggle();
 			crToggle.Toggled += OnTagToggled;
 			c.PackStart(crToggle, false);
 			c.AddAttribute(crToggle, "active", 1);

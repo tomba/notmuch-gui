@@ -9,7 +9,7 @@ namespace NotMuchGUI
 	{
 		public static TermDialog Create()
 		{
-			Builder builder = new Builder(null, "NotMuchGUI.UI.TermDialog.ui", null);
+			var builder = new Builder(null, "NotMuchGUI.UI.TermDialog.ui", null);
 			var dlg = new TermDialog(builder, builder.GetObject("TermDialog").Handle);
 			return dlg;
 		}
