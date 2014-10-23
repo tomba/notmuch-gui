@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NotMuchGUI
 {
-	public class CmdHelpers
+	public static class CmdHelpers
 	{
 		public static void LaunchDefaultApp(string filePath)
 		{
@@ -15,7 +15,7 @@ namespace NotMuchGUI
 		}
 
 		public static bool RunCmd(string cmd, string args, out string stdout, out string stderr,
-			out int ret, out string err, int maxbuf = 100000)
+		                          out int ret, out string err, int maxbuf = 100000)
 		{
 			err = null;
 
@@ -27,8 +27,8 @@ namespace NotMuchGUI
 				RedirectStandardOutput = true,
 			};
 
-			StringBuilder errSb = new StringBuilder();
-			StringBuilder stdSb = new StringBuilder();
+			var errSb = new StringBuilder();
+			var stdSb = new StringBuilder();
 
 			var lockOb = new object();
 			bool killed = false;

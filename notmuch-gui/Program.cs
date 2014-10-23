@@ -2,7 +2,6 @@ using System;
 using Gtk;
 using NM = NotMuch;
 using System.IO;
-using System.Diagnostics;
 
 namespace NotMuchGUI
 {
@@ -48,7 +47,7 @@ namespace NotMuchGUI
 			System.Threading.SynchronizationContext.SetSynchronizationContext(new GLib.GLibSynchronizationContext());
 
 
-			Builder builder = new Builder(null, "NotMuchGUI.UI.MainWindow.ui", null);
+			var builder = new Builder(null, "NotMuchGUI.UI.MainWindow.ui", null);
 			MainClass.MainWindow = new MainWindow(builder, builder.GetObject("MainWindow").Handle);
 			MainClass.MainWindow.ShowAll();
 			

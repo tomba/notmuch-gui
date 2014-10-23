@@ -16,6 +16,7 @@ namespace NotMuchGUI
 		NUM_COLUMNS,
 	}
 
+	[Flags]
 	enum MessageListFlags
 	{
 		None = 0,

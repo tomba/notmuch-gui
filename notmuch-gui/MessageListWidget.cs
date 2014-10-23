@@ -8,7 +8,7 @@ using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	public partial class MessageListWidget : Gtk.Bin
+	public class MessageListWidget : Bin
 	{
 		public event EventHandler MessageSelected;
 		public event EventHandler CountsChanged;
@@ -22,13 +22,13 @@ namespace NotMuchGUI
 
 		int m_maxMsgs;
 
-		[UI] TreeView messagesTreeview;
+		[UI] readonly TreeView messagesTreeview;
 
 		public MessageListWidget()
 		{
-			Builder builder = new Gtk.Builder (null, "NotMuchGUI.UI.MessageListWidget.ui", null);
-			builder.Autoconnect (this);
-			Add ((Box) builder.GetObject ("MessageListWidget"));
+			Builder builder = new Builder(null, "NotMuchGUI.UI.MessageListWidget.ui", null);
+			builder.Autoconnect(this);
+			Add((Box)builder.GetObject("MessageListWidget"));
 
 			if (MainClass.AppKeyFile.GetIntegerOrFalse("ui", "max-msgs", out m_maxMsgs) == false)
 				m_maxMsgs = 1000;
@@ -90,7 +90,7 @@ namespace NotMuchGUI
 		static Gdk.Color CellBgColor1 = new Gdk.Color(255, 255, 255);
 		static Gdk.Color CellBgColor2 = new Gdk.Color(235, 235, 255);
 
-		void SetCommonCellSettings(Gtk.TreeViewColumn column, Gtk.CellRendererText cell, MessageTreeStore model, ref TreeIter iter)
+		void SetCommonCellSettings(TreeViewColumn column, CellRendererText cell, MessageTreeStore model, ref TreeIter iter)
 		{
 			MessageListFlags flags = model.GetFlags(ref iter);
 			int threadNum = model.GetThreadNum(ref iter);
@@ -107,21 +107,21 @@ namespace NotMuchGUI
 			else
 				cell.CellBackgroundGdk = CellBgColor2;
 
-			cell.Strikethrough = (flags & MessageListFlags.Deleted) != 0 ? true : false;
+			cell.Strikethrough = (flags & MessageListFlags.Deleted) != 0;
 		}
 
-		void MyCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.ITreeModel _model, Gtk.TreeIter iter)
+		void MyCellDataFunc(TreeViewColumn column, CellRenderer cell, ITreeModel _model, TreeIter iter)
 		{
 			var model = (MessageTreeStore)_model;
-			var c = (Gtk.CellRendererText)cell;
+			var c = (CellRendererText)cell;
 
 			SetCommonCellSettings(column, c, model, ref iter);
 		}
 
-		void DateCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.ITreeModel _model, Gtk.TreeIter iter)
+		void DateCellDataFunc(TreeViewColumn column, CellRenderer cell, ITreeModel _model, TreeIter iter)
 		{
 			var model = (MessageTreeStore)_model;
-			var c = (Gtk.CellRendererText)cell;
+			var c = (CellRendererText)cell;
 
 			var stamp = model.GetDate(ref iter);
 
@@ -130,10 +130,10 @@ namespace NotMuchGUI
 			SetCommonCellSettings(column, c, model, ref iter);
 		}
 
-		void TagsCellDataFunc(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.ITreeModel _model, Gtk.TreeIter iter)
+		void TagsCellDataFunc(TreeViewColumn column, CellRenderer cell, ITreeModel _model, TreeIter iter)
 		{
 			var model = (MessageTreeStore)_model;
-			var c = (Gtk.CellRendererText)cell;
+			var c = (CellRendererText)cell;
 
 			var tags = model.GetTags(ref iter);
 
@@ -144,7 +144,7 @@ namespace NotMuchGUI
 
 		TreeViewColumn CreateTreeViewColumn(string name, int col)
 		{
-			var re = new Gtk.CellRendererText();
+			var re = new CellRendererText();
 			var c = new TreeViewColumn(name, re, "text", col)
 			{
 				Expand = false,
@@ -160,7 +160,7 @@ namespace NotMuchGUI
 
 		TreeViewColumn CreateDateTreeViewColumn(string name, int col)
 		{
-			var re = new Gtk.CellRendererText();
+			var re = new CellRendererText();
 			var c = new TreeViewColumn(name, re)
 			{
 				Expand = false,
@@ -180,7 +180,7 @@ namespace NotMuchGUI
 
 		TreeViewColumn CreateTagsTreeViewColumn(string name, int col)
 		{
-			var re = new Gtk.CellRendererText();
+			var re = new CellRendererText();
 			var c = new TreeViewColumn(name, re)
 			{
 				Expand = false,
@@ -300,7 +300,7 @@ namespace NotMuchGUI
 			if (args.Event.Button == 3)
 			{
 				Menu m = new Menu();
-				MenuItem item = new MenuItem("Focus Thread");
+				var item = new MenuItem("Focus Thread");
 				item.ButtonPressEvent += OnFocusThreadSelected;
 				m.Add(item);
 				m.ShowAll();
@@ -310,7 +310,7 @@ namespace NotMuchGUI
 
 		protected void OnFocusThreadSelected(object sender, ButtonPressEventArgs e)
 		{
-			var id = this.GetCurrentMessageID();
+			var id = GetCurrentMessageID();
 
 			string threadID;
 
@@ -377,7 +377,7 @@ namespace NotMuchGUI
 
 				long t1 = sw.ElapsedMilliseconds;
 
-				int count = 0;
+				int count;
 
 				long t2 = sw.ElapsedMilliseconds;
 
@@ -423,7 +423,7 @@ namespace NotMuchGUI
 				sw.Stop();
 
 				Console.WriteLine("Added {0} msgs in {1}, {2}, {3}, {4} = {5} ms '{6}'",
-				                  count, t1, t2 - t1, t3 - t2, t4 - t3, t4, m_queryString);
+					count, t1, t2 - t1, t3 - t2, t4 - t3, t4, m_queryString);
 			}
 
 			void SearchMessages(NM.Query query, MessageTreeStore model, out int count)
