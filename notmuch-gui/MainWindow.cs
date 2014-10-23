@@ -384,7 +384,7 @@ public partial class MainWindow: Gtk.Window
 
 		if (dbgAction.Active)
 		{
-			//m_dbgWnd = new DebugWindow();
+			m_dbgWnd = DebugWindow.Create();
 			m_dbgWnd.ShowAll();
 		}
 	}

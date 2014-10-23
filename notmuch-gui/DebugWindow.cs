@@ -6,6 +6,13 @@ namespace NotMuchGUI
 {
 	public class DebugWindow : Window
 	{
+		public static DebugWindow Create()
+		{
+			var builder = new Builder(null, "NotMuchGUI.UI.DebugWindow.ui", null);
+			var dlg = new DebugWindow(builder, builder.GetObject("DebugWindow").Handle);
+			return dlg;
+		}
+
 		[UI] readonly TextView textviewDump;
 		[UI] readonly TextView textviewSrc;
 
