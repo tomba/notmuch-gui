@@ -1,17 +1,14 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Gtk;
 using NotMuchGUI;
 using NM = NotMuch;
-using WebKit;
 using System.Collections.Generic;
 using System.Linq;
 using UI = Gtk.Builder.ObjectAttribute;
 
-public partial class MainWindow: Gtk.Window
+public class MainWindow: Window
 {
 	DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
@@ -45,7 +42,8 @@ public partial class MainWindow: Gtk.Window
 	MessageWidget messagewidget1;
 	TagsWidget tagsWidget;
 
-	public MainWindow(Builder builder, IntPtr handle) : base(handle)
+	public MainWindow(Builder builder, IntPtr handle)
+		: base(handle)
 	{
 		builder.Autoconnect(this);
 
@@ -124,7 +122,6 @@ public partial class MainWindow: Gtk.Window
 		};
 
 		messageListWidget.MyFocus();
-
 	}
 
 	protected override bool OnKeyPressEvent(Gdk.EventKey evnt)
@@ -136,16 +133,16 @@ public partial class MainWindow: Gtk.Window
 
 		switch (evnt.Key)
 		{
-			case Gdk.Key.m:
-				OnToggleReadActionActivated(null, null);
-				return true;
+		case Gdk.Key.m:
+			OnToggleReadActionActivated(null, null);
+			return true;
 
-			case Gdk.Key.Delete:
-				OnDeleteActionActivated(null, null);
-				return true;
+		case Gdk.Key.Delete:
+			OnDeleteActionActivated(null, null);
+			return true;
 
-			default:
-				return false;
+		default:
+			return false;
 		}
 	}
 
@@ -235,7 +232,7 @@ public partial class MainWindow: Gtk.Window
 			messagewidget1.ShowEmail(mkmsg, nmmsg.FileName, nmmsg.ThreadID);
 		}
 	}
-	#if MBOX_PARSE_HACK
+#if MBOX_PARSE_HACK
 	GMime.Message TryParseMboxMessage(GMime.StreamFs readStream)
 	{
 		readStream.Seek(0);
@@ -265,6 +262,7 @@ public partial class MainWindow: Gtk.Window
 		return gmsg;
 	}
 	#endif
+
 	void OnGcActionActivated(object sender, EventArgs e)
 	{
 		var sw = Stopwatch.StartNew();
@@ -306,13 +304,6 @@ public partial class MainWindow: Gtk.Window
 		wnd.New();
 
 		wnd.Show();
-	}
-
-	void OnQueryEntryChanged(object sender, EventArgs e)
-	{
-		//var queryStr = queryEntry.Text;
-
-		//ExecuteQuery(queryStr);
 	}
 
 	LinkedList<QueryHistoryItem> m_history = new LinkedList<QueryHistoryItem>();
@@ -411,10 +402,9 @@ public partial class MainWindow: Gtk.Window
 		dlg.Destroy();
 	}
 
-	void OnProcessActionActivated (object sender, EventArgs e)
+	void OnProcessActionActivated(object sender, EventArgs e)
 	{
 		var dlg = TermDialog.Create();
-		dlg.ParentWindow = this.RootWindow;
 		dlg.Start(MainClass.NotmuchExe, "new");
 		var resp = (ResponseType)dlg.Run();
 
