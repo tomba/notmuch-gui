@@ -401,7 +401,6 @@ public partial class MainWindow: Gtk.Window
 			throw new Exception();
 
 		var dlg = TermDialog.Create();
-		dlg.ParentWindow = this.RootWindow;
 		dlg.Start(exe);
 		var resp = (ResponseType)dlg.Run();
 

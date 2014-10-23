@@ -1,82 +1,106 @@
 using System;
-using Mono.Unix.Native;
-using System.Collections.Generic;
+using System.Diagnostics;
 using Gtk;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	public partial class TermDialog : Gtk.Dialog
+	public class TermDialog : Dialog
 	{
-		//Vte.Terminal m_term;
-		int m_pid = -1;
-
 		public static TermDialog Create()
 		{
 			Builder builder = new Builder(null, "NotMuchGUI.UI.TermDialog.ui", null);
 			var dlg = new TermDialog(builder, builder.GetObject("TermDialog").Handle);
-			dlg.ShowAll();
 			return dlg;
 		}
 
-		TermDialog(Builder builder, IntPtr handle) : base(handle)
+		[UI] readonly Button cancelButton;
+		[UI] readonly TextView textview;
+
+		Process m_process;
+
+		TermDialog(Builder builder, IntPtr handle)
+			: base(handle)
 		{
-			builder.Autoconnect (this);
+			builder.Autoconnect(this);
 
-			/*
-			m_term = new Vte.Terminal();
-			termScrolledwindow.Child = m_term;
-
-			m_term.ChildExited += ChildExited;
-
-			m_term.IsFocus = true;
-
-			m_term.ShowAll();
-			*/
-		}
-
-		void ChildExited(object sender, EventArgs e)
-		{
-			m_pid = -1;
-			/*
-			buttonCancel.Label = "Close";
-			buttonCancel.GrabFocus();
-
-			m_term.Feed("<Process ended>\r\n");
-			m_term.Sensitive = false;*/
+			cancelButton.Clicked += OnButtonCancelClicked;
 		}
 
 		public void Start(string cmd, params string[] args)
 		{
-			var l = new List<string>();
-			l.Add(System.IO.Path.GetFileName(cmd));
-			l.AddRange(args);
-			l.Add(null);
-			/*
-			m_pid = m_term.ForkCommand(cmd, l.ToArray(),
-				null,
-				Environment.GetEnvironmentVariable("HOME"),
-				false, false, false);
-
-			if (m_pid < 0)
+			var psi = new ProcessStartInfo(cmd, string.Join(" ", args))
 			{
-				m_term.Feed("<Process start failed>\r\n");
-				throw new Exception("Process start failed");
-			}*/
+				CreateNoWindow = true,
+				UseShellExecute = false,
+				RedirectStandardError = true,
+				RedirectStandardOutput = true,
+			};
+
+			var p = new Process();
+			p.StartInfo = psi;
+			p.ErrorDataReceived += (sender, e) =>
+			{
+				Console.WriteLine("ERR {0}", e.Data);
+
+				if (string.IsNullOrEmpty(e.Data))
+					return;
+
+				Application.Invoke((s, o) => textview.Buffer.InsertAtCursor(e.Data + "\n"));
+			};
+			p.OutputDataReceived += (sender, e) =>
+			{
+				Console.WriteLine("OUT '{0}'", e.Data);
+
+				if (string.IsNullOrEmpty(e.Data))
+					return;
+
+				Application.Invoke((s, o) => textview.Buffer.InsertAtCursor(e.Data + "\n"));
+			};
+
+			p.Exited += (sender, e) =>
+			{
+				Console.WriteLine("EXIT");
+
+				Application.Invoke((s, o) =>
+				{
+					textview.Buffer.InsertAtCursor("<Process ended>\n");
+
+					cancelButton.Label = "Close";
+					cancelButton.GrabFocus();
+
+					m_process = null;
+				});
+			};
+
+			m_process = p;
+
+			try
+			{
+				p.Start();
+
+				p.BeginOutputReadLine();
+				p.BeginErrorReadLine();
+				p.EnableRaisingEvents = true;
+			}
+			catch (Exception e)
+			{
+				textview.Buffer.InsertAtCursor(String.Format("<Process start failed: {0}>\n", e.Message));
+				m_process = null;
+			}
 		}
 
 		protected void OnButtonCancelClicked(object sender, EventArgs e)
 		{
-			/*
-			if (m_pid >= 0)
+			if (m_process != null)
 			{
-				m_term.Feed("<Abort>\r\n");
-				Syscall.kill(m_pid, Signum.SIGABRT);
+				textview.Buffer.InsertAtCursor("<Abort>\r\n");
+				m_process.Kill();
 			}
 			else
 			{
-				Respond(Gtk.ResponseType.Close);
+				Respond(ResponseType.Close);
 			}
-			*/
 		}
 	}
 }
