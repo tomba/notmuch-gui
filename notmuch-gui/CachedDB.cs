@@ -12,7 +12,7 @@ namespace NotMuchGUI
 		static DateTime s_unusedDateStamp;
 		static int s_readers;
 		static int s_writers;
-		static ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+		static ReaderWriterLockSlim s_rwLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
 		public static event Action<bool> DBOpenEvent;
 		public static event Action DBCloseEvent;
@@ -31,9 +31,9 @@ namespace NotMuchGUI
 			m_writable = writable;
 
 			if (writable)
-				m_rwLock.EnterWriteLock();
+				s_rwLock.EnterWriteLock();
 			else
-				m_rwLock.EnterReadLock();
+				s_rwLock.EnterReadLock();
 
 			lock (s_lock)
 			{
@@ -105,9 +105,9 @@ namespace NotMuchGUI
 			}
 
 			if (m_writable)
-				m_rwLock.ExitWriteLock();
+				s_rwLock.ExitWriteLock();
 			else
-				m_rwLock.ExitReadLock();
+				s_rwLock.ExitReadLock();
 		}
 
 		~CachedDB()
