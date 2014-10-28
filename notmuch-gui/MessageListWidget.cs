@@ -34,6 +34,7 @@ namespace NotMuchGUI
 				m_maxMsgs = 1000;
 
 			messagesTreeview.Selection.Mode = SelectionMode.Multiple;
+			messagesTreeview.ButtonPressEvent += OnMessagesTreeviewButtonPressEvent;
 
 			SetupMessagesTreeView();
 
@@ -315,10 +316,10 @@ namespace NotMuchGUI
 		}
 
 		[GLib.ConnectBeforeAttribute]
-		protected void OnMessagesTreeviewButtonPressEvent(object o, ButtonPressEventArgs args)
+		void OnMessagesTreeviewButtonPressEvent(object o, ButtonPressEventArgs args)
 		{
 			/* right click */
-			if (args.Event.Button == 3)
+			if (args.Event.Type == Gdk.EventType.ButtonPress && args.Event.Button == 3)
 			{
 				Menu m = new Menu();
 				var item = new MenuItem("Focus Thread");
@@ -329,9 +330,12 @@ namespace NotMuchGUI
 			}
 		}
 
-		protected void OnFocusThreadSelected(object sender, ButtonPressEventArgs e)
+		void OnFocusThreadSelected(object sender, ButtonPressEventArgs e)
 		{
 			var id = GetCurrentMessageID();
+
+			if (id == null)
+				return;
 
 			string threadID;
 
