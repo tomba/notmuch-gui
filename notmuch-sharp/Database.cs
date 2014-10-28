@@ -66,6 +66,9 @@ namespace NotMuch
 
 		public Message FindMessage(string messageId)
 		{
+			if (messageId == null)
+				throw new ArgumentNullException("messageId");
+
 			IntPtr msgPtr;
 
 			Debug.Assert(m_handle != IntPtr.Zero);
@@ -79,6 +82,9 @@ namespace NotMuch
 
 		public Message GetMessage(string messageId)
 		{
+			if (messageId == null)
+				throw new ArgumentNullException("messageId");
+
 			var msg = FindMessage(messageId);
 
 			if (msg.IsNull)
@@ -108,6 +114,9 @@ namespace NotMuch
 
 		public Query CreateQuery(string queryString)
 		{
+			if (queryString == null)
+				throw new ArgumentNullException("queryString");
+
 			Debug.Assert(m_handle != IntPtr.Zero);
 
 			var query = new Query(notmuch_query_create(m_handle, queryString));

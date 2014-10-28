@@ -66,6 +66,9 @@ namespace NotMuch
 
 		public void AddTagExclude(string tag)
 		{
+			if (tag == null)
+				throw new ArgumentNullException("tag");
+
 			notmuch_query_add_tag_exclude(m_handle, tag);
 		}
 

@@ -54,6 +54,9 @@ namespace NotMuch
 
 		public Status AddTag(string tag)
 		{
+			if (tag == null)
+				throw new ArgumentNullException("tag");
+
 			Debug.Assert(m_handle != IntPtr.Zero);
 
 			return notmuch_message_add_tag(m_handle, tag);
@@ -61,6 +64,9 @@ namespace NotMuch
 
 		public Status RemoveTag(string tag)
 		{
+			if (tag == null)
+				throw new ArgumentNullException("tag");
+
 			Debug.Assert(m_handle != IntPtr.Zero);
 
 			return notmuch_message_remove_tag(m_handle, tag);
@@ -68,6 +74,9 @@ namespace NotMuch
 
 		public string GetHeader(string name)
 		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+
 			Debug.Assert(m_handle != IntPtr.Zero);
 
 			IntPtr sp = notmuch_message_get_header(m_handle, name);
