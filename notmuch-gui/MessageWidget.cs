@@ -41,6 +41,7 @@ namespace NotMuchGUI
 
 			scrolledwindowWeb.Add(m_webView);
 
+			attachmentTreeview.RowActivated += OnAttachmentNodeviewRowActivated;
 
 			attachmentTreeview.AppendColumn("Attachment", new Gtk.CellRendererText(), "text", 0);
 
@@ -160,7 +161,7 @@ namespace NotMuchGUI
 			}
 		}
 
-		protected void OnAttachmentNodeviewRowActivated(object o, Gtk.RowActivatedArgs args)
+		void OnAttachmentNodeviewRowActivated(object o, Gtk.RowActivatedArgs args)
 		{
 			Gtk.TreeIter iter;
 			m_attachmentStore.GetIter(out iter, args.Path);
