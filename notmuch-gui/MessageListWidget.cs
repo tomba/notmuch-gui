@@ -53,8 +53,6 @@ namespace NotMuchGUI
 		{
 			var tv = messagesTreeview;
 
-			tv.FixedHeightMode = true;
-
 			TreeViewColumn c;
 
 			c = CreateTreeViewColumn("From", (int)MessageListColumns.From);
