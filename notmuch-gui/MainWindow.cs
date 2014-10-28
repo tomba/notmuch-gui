@@ -426,9 +426,7 @@ public class MainWindow: Window
 		{
 			var db = cdb.Database;
 
-			var curId = messageListWidget.GetCurrentMessageID();
-
-			var curMsg = db.GetMessage(curId);
+			var curMsg = db.GetMessage(ids[0]);
 
 			bool unread = curMsg.GetTags().Contains("unread");
 
@@ -460,9 +458,7 @@ public class MainWindow: Window
 		{
 			var db = cdb.Database;
 
-			var curId = messageListWidget.GetCurrentMessageID();
-
-			var curMsg = db.GetMessage(curId);
+			var curMsg = db.GetMessage(ids[0]);
 
 			bool deleted = curMsg.GetTags().Contains("deleted");
 
