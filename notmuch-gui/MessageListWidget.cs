@@ -244,6 +244,29 @@ namespace NotMuchGUI
 		}
 
 		/// <summary>
+		/// Get the message IDs for a single selected message, or NULL if none or more than one selected
+		/// </summary>
+		public string GetSelectedMessageID()
+		{
+			TreeSelection selection = messagesTreeview.Selection;
+
+			var paths = selection.GetSelectedRows();
+
+			if (paths.Length != 1)
+				return null;
+
+			var path = paths[0];
+
+			var model = (MessageTreeStore)messagesTreeview.Model;
+
+			TreeIter iter;
+
+			model.GetIter(out iter, path);
+
+			return model.GetMessageID(ref iter);
+		}
+
+		/// <summary>
 		/// Get the message IDs for selected messages
 		/// </summary>
 		public string[] GetSelectedMessageIDs()

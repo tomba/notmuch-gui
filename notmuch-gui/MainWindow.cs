@@ -290,7 +290,11 @@ public class MainWindow: Window
 		var wnd = new ComposeWindow();
 		wnd.ParentWindow = this.Window;
 
-		var msgId = messageListWidget.GetCurrentMessageID();
+		var msgId = messageListWidget.GetSelectedMessageID();
+
+		if (msgId == null)
+			return;
+
 		wnd.Reply(msgId, replyAll);
 
 		wnd.Show();
