@@ -537,19 +537,12 @@ namespace NotMuchGUI
 
 				var path = model.GetPath(iter);
 
-				// XXX for some reason scrolling to last has to be done asyncronously,
-				// otherwise the treeview scrolls to the second last item...
-				GLib.Idle.Add(() =>
-				{
-					m_parent.messagesTreeview.ExpandToPath(path);
+				m_parent.messagesTreeview.ExpandToPath(path);
 
-					m_parent.messagesTreeview.Selection.UnselectAll();
-					m_parent.messagesTreeview.Selection.SelectPath(path);
+				m_parent.messagesTreeview.Selection.UnselectAll();
+				m_parent.messagesTreeview.Selection.SelectPath(path);
 
-					m_parent.messagesTreeview.ScrollToCell(path, null, false, 0, 0);
-
-					return false;
-				});
+				m_parent.messagesTreeview.ScrollToCell(path, null, false, 0, 0);
 			}
 
 			void SelectOldMessages(MessageTreeStore model)
