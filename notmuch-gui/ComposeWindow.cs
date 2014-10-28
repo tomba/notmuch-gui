@@ -1,23 +1,40 @@
 using System;
-using System.IO;
 using System.Diagnostics;
-using Gtk;
-using MK = MimeKit;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Collections.Generic;
+using Gtk;
+using MK = MimeKit;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	public partial class ComposeWindow : Gtk.Window
+	public class ComposeWindow : Window
 	{
+		public static ComposeWindow Create()
+		{
+			var builder = new Builder(null, "NotMuchGUI.UI.ComposeWindow.ui", null);
+			var wnd = new ComposeWindow(builder, builder.GetObject("ComposeWindow").Handle);
+			return wnd;
+		}
+
+		[UI] readonly Box vbox2;
+		[UI] readonly Button editButton;
+		[UI] readonly Button sendButton;
+
 		MK.MimeMessage m_message;
 
 		MessageWidget messagewidget1;
 
-		public ComposeWindow() : 
-			base(Gtk.WindowType.Toplevel)
+		ComposeWindow(Builder builder, IntPtr handle) : base(handle)
 		{
+			builder.Autoconnect(this);
+
+			messagewidget1 = new MessageWidget();
+			vbox2.Add(messagewidget1);
+
+			editButton.Clicked += OnEditButtonClicked;
+			sendButton.Clicked += OnSendButtonClicked;
 		}
 
 		public MK.MimeMessage Message
@@ -80,7 +97,7 @@ namespace NotMuchGUI
 			return 0;
 		}
 
-		protected void OnEditButtonClicked(object sender, EventArgs args)
+		void OnEditButtonClicked(object sender, EventArgs args)
 		{
 			var tmpFile = System.IO.Path.GetTempFileName();
 
@@ -203,7 +220,7 @@ namespace NotMuchGUI
 			File.Delete(tmpFile);
 		}
 
-		protected void OnSendButtonClicked(object sender, EventArgs e)
+		void OnSendButtonClicked(object sender, EventArgs e)
 		{
 			var exe = MainClass.AppKeyFile.GetStringOrNull("send", "cmd");
 			if (exe == null)

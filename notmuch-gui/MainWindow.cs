@@ -287,8 +287,7 @@ public class MainWindow: Window
 
 	void Reply(bool replyAll)
 	{
-		var wnd = new ComposeWindow();
-		wnd.ParentWindow = this.Window;
+		var wnd = ComposeWindow.Create();
 
 		var msgId = messageListWidget.GetSelectedMessageID();
 
@@ -297,17 +296,16 @@ public class MainWindow: Window
 
 		wnd.Reply(msgId, replyAll);
 
-		wnd.Show();
+		wnd.ShowAll();
 	}
 
 	void OnNewActionActivated(object sender, EventArgs e)
 	{
-		var wnd = new ComposeWindow();
-		wnd.ParentWindow = this.Window;
+		var wnd = ComposeWindow.Create();
 
 		wnd.New();
 
-		wnd.Show();
+		wnd.ShowAll();
 	}
 
 	LinkedList<QueryHistoryItem> m_history = new LinkedList<QueryHistoryItem>();
