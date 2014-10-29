@@ -18,29 +18,29 @@ namespace NotMuchGUI
 		}
 	}
 
-	public class MessageWidget : Gtk.Bin
+	public class MessageWidget : Bin
 	{
 		WebKit.WebView m_webView;
-		Gtk.ListStore m_attachmentStore;
+		ListStore m_attachmentStore;
 		string m_msgFile;
 
 		public string HtmlContent { get; private set; }
 
-		[UI] Gtk.Label labelFrom;
-		[UI] Gtk.Label labelTo;
-		[UI] Gtk.Label labelCc;
-		[UI] Gtk.Label labelSubject;
-		[UI] Gtk.Label labelDate;
-		[UI] Gtk.Label labelMsgID;
-		[UI] Gtk.Label labelContent;
-		[UI] Gtk.Label labelThreadID;
+		[UI] Label labelFrom;
+		[UI] Label labelTo;
+		[UI] Label labelCc;
+		[UI] Label labelSubject;
+		[UI] Label labelDate;
+		[UI] Label labelMsgID;
+		[UI] Label labelContent;
+		[UI] Label labelThreadID;
 
-		[UI] Gtk.ScrolledWindow scrolledwindowWeb;
+		[UI] ScrolledWindow scrolledwindowWeb;
 		[UI] TreeView attachmentTreeview;
 
 		public MessageWidget()
 		{
-			Builder builder = new Gtk.Builder(null, "NotMuchGUI.UI.MessageWidget.ui", null);
+			Builder builder = new Builder(null, "NotMuchGUI.UI.MessageWidget.ui", null);
 			builder.Autoconnect(this);
 			Add((Box)builder.GetObject("MessageWidget"));
 
@@ -56,10 +56,10 @@ namespace NotMuchGUI
 
 			attachmentTreeview.RowActivated += OnAttachmentNodeviewRowActivated;
 
-			attachmentTreeview.AppendColumn("Attachment", new Gtk.CellRendererText(), "text", 0);
+			attachmentTreeview.AppendColumn("Attachment", new CellRendererText(), "text", 0);
 
 			// filename, index
-			m_attachmentStore = new Gtk.ListStore(typeof(string), typeof(int));
+			m_attachmentStore = new ListStore(typeof(string), typeof(int));
 			attachmentTreeview.Model = m_attachmentStore;
 		}
 
@@ -174,9 +174,9 @@ namespace NotMuchGUI
 			}
 		}
 
-		void OnAttachmentNodeviewRowActivated(object o, Gtk.RowActivatedArgs args)
+		void OnAttachmentNodeviewRowActivated(object o, RowActivatedArgs args)
 		{
-			Gtk.TreeIter iter;
+			TreeIter iter;
 			m_attachmentStore.GetIter(out iter, args.Path);
 			int idx = (int)m_attachmentStore.GetValue(iter, 1);
 			SaveAttachment(idx);
