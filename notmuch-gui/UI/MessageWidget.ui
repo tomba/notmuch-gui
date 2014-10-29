@@ -30,7 +30,7 @@
           <object class="GtkLabel" id="labelCc">
             <property name="can_focus">False</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">labelCc</property>
+            <property name="label" translatable="yes">Tomi Valkeinen &lt;tomi.valkeinen@iki.fi&gt;</property>
             <property name="selectable">True</property>
             <property name="ellipsize">end</property>
           </object>
@@ -72,7 +72,7 @@
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">labelFrom</property>
+            <property name="label" translatable="yes">Tomi Valkeinen &lt;tomi.valkeinen@iki.fi&gt;</property>
             <property name="selectable">True</property>
             <property name="ellipsize">end</property>
           </object>
@@ -84,36 +84,10 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="labelMsgID">
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">msgID</property>
-            <property name="selectable">True</property>
-          </object>
-          <packing>
-            <property name="left_attach">2</property>
-            <property name="top_attach">0</property>
-            <property name="width">1</property>
-            <property name="height">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="labelThreadID">
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">threadID</property>
-            <property name="selectable">True</property>
-          </object>
-          <packing>
-            <property name="left_attach">2</property>
-            <property name="top_attach">1</property>
-            <property name="width">1</property>
-            <property name="height">1</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkLabel" id="labelTo">
             <property name="can_focus">False</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">labelTo</property>
+            <property name="label" translatable="yes">Tomi Valkeinen &lt;tomi.valkeinen@iki.fi&gt;</property>
             <property name="selectable">True</property>
             <property name="ellipsize">end</property>
           </object>
@@ -128,7 +102,7 @@
           <object class="GtkLabel" id="labelSubject">
             <property name="can_focus">False</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">labelSubject</property>
+            <property name="label" translatable="yes">Diiba daaba dallallei</property>
             <property name="selectable">True</property>
             <property name="ellipsize">end</property>
           </object>
@@ -175,6 +149,32 @@
           <packing>
             <property name="left_attach">0</property>
             <property name="top_attach">3</property>
+            <property name="width">1</property>
+            <property name="height">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelThreadID">
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">threadID</property>
+            <property name="selectable">True</property>
+          </object>
+          <packing>
+            <property name="left_attach">3</property>
+            <property name="top_attach">3</property>
+            <property name="width">1</property>
+            <property name="height">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelMsgID">
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">msgID</property>
+            <property name="selectable">True</property>
+          </object>
+          <packing>
+            <property name="left_attach">3</property>
+            <property name="top_attach">2</property>
             <property name="width">1</property>
             <property name="height">1</property>
           </packing>
