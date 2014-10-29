@@ -9,6 +9,15 @@ using Gtk;
 
 namespace NotMuchGUI
 {
+	// SetProperty is protected, so we need a custom class
+	class MyWebSettings : WebKit.WebSettings
+	{
+		public void Set(string name, bool val)
+		{
+			SetProperty(name, new GLib.Value(val));
+		}
+	}
+
 	public class MessageWidget : Gtk.Bin
 	{
 		WebKit.WebView m_webView;
@@ -31,13 +40,17 @@ namespace NotMuchGUI
 
 		public MessageWidget()
 		{
-			Builder builder = new Gtk.Builder (null, "NotMuchGUI.UI.MessageWidget.ui", null);
-			builder.Autoconnect (this);
-			Add ((Box) builder.GetObject ("MessageWidget"));
+			Builder builder = new Gtk.Builder(null, "NotMuchGUI.UI.MessageWidget.ui", null);
+			builder.Autoconnect(this);
+			Add((Box)builder.GetObject("MessageWidget"));
 
 			m_webView = new WebKit.WebView();
 			m_webView.Editable = false;
 			m_webView.Expand = true;
+
+			var settings = new MyWebSettings();
+			settings.Set("auto-load-images", true);
+			m_webView.Settings = settings;
 
 			scrolledwindowWeb.Add(m_webView);
 
