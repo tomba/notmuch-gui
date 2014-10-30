@@ -36,7 +36,10 @@ namespace NotMuchGUI
 		[UI] Label labelThreadID;
 
 		[UI] ScrolledWindow scrolledwindowWeb;
-		[UI] TreeView attachmentTreeview;
+
+		[UI] Expander attachmentExpander;
+		[UI] Label attachmentLabel;
+		[UI] IconView attachmentIconview;
 
 		public MessageWidget()
 		{
@@ -54,13 +57,13 @@ namespace NotMuchGUI
 
 			scrolledwindowWeb.Add(m_webView);
 
-			attachmentTreeview.RowActivated += OnAttachmentNodeviewRowActivated;
-
-			attachmentTreeview.AppendColumn("Attachment", new CellRendererText(), "text", 0);
-
 			// filename, index
-			m_attachmentStore = new ListStore(typeof(string), typeof(int));
-			attachmentTreeview.Model = m_attachmentStore;
+			m_attachmentStore = new ListStore(typeof(string), typeof(int), typeof(Gdk.Pixbuf));
+
+			attachmentIconview.Model = m_attachmentStore;
+			attachmentIconview.PixbufColumn = 2;
+			attachmentIconview.TextColumn = 0;
+			attachmentIconview.ItemActivated += OnAttachmentItemActivated;;
 		}
 
 		public void Clear()
@@ -100,16 +103,33 @@ namespace NotMuchGUI
 				if (filename == null)
 					filename = "attachment-" + System.IO.Path.GetFileName(System.IO.Path.GetTempFileName());
 
-				m_attachmentStore.AppendValues(filename, idx);
+				const int iconSize = 24;
+
+				Gdk.Pixbuf pix = null;
+
+				var icon = GLib.ContentType.GetIcon(part.ContentType.MimeType.ToLower());
+				if (icon != null)
+				{
+					var iconInfo = IconTheme.Default.LookupIcon(icon, iconSize, 0);
+					if (iconInfo != null)
+						pix = iconInfo.LoadIcon();
+				}
+
+				m_attachmentStore.AppendValues(filename, idx, pix);
 
 				idx++;
 			}
 
-			// show/hide the parent, i.e. the ScolledWindow
 			if (idx == 0)
-				attachmentTreeview.Parent.Hide();
+			{
+				attachmentExpander.Hide();
+			}
 			else
-				attachmentTreeview.Parent.ShowAll();
+			{
+				attachmentExpander.Expanded = false;
+				attachmentLabel.Text = String.Format("{0} attachments", idx);
+				attachmentExpander.Show();
+			}
 		}
 
 		void ShowBody(MK.MimeMessage msg, string threadID)
@@ -174,7 +194,7 @@ namespace NotMuchGUI
 			}
 		}
 
-		void OnAttachmentNodeviewRowActivated(object o, RowActivatedArgs args)
+		void OnAttachmentItemActivated (object o, ItemActivatedArgs args)
 		{
 			TreeIter iter;
 			m_attachmentStore.GetIter(out iter, args.Path);
