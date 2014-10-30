@@ -352,10 +352,13 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="orientation">vertical</property>
+            <property name="position">200</property>
+            <property name="position_set">True</property>
             <child>
               <object class="GtkPaned" id="hpaned1">
                 <property name="can_focus">True</property>
-                <property name="position">353</property>
+                <property name="position">300</property>
+                <property name="position_set">True</property>
                 <child>
                   <placeholder/>
                 </child>
