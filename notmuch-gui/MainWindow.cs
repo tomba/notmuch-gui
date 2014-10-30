@@ -68,10 +68,10 @@ public class MainWindow: Window
 		toggleReadAction.Activated += OnToggleReadActionActivated;
 
 		querywidget = new QueryWidget();
-		hpaned1.Add(querywidget);
+		hpaned1.Pack1(querywidget, true, true);
 
 		messageListWidget = new MessageListWidget();
-		hpaned1.Add(messageListWidget);
+		hpaned1.Pack2(messageListWidget, true, true);
 
 		messagewidget1 = new MessageWidget();
 		hbox3.Add(messagewidget1);
