@@ -29,6 +29,10 @@ namespace NotMuchGUI
 
 		public void Start(string cmd, params string[] args)
 		{
+			this.Title = string.Format("Running...");
+
+			textview.Buffer.InsertAtCursor(string.Format("Running {0} {1}\n", cmd, string.Join(" ", args)));
+
 			var psi = new ProcessStartInfo(cmd, string.Join(" ", args))
 			{
 				CreateNoWindow = true,
@@ -41,7 +45,7 @@ namespace NotMuchGUI
 			p.StartInfo = psi;
 			p.ErrorDataReceived += (sender, e) =>
 			{
-				Console.WriteLine("ERR {0}", e.Data);
+				//Console.WriteLine("ERR {0}", e.Data);
 
 				if (string.IsNullOrEmpty(e.Data))
 					return;
@@ -50,7 +54,7 @@ namespace NotMuchGUI
 			};
 			p.OutputDataReceived += (sender, e) =>
 			{
-				Console.WriteLine("OUT '{0}'", e.Data);
+				//Console.WriteLine("OUT '{0}'", e.Data);
 
 				if (string.IsNullOrEmpty(e.Data))
 					return;
@@ -60,10 +64,12 @@ namespace NotMuchGUI
 
 			p.Exited += (sender, e) =>
 			{
-				Console.WriteLine("EXIT");
+				//Console.WriteLine("EXIT");
 
 				Application.Invoke((s, o) =>
 				{
+					this.Title = "Finished";
+
 					textview.Buffer.InsertAtCursor("<Process ended>\n");
 
 					cancelButton.Label = "Close";
@@ -94,6 +100,7 @@ namespace NotMuchGUI
 		{
 			if (m_process != null)
 			{
+				this.Title = "Aborted";
 				textview.Buffer.InsertAtCursor("<Abort>\r\n");
 				m_process.Kill();
 			}
