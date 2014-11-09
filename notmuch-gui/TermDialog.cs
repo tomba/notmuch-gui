@@ -27,11 +27,24 @@ namespace NotMuchGUI
 			cancelButton.Clicked += OnButtonCancelClicked;
 		}
 
+		void Append(string txt)
+		{
+			TextIter iter;
+
+			iter = textview.Buffer.EndIter;
+			textview.Buffer.Insert(ref iter, txt);
+
+			iter = textview.Buffer.EndIter;
+			textview.Buffer.PlaceCursor(iter);
+			var mark = textview.Buffer.GetMark("insert");
+			textview.ScrollMarkOnscreen(mark);
+		}
+
 		public void Start(string cmd, params string[] args)
 		{
 			this.Title = string.Format("Running...");
 
-			textview.Buffer.InsertAtCursor(string.Format("Running {0} {1}\n", cmd, string.Join(" ", args)));
+			Append(string.Format("Running {0} {1}\n", cmd, string.Join(" ", args)));
 
 			var psi = new ProcessStartInfo(cmd, string.Join(" ", args))
 			{
@@ -50,7 +63,7 @@ namespace NotMuchGUI
 				if (string.IsNullOrEmpty(e.Data))
 					return;
 
-				Application.Invoke((s, o) => textview.Buffer.InsertAtCursor(e.Data + "\n"));
+				Application.Invoke((s, o) => Append(e.Data + "\n"));
 			};
 			p.OutputDataReceived += (sender, e) =>
 			{
@@ -59,7 +72,7 @@ namespace NotMuchGUI
 				if (string.IsNullOrEmpty(e.Data))
 					return;
 
-				Application.Invoke((s, o) => textview.Buffer.InsertAtCursor(e.Data + "\n"));
+				Application.Invoke((s, o) => Append(e.Data + "\n"));
 			};
 
 			p.Exited += (sender, e) =>
@@ -70,7 +83,7 @@ namespace NotMuchGUI
 				{
 					this.Title = "Finished";
 
-					textview.Buffer.InsertAtCursor("<Process ended>\n");
+					Append("<Process ended>\n");
 
 					cancelButton.Label = "Close";
 					cancelButton.GrabFocus();
@@ -91,7 +104,7 @@ namespace NotMuchGUI
 			}
 			catch (Exception e)
 			{
-				textview.Buffer.InsertAtCursor(String.Format("<Process start failed: {0}>\n", e.Message));
+				Append(String.Format("<Process start failed: {0}>\n", e.Message));
 				m_process = null;
 			}
 		}
@@ -101,7 +114,7 @@ namespace NotMuchGUI
 			if (m_process != null)
 			{
 				this.Title = "Aborted";
-				textview.Buffer.InsertAtCursor("<Abort>\r\n");
+				Append("<Abort>\r\n");
 				m_process.Kill();
 			}
 			else
