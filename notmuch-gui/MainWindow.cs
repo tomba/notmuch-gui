@@ -168,15 +168,14 @@ public class MainWindow: Window
 
 	void OnMessageListWidgetMessageSelected(object sender, EventArgs e)
 	{
+		messagewidget1.Clear();
+
 		var ids = messageListWidget.GetSelectedMessageIDs();
 
 		tagsWidget.UpdateTagsView(ids);
 
 		if (ids.Length == 0)
-		{
-			messagewidget1.Clear();
 			return;
-		}
 
 		using (var cdb = new CachedDB())
 		{
@@ -186,12 +185,21 @@ public class MainWindow: Window
 
 			if (nmmsg.IsNull)
 			{
-				Console.WriteLine("can't find message");
-				messagewidget1.Clear();
+				DialogHelpers.ShowDialog(this, MessageType.Error,
+					"Failed to find message from database",
+					"Failed to find message from database '{0}'", ids[0]);
 				return;
 			}
 
 			var filename = nmmsg.FileName;
+
+			if (File.Exists(filename) == false)
+			{
+				DialogHelpers.ShowDialog(this, MessageType.Error,
+					"Failed to find email file",
+					"Failed to find email file '{0}'", filename);
+				return;
+			}
 
 			MimeKit.MimeMessage mkmsg;
 
