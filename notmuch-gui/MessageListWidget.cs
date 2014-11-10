@@ -596,6 +596,10 @@ namespace NotMuchGUI
 					
 					return false;
 				});
+
+				// if the new query didn't contain any of the old messages, scroll to end
+				if (l.Count == m_selectMsgIDs.Length)
+					ScrollToMostRecent(model);
 			}
 
 			TreeIter AddMsg(MessageTreeStore model, NM.Message msg, int depth, int msgNum, ref TreeIter parent, int threadNum,
