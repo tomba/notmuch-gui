@@ -39,7 +39,7 @@ public class MainWindow: Window
 	QueryWidget querywidget;
 	MessageListWidget messageListWidget;
 
-	MessageWidget messagewidget1;
+	MessageWidget messagewidget;
 	TagsWidget tagsWidget;
 
 	public MainWindow(Builder builder, IntPtr handle)
@@ -73,8 +73,8 @@ public class MainWindow: Window
 		messageListWidget = new MessageListWidget();
 		hpaned1.Pack2(messageListWidget, true, true);
 
-		messagewidget1 = new MessageWidget();
-		hbox3.Add(messagewidget1);
+		messagewidget = new MessageWidget();
+		hbox3.Add(messagewidget);
 
 		tagsWidget = new TagsWidget();
 		hbox3.Add(tagsWidget);
@@ -174,7 +174,7 @@ public class MainWindow: Window
 
 		if (ids.Length == 0)
 		{
-			messagewidget1.Clear();
+			messagewidget.Clear();
 			return;
 		}
 
@@ -186,7 +186,7 @@ public class MainWindow: Window
 
 			if (nmmsg.IsNull)
 			{
-				messagewidget1.ShowError(string.Format("Failed to find message from database '{0}'", ids[0]));
+				messagewidget.ShowError(string.Format("Failed to find message from database '{0}'", ids[0]));
 				return;
 			}
 
@@ -194,7 +194,7 @@ public class MainWindow: Window
 
 			if (File.Exists(filename) == false)
 			{
-				messagewidget1.ShowError(string.Format("Failed to find email file '{0}'", filename));
+				messagewidget.ShowError(string.Format("Failed to find email file '{0}'", filename));
 				return;
 			}
 
@@ -206,7 +206,7 @@ public class MainWindow: Window
 			}
 			catch (Exception exc)
 			{
-				messagewidget1.ShowError(string.Format(
+				messagewidget.ShowError(string.Format(
 					"Failed to parse message from '{0}':\n{1}", filename, exc.Message));
 				return;
 			}
@@ -233,7 +233,7 @@ public class MainWindow: Window
 			}
 			#endif
 
-			messagewidget1.ShowEmail(mkmsg, nmmsg.FileName, nmmsg.ThreadID);
+			messagewidget.ShowEmail(mkmsg, nmmsg.FileName, nmmsg.ThreadID);
 		}
 	}
 #if MBOX_PARSE_HACK
@@ -390,7 +390,7 @@ public class MainWindow: Window
 
 	void OnMsgSrcActionActivated(object sender, EventArgs e)
 	{
-		messagewidget1.ShowHtmlSource = msgSrcAction.Active;
+		messagewidget.ShowHtmlSource = msgSrcAction.Active;
 	}
 
 	void OnFetchActionActivated(object sender, EventArgs e)
