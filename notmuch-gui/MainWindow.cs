@@ -168,14 +168,15 @@ public class MainWindow: Window
 
 	void OnMessageListWidgetMessageSelected(object sender, EventArgs e)
 	{
-		messagewidget1.Clear();
-
 		var ids = messageListWidget.GetSelectedMessageIDs();
 
 		tagsWidget.UpdateTagsView(ids);
 
 		if (ids.Length == 0)
+		{
+			messagewidget1.Clear();
 			return;
+		}
 
 		using (var cdb = new CachedDB())
 		{
@@ -185,9 +186,7 @@ public class MainWindow: Window
 
 			if (nmmsg.IsNull)
 			{
-				DialogHelpers.ShowDialog(this, MessageType.Error,
-					"Failed to find message from database",
-					"Failed to find message from database '{0}'", ids[0]);
+				messagewidget1.ShowError(string.Format("Failed to find message from database '{0}'", ids[0]));
 				return;
 			}
 
@@ -195,9 +194,7 @@ public class MainWindow: Window
 
 			if (File.Exists(filename) == false)
 			{
-				DialogHelpers.ShowDialog(this, MessageType.Error,
-					"Failed to find email file",
-					"Failed to find email file '{0}'", filename);
+				messagewidget1.ShowError(string.Format("Failed to find email file '{0}'", filename));
 				return;
 			}
 
@@ -209,9 +206,8 @@ public class MainWindow: Window
 			}
 			catch (Exception exc)
 			{
-				DialogHelpers.ShowDialog(this, MessageType.Error,
-					"Failed to parse message",
-					"Failed to parse message from '{0}':\n{1}", filename, exc.Message);
+				messagewidget1.ShowError(string.Format(
+					"Failed to parse message from '{0}':\n{1}", filename, exc.Message));
 				return;
 			}
 

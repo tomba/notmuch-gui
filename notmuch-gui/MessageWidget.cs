@@ -83,6 +83,12 @@ namespace NotMuchGUI
 			m_attachmentStore.Clear();
 		}
 
+		public void ShowError(string text)
+		{
+			Clear();
+			m_webView.LoadString(text, null, null, null);
+		}
+
 		public void ShowEmail(MK.MimeMessage msg, string filename, string threadID)
 		{
 			m_msgFile = filename;
@@ -165,7 +171,13 @@ namespace NotMuchGUI
 				textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "*"));
 
 			if (textpart == null)
-				throw new Exception();
+				textpart = textParts.FirstOrDefault();
+
+			if (textpart == null)
+			{
+				m_webView.LoadString("Error: no text parts", null, null, null);
+				return;
+			}
 
 			labelContent.Text = String.Format("{0} ({1})",
 				textpart.ContentType,
