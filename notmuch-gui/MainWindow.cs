@@ -418,7 +418,7 @@ public class MainWindow: Window
 
 		dlg.Destroy();
 
-		OnRefreshActionActivated(null, null);
+		ExecuteQuery(m_currentItem.Value, true);
 	}
 
 	void OnToggleReadActionActivated(object sender, EventArgs e)
