@@ -28,6 +28,23 @@ namespace NotMuchGUI
 
 			return TreeIter.Zero;
 		}
+
+		public static bool Contains(this ListStore store, Func<TreeIter, bool> f)
+		{
+			TreeIter iter;
+
+			if (!store.GetIterFirst(out iter))
+				return false;
+
+			do
+			{
+				if (f(iter))
+					return true;
+			}
+			while (store.IterNext(ref iter));
+
+			return false;
+		}
 	}
 }
 

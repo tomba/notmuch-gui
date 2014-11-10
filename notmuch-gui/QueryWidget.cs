@@ -30,10 +30,15 @@ namespace NotMuchGUI
 				var db = cdb.Database;
 
 				foreach (var tag in db.GetAllTags())
-					m_queryStore.AppendValues(String.Format("tag:{0}", tag), 0, 0);
+				{
+					var queryStr = String.Format("tag:{0}", tag);
+
+					if (m_queryStore.Contains(i => (string)m_queryStore.GetValue(i, 0) == queryStr))
+						continue;
+
+					m_queryStore.AppendValues(String.Format("tag:{0}", tag), -1, -1);
+				}
 			}
-
-
 
 			m_queryCountUpdater = new QueryCountUpdater();
 
@@ -96,7 +101,12 @@ namespace NotMuchGUI
 			if (uiTags != null)
 			{
 				foreach (var tag in uiTags)
+				{
+					if (queryStore.Contains(i => (string)queryStore.GetValue(i, 0) == tag))
+						continue;
+
 					queryStore.AppendValues(tag, 0, 0);
+				}
 			}
 
 			m_queryStore = queryStore;
