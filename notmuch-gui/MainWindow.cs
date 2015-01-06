@@ -216,7 +216,7 @@ public class MainWindow: Window
 				m_dbgWnd.SetSrc(File.ReadAllText(filename));
 
 				var sb = new System.Text.StringBuilder();
-				MimeKitHelpers.DumpMessage(mkmsg, sb, 0);
+				MimeKitHelpers.DumpMessage(mkmsg, sb);
 				m_dbgWnd.SetDump(sb.ToString());
 			}
 

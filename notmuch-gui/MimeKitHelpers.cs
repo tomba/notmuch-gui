@@ -11,50 +11,38 @@ namespace NotMuchGUI
 	{
 		const int step = 4;
 
-		public static void DumpMessage(MimeMessage msg, StringBuilder sb, int indent)
+		public static void DumpMessage(MimeMessage msg, StringBuilder sb)
 		{
-			sb.AppendFormat("{0}\n", msg.GetType());
-			DumpEntity(msg.Body, sb, indent + step);
-		}
+			var iter = new MimeIterator(msg);
 
-		static void DumpEntity(MimeEntity ent, StringBuilder sb, int indent)
-		{
-			string indentStr = new string(' ', indent);
-
-			sb.AppendFormat("{0}{1}", indentStr, ent.GetType());
-
-			if (ent.ContentType != null)
-				sb.AppendFormat(" ContentType({0}, {1}), ContentID({2})",
-					ent.ContentType.ToString(), ent.ContentType.Charset, ent.ContentId);
-
-			if (ent.ContentId != null)
-				sb.AppendFormat(" ContentId({0})", ent.ContentId);
-
-			if (ent.ContentDisposition != null)
-				sb.AppendFormat(" ContentDisposition({0}, {1})", ent.ContentDisposition.Disposition,
-					ent.ContentDisposition.FileName);
-
-			if (ent is MessagePart)
+			while (iter.MoveNext())
 			{
-				var mp = (MessagePart)ent;
+				string indentStr = new string(' ', iter.Depth * step);
 
-				sb.AppendLine();
+				MimeEntity ent = iter.Current;
 
-				DumpMessage(mp.Message, sb, indent + step);
-			}
-			else if (ent is Multipart)
-			{
-				var mp = (Multipart)ent;
+				sb.AppendFormat("{0}{1}", indentStr, ent.GetType());
 
-				sb.AppendLine();
+				if (ent.ContentType != null)
+					sb.AppendFormat(" ContentType({0}, {1}), ContentID({2})",
+						ent.ContentType.ToString(), ent.ContentType.Charset, ent.ContentId);
 
-				foreach (var part in mp)
-					DumpEntity(part, sb, indent + step);
-			}
-			else // MimePart
-			{
-				var part = (MimePart)ent;
-				sb.AppendFormat(" ContentEncoding({0})\n", part.ContentTransferEncoding);
+				if (ent.ContentId != null)
+					sb.AppendFormat(" ContentId({0})", ent.ContentId);
+
+				if (ent.ContentDisposition != null)
+					sb.AppendFormat(" ContentDisposition({0}, {1})", ent.ContentDisposition.Disposition,
+						ent.ContentDisposition.FileName);
+
+				if (ent is MimePart)
+				{
+					var part = (MimePart)ent;
+					sb.AppendFormat(" ContentEncoding({0})\n", part.ContentTransferEncoding);
+				}
+				else
+				{
+					sb.AppendLine();
+				}
 			}
 		}
 
