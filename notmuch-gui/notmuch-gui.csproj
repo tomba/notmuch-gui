@@ -98,6 +98,8 @@
     <Compile Include="QueryWidget.cs" />
     <Compile Include="TermDialog.cs" />
     <Compile Include="MyKeyFile.cs" />
+    <Compile Include="PasswordCache.cs" />
+    <Compile Include="MyGPGContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

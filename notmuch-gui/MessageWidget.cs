@@ -6,6 +6,7 @@ using NM = NotMuch;
 using MK = MimeKit;
 using UI = Gtk.Builder.ObjectAttribute;
 using Gtk;
+using MimeKit.Cryptography;
 
 namespace NotMuchGUI
 {
@@ -157,21 +158,53 @@ namespace NotMuchGUI
 				labelThreadID.Visible = true;
 			}
 
-			var textParts = msg.BodyParts.OfType<MK.TextPart>();
-
 			MK.TextPart textpart = null;
 
-			if (textpart == null)
-				textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "html"));
+			if (msg.Body is MultipartEncrypted)
+			{
+				var encryptedPart = (MultipartEncrypted)msg.Body;
 
-			if (textpart == null)
-				textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "plain"));
+				var ctx = new MyGPGContext();
 
-			if (textpart == null)
-				textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "*"));
+				try
+				{
+					var decrypted = encryptedPart.Decrypt(ctx);
 
-			if (textpart == null)
-				textpart = textParts.FirstOrDefault();
+					textpart = (MK.TextPart)decrypted;
+				}
+				catch (OperationCanceledException e)
+				{
+					m_webView.LoadString(string.Format("Unauthorized<p>{0}", e.Message), null, null, null);
+					return;
+				}
+				catch (UnauthorizedAccessException e)
+				{
+					m_webView.LoadString(string.Format("Unauthorized<p>{0}", e.Message), null, null, null);
+					return;
+				}
+				catch (Exception e)
+				{
+					m_webView.LoadString(string.Format("Error<p>{0}", e.Message), null, null, null);
+					return;
+				}
+
+			}
+			else
+			{
+				var textParts = msg.BodyParts.OfType<MK.TextPart>();
+
+				if (textpart == null)
+					textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "html"));
+
+				if (textpart == null)
+					textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "plain"));
+
+				if (textpart == null)
+					textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "*"));
+
+				if (textpart == null)
+					textpart = textParts.FirstOrDefault();
+			}
 
 			if (textpart == null)
 			{
