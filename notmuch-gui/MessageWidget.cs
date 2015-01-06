@@ -63,7 +63,7 @@ namespace NotMuchGUI
 			attachmentIconview.Model = m_attachmentStore;
 			attachmentIconview.PixbufColumn = 2;
 			attachmentIconview.TextColumn = 0;
-			attachmentIconview.ItemActivated += OnAttachmentItemActivated;;
+			attachmentIconview.ItemActivated += OnAttachmentItemActivated;
 		}
 
 		public void Clear()
@@ -206,7 +206,7 @@ namespace NotMuchGUI
 			}
 		}
 
-		void OnAttachmentItemActivated (object o, ItemActivatedArgs args)
+		void OnAttachmentItemActivated(object o, ItemActivatedArgs args)
 		{
 			TreeIter iter;
 			m_attachmentStore.GetIter(out iter, args.Path);
