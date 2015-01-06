@@ -2,6 +2,7 @@
 using Gtk;
 using MimeKit.Cryptography;
 using Org.BouncyCastle.Bcpg.OpenPgp;
+using System.Collections.Generic;
 
 namespace NotMuchGUI
 {
@@ -16,10 +17,21 @@ namespace NotMuchGUI
 			if (password != null)
 				return password;
 
-			var dlg = new MessageDialog(null, DialogFlags.Modal, MessageType.Question,
-				ButtonsType.OkCancel, "Enter password for key {0:X}", key.KeyId);
+			var pbundle = this.PublicKeyRingBundle;
+			var pkr = pbundle.GetPublicKeyRing(key.KeyId);
+			var pubKey = pkr.GetPublicKey();
 
-			dlg.Title = "Enter password";
+			List<string> uids = new List<string>();
+			foreach (string uid in pubKey.GetUserIds())
+				uids.Add(uid);
+
+			var dlg = new MessageDialog(null, DialogFlags.Modal, MessageType.Question,
+				          ButtonsType.OkCancel, false,
+				          "Enter passphrase for key {0:X} (master {1:X})\n{2}",
+				          key.KeyId, pubKey.KeyId,
+				          string.Join("\n", uids));
+
+			dlg.Title = "Enter passphrase";
 			dlg.DefaultResponse = ResponseType.Ok;
 
 			var content = dlg.ContentArea;
