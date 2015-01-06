@@ -21,27 +21,25 @@ namespace NotMuchGUI
 
 				MimeEntity ent = iter.Current;
 
-				sb.AppendFormat("{0}{1}", indentStr, ent.GetType());
+				sb.AppendFormat("{0}{1}\n", indentStr, ent.GetType().Name);
+
+				indentStr = new string(' ', (iter.Depth + 2) * step);
 
 				if (ent.ContentType != null)
-					sb.AppendFormat(" ContentType({0}, {1}), ContentID({2})",
-						ent.ContentType.ToString(), ent.ContentType.Charset, ent.ContentId);
+					sb.AppendFormat("{0}* {1}\n", indentStr, ent.ContentType);
 
 				if (ent.ContentId != null)
-					sb.AppendFormat(" ContentId({0})", ent.ContentId);
+					sb.AppendFormat("{0}* {1}\n", indentStr, ent.ContentId);
 
 				if (ent.ContentDisposition != null)
-					sb.AppendFormat(" ContentDisposition({0}, {1})", ent.ContentDisposition.Disposition,
-						ent.ContentDisposition.FileName);
+					sb.AppendFormat("{0}* {1}\n", indentStr, ent.ContentDisposition);
 
 				if (ent is MimePart)
 				{
 					var part = (MimePart)ent;
-					sb.AppendFormat(" ContentEncoding({0})\n", part.ContentTransferEncoding);
-				}
-				else
-				{
-					sb.AppendLine();
+
+					if (part.ContentTransferEncoding != ContentEncoding.Default)
+						sb.AppendFormat("{0}* {1}\n", indentStr, part.ContentTransferEncoding);
 				}
 			}
 		}
