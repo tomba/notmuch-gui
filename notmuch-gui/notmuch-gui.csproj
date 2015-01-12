@@ -43,9 +43,6 @@
     <Reference Include="glib-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="pango-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="atk-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="webkit-sharp-3.0">
-      <HintPath>..\webkit-sharp-3.0\webkit-sharp-3.0.dll</HintPath>
-    </Reference>
     <Reference Include="gdk-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="gio-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="System.Core" />
@@ -60,6 +57,7 @@
     <Reference Include="MimeKit">
       <HintPath>..\packages\MimeKit.1.0.3.0\lib\net45\MimeKit.dll</HintPath>
     </Reference>
+    <Reference Include="webkitgtk-sharp, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e1f0fd21e79c8b0f" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="mail.png">
