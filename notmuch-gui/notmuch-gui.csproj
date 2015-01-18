@@ -51,13 +51,13 @@
     <Reference Include="INIFileParser">
       <HintPath>..\packages\ini-parser.2.1.1\lib\INIFileParser.dll</HintPath>
     </Reference>
+    <Reference Include="webkitgtk-sharp, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e1f0fd21e79c8b0f" />
     <Reference Include="BouncyCastle">
-      <HintPath>..\packages\MimeKit.1.0.3.0\lib\net45\BouncyCastle.dll</HintPath>
+      <HintPath>..\packages\MimeKit.1.0.6.1\lib\net45\BouncyCastle.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.1.0.3.0\lib\net45\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.1.0.6.1\lib\net45\MimeKit.dll</HintPath>
     </Reference>
-    <Reference Include="webkitgtk-sharp, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e1f0fd21e79c8b0f" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="mail.png">
