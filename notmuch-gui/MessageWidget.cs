@@ -94,7 +94,8 @@ namespace NotMuchGUI
 		{
 			m_msgFile = filename;
 
-			ShowBody(msg, threadID);
+			SetMessageLabels(msg, threadID);
+			ShowBody(msg);
 			ShowAttachments(msg);
 		}
 
@@ -139,7 +140,8 @@ namespace NotMuchGUI
 			}
 		}
 
-		void ShowBody(MK.MimeMessage msg, string threadID)
+
+		void SetMessageLabels(MK.MimeMessage msg, string threadID)
 		{
 			labelFrom.Text = msg.From.ToString();
 			labelTo.Text = msg.To.ToString();
@@ -157,7 +159,10 @@ namespace NotMuchGUI
 				labelThreadID.Text = "thread:" + threadID;
 				labelThreadID.Visible = true;
 			}
+		}
 
+		void ShowBody(MK.MimeMessage msg)
+		{
 			MK.TextPart textpart = null;
 
 			if (msg.Body is MultipartEncrypted)
