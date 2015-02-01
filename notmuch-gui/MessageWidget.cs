@@ -1,12 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using NM = NotMuch;
-using MK = MimeKit;
-using UI = Gtk.Builder.ObjectAttribute;
+using System.Text;
 using Gtk;
+using MimeKit;
 using MimeKit.Cryptography;
+using MK = MimeKit;
+using NM = NotMuch;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
@@ -95,18 +97,84 @@ namespace NotMuchGUI
 			m_msgFile = filename;
 
 			SetMessageLabels(msg, threadID);
-			ShowBody(msg);
-			ShowAttachments(msg);
+
+			var ctx = MessageParser.ParseMessage(msg);
+
+			ShowBody(ctx);
+			ShowAttachments(ctx);
 		}
 
-		void ShowAttachments(MK.MimeMessage msg)
+		void SetMessageLabels(MK.MimeMessage msg, string threadID)
+		{
+			labelFrom.Text = msg.From.ToString();
+			labelTo.Text = msg.To.ToString();
+			labelCc.Text = msg.Cc.ToString();
+			labelSubject.Text = msg.Subject;
+			labelDate.Text = msg.Date.ToLocalTime().ToString("g");
+			labelMsgID.Text = "id:" + msg.MessageId;
+
+			if (string.IsNullOrEmpty(threadID))
+			{
+				labelThreadID.Visible = false;
+			}
+			else
+			{
+				labelThreadID.Text = "thread:" + threadID;
+				labelThreadID.Visible = true;
+			}
+		}
+
+		void ShowBody(MessageParser.ParseContext ctx)
+		{
+			if (ctx.Pieces.Count == 0)
+			{
+				m_webView.LoadString("No parts found", null, null, null);
+				return;
+			}
+
+			var sb = new StringBuilder();
+
+			foreach (var piece in ctx.Pieces)
+			{
+				if (piece.Error != null)
+				{
+					sb.AppendLine(piece.Error);
+					sb.AppendLine("</p>");
+					continue;
+				}
+
+				var textpart = (TextPart)piece.MimePart;
+
+				string html;
+
+				if (textpart.ContentType.Matches("text", "html"))
+					html = textpart.Text;
+				else
+					html = TextToHtmlHelper.TextToHtml(textpart.Text);
+
+				sb.Append(html);
+			}
+
+			var content = sb.ToString();
+
+			this.HtmlContent = content;
+
+			m_webView.LoadString(content, null, null, null);
+		}
+
+		void ShowAttachments(MessageParser.ParseContext ctx)
 		{
 			m_attachmentStore.Clear();
 
 			int idx = 0;
 
-			foreach (var part in msg.Attachments)
+			foreach (var attachment in ctx.Attachments)
 			{
+				var part = attachment.MimePart;
+
+				if (part is ApplicationPgpSignature)
+					continue;
+
 				string filename = part.FileName;
 				if (filename == null)
 					filename = "attachment-" + System.IO.Path.GetFileName(System.IO.Path.GetTempFileName());
@@ -138,99 +206,6 @@ namespace NotMuchGUI
 				attachmentLabel.Text = String.Format("{0} attachments", idx);
 				attachmentExpander.Show();
 			}
-		}
-
-
-		void SetMessageLabels(MK.MimeMessage msg, string threadID)
-		{
-			labelFrom.Text = msg.From.ToString();
-			labelTo.Text = msg.To.ToString();
-			labelCc.Text = msg.Cc.ToString();
-			labelSubject.Text = msg.Subject;
-			labelDate.Text = msg.Date.ToLocalTime().ToString("g");
-			labelMsgID.Text = "id:" + msg.MessageId;
-
-			if (string.IsNullOrEmpty(threadID))
-			{
-				labelThreadID.Visible = false;
-			}
-			else
-			{
-				labelThreadID.Text = "thread:" + threadID;
-				labelThreadID.Visible = true;
-			}
-		}
-
-		void ShowBody(MK.MimeMessage msg)
-		{
-			MK.TextPart textpart = null;
-
-			if (msg.Body is MultipartEncrypted)
-			{
-				var encryptedPart = (MultipartEncrypted)msg.Body;
-
-				var ctx = new MyGPGContext();
-
-				try
-				{
-					var decrypted = encryptedPart.Decrypt(ctx);
-
-					textpart = (MK.TextPart)decrypted;
-				}
-				catch (OperationCanceledException e)
-				{
-					m_webView.LoadString(string.Format("Unauthorized<p>{0}", e.Message), null, null, null);
-					return;
-				}
-				catch (UnauthorizedAccessException e)
-				{
-					m_webView.LoadString(string.Format("Unauthorized<p>{0}", e.Message), null, null, null);
-					return;
-				}
-				catch (Exception e)
-				{
-					m_webView.LoadString(string.Format("Error<p>{0}", e.Message), null, null, null);
-					return;
-				}
-
-			}
-			else
-			{
-				var textParts = msg.BodyParts.OfType<MK.TextPart>();
-
-				if (textpart == null)
-					textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "html"));
-
-				if (textpart == null)
-					textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "plain"));
-
-				if (textpart == null)
-					textpart = textParts.FirstOrDefault(p => p.ContentType.Matches("text", "*"));
-
-				if (textpart == null)
-					textpart = textParts.FirstOrDefault();
-			}
-
-			if (textpart == null)
-			{
-				m_webView.LoadString("Error: no text parts", null, null, null);
-				return;
-			}
-
-			labelContent.Text = String.Format("{0} ({1})",
-				textpart.ContentType,
-				textpart.ContentType.Charset);
-
-			string html;
-
-			if (textpart.ContentType.Matches("text", "html"))
-				html = textpart.Text;
-			else
-				html = TextToHtmlHelper.TextToHtml(textpart.Text);
-
-			this.HtmlContent = html;
-
-			m_webView.LoadString(html, null, null, null);
 		}
 
 		public bool ShowHtmlSource
