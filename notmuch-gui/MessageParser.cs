@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using MimeKit;
 using MimeKit.Cryptography;
+using System.Text;
 
 namespace NotMuchGUI
 {
@@ -89,19 +90,42 @@ namespace NotMuchGUI
 
 						var gpgCtx = new MyGPGContext();
 
-						try
-						{
-							signedPart.Verify(gpgCtx);
+						var sb = new StringBuilder();
+						sb.AppendLine("<small>");
+						sb.AppendLine("-- Start signed part --<br>");
 
-							var body = mp.First();
-							ctx.Pieces.Add(new MessagePiece() { Error = "<small>-- Start signed part --</small><p>" });
-							ParseMessage(body, ctx);
-							ctx.Pieces.Add(new MessagePiece() { Error = "<small>-- End signed part --</small><p>" });
-						}
-						catch (Exception e)
+						var sigs = signedPart.Verify(gpgCtx);
+
+						foreach (var signature in sigs)
 						{
-							ctx.Pieces.Add(new MessagePiece() { Error = String.Format("Error: {0}", e.Message) });
+							try
+							{
+								bool valid = signature.Verify();
+
+								var cert = signature.SignerCertificate;
+
+								var txt = String.Format("{0} &lt;{1}&gt; ({2})",
+									          cert.Name, cert.Email, cert.Fingerprint);
+
+								if (valid)
+									sb.AppendLine("Signed by " + txt + "<br>");
+								else
+									sb.AppendLine("FAILED to verify signature by " + txt + "<br>");
+							}
+							catch (DigitalSignatureVerifyException e)
+							{
+								sb.AppendLine(String.Format("Error: {0}<br>", e.Message));
+							}
 						}
+
+						sb.AppendLine("</small>");
+
+						ctx.Pieces.Add(new MessagePiece() { Error = sb.ToString() });
+
+						var body = mp.First();
+						ParseMessage(body, ctx);
+
+						ctx.Pieces.Add(new MessagePiece() { Error = "<small>-- End signed part --</small><p>" });
 					}
 					break;
 
