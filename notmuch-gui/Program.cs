@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Gtk;
 using NM = NotMuch;
 using System.IO;
@@ -82,6 +83,17 @@ namespace NotMuchGUI
 			var exe = MainClass.AppKeyFile.GetStringOrNull("notmuch", "executable");
 			if (exe != null)
 				MainClass.NotmuchExe = exe;
+
+			/* collect user's email addresses */
+			var emails =
+				from section in MainClass.AppKeyFile.Sections
+				where section.Name == "identity"
+				let name = section.FindFirstValue("name")
+				from kvp in section.KeyValues
+				where kvp.Key == "email"
+				select new MimeKit.MailboxAddress(name, kvp.Value);
+
+			Globals.MyAddresses = emails.ToArray();
 		}
 	}
 }
