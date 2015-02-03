@@ -136,9 +136,9 @@ namespace NotMuchGUI
 
 			foreach (var piece in ctx.Pieces)
 			{
-				if (piece.Error != null)
+				if (piece.Text != null)
 				{
-					sb.AppendLine(piece.Error);
+					sb.AppendLine(piece.Text);
 					sb.AppendLine("</p>");
 					continue;
 				}
@@ -171,9 +171,6 @@ namespace NotMuchGUI
 			foreach (var attachment in ctx.Attachments)
 			{
 				var part = attachment.MimePart;
-
-				if (part is ApplicationPgpSignature)
-					continue;
 
 				string filename = part.FileName;
 				if (filename == null)

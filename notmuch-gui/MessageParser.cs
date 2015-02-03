@@ -12,7 +12,7 @@ namespace NotMuchGUI
 		public class MessagePiece
 		{
 			public MimePart MimePart;
-			public string Error;
+			public string Text;
 		}
 
 		public class Attachment
@@ -24,6 +24,30 @@ namespace NotMuchGUI
 		{
 			public List<MessagePiece> Pieces = new List<MessagePiece>();
 			public List<Attachment> Attachments = new List<Attachment>();
+
+			public void AddMimePart(MimePart mimePart)
+			{
+				this.Pieces.Add(new MessagePiece()
+				{
+					MimePart = mimePart,
+				});
+			}
+
+			public void AddText(string text)
+			{
+				this.Pieces.Add(new MessagePiece()
+				{
+					Text = text,
+				});
+			}
+
+			public void AddAttachment(MimePart mimePart)
+			{
+				this.Attachments.Add(new Attachment()
+				{
+					MimePart = mimePart,
+				});
+			}
 		}
 
 		public static void ParseMessage(MimeEntity ent, ParseContext ctx)
@@ -35,27 +59,27 @@ namespace NotMuchGUI
 			}
 			else if (ent is Multipart)
 			{
-				var mp = (Multipart)ent;
+				var multiPart = (Multipart)ent;
 
 				switch (ent.ContentType.MediaSubtype)
 				{
 				case "mixed":
 					{
-						foreach (var part in mp)
+						foreach (var part in multiPart)
 							ParseMessage(part, ctx);
 					}
 					break;
 
 				case "alternative":
 					{
-						var body = mp.Last();
+						var body = multiPart.Last();
 						ParseMessage(body, ctx);
 					}
 					break;
 
 				case "encrypted":
 					{
-						var encryptedPart = (MultipartEncrypted)mp;
+						var encryptedPart = (MultipartEncrypted)multiPart;
 
 						var gpgCtx = new MyGPGContext();
 
@@ -63,30 +87,38 @@ namespace NotMuchGUI
 						{
 							var decrypted = encryptedPart.Decrypt(gpgCtx);
 
+							var sb = new StringBuilder();
+							sb.AppendLine("<small>");
+							sb.AppendLine("-- Start encrypted part --<br>");
+							sb.AppendLine("</small>");
+							ctx.AddText(sb.ToString());
+
 							ParseMessage(decrypted, ctx);
+
+							ctx.AddText("<small>-- End encrypted part --</small><p>");
 						}
 						catch (OperationCanceledException)
 						{
-							ctx.Pieces.Add(new MessagePiece() { Error = "Canceled" });
+							ctx.AddText("Canceled");
 						}
 						catch (UnauthorizedAccessException)
 						{
-							ctx.Pieces.Add(new MessagePiece() { Error = "Unauthorized" });
+							ctx.AddText("Unauthorized");
 						}
 						catch (PrivateKeyNotFoundException)
 						{
-							ctx.Pieces.Add(new MessagePiece() { Error = "Private key not found" });
+							ctx.AddText("Private key not found");
 						}
 						catch (Exception e)
 						{
-							ctx.Pieces.Add(new MessagePiece() { Error = String.Format("Error: {0}", e.Message) });
+							ctx.AddText(String.Format("Error: {0}", e.Message));
 						}
 					}
 					break;
 
 				case "signed":
 					{
-						var signedPart = (MultipartSigned)mp;
+						var signedPart = (MultipartSigned)multiPart;
 
 						var gpgCtx = new MyGPGContext();
 
@@ -120,20 +152,16 @@ namespace NotMuchGUI
 
 						sb.AppendLine("</small>");
 
-						ctx.Pieces.Add(new MessagePiece() { Error = sb.ToString() });
+						ctx.AddText(sb.ToString());
 
-						var body = mp.First();
-						ParseMessage(body, ctx);
+						ParseMessage(multiPart[0], ctx);
 
-						ctx.Pieces.Add(new MessagePiece() { Error = "<small>-- End signed part --</small><p>" });
+						ctx.AddText("<small>-- End signed part --</small><p>");
 					}
 					break;
 
 				default:
-					ctx.Pieces.Add(new MessagePiece()
-					{
-						Error = String.Format("unhandled multipart type {0}", ent.ContentType.MediaSubtype),
-					});
+					ctx.AddText(String.Format("unhandled multipart type {0}", ent.ContentType.MediaSubtype));
 					break;
 				}
 			}
@@ -148,21 +176,11 @@ namespace NotMuchGUI
 
 				if (mimepart.ContentDisposition != null && mimepart.ContentDisposition.IsAttachment)
 				{
-					var attachment = new Attachment()
-					{
-						MimePart = mimepart,
-					};
-
-					ctx.Attachments.Add(attachment);
+					ctx.AddAttachment(mimepart);
 					return;
 				}
 
-				var msgPart = new MessagePiece()
-				{
-					MimePart = mimepart,
-				};
-
-				ctx.Pieces.Add(msgPart);
+				ctx.AddMimePart(mimepart);
 			}
 			else
 			{
