@@ -12,15 +12,6 @@ using UI = Gtk.Builder.ObjectAttribute;
 
 namespace NotMuchGUI
 {
-	// SetProperty is protected, so we need a custom class
-	class MyWebSettings : WebKit.WebSettings
-	{
-		public void Set(string name, bool val)
-		{
-			SetProperty(name, new GLib.Value(val));
-		}
-	}
-
 	public class MessageWidget : Bin
 	{
 		WebKit.WebView m_webView;
@@ -56,8 +47,8 @@ namespace NotMuchGUI
 			// Disable context menu
 			m_webView.ContextMenu += (o, args) => args.RetVal = true;
 
-			var settings = new MyWebSettings();
-			settings.Set("auto-load-images", true);
+			var settings = new WebKit.WebSettings();
+			settings.AutoLoadImages = true;
 			m_webView.Settings = settings;
 
 			scrolledwindowWeb.Add(m_webView);
