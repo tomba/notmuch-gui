@@ -53,6 +53,8 @@ namespace NotMuchGUI
 			m_webView = new WebKit.WebView();
 			m_webView.Editable = false;
 			m_webView.Expand = true;
+			// Disable context menu
+			m_webView.ContextMenu += (o, args) => args.RetVal = true;
 
 			var settings = new MyWebSettings();
 			settings.Set("auto-load-images", true);
