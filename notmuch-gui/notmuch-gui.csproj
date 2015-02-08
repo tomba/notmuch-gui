@@ -23,7 +23,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <EnvironmentVariables>
       <EnvironmentVariables>
-        <Variable name="LC_ALL" value="fi_FI.UTF-8" />
+        <Variable name="LC_ALLxx" value="fi_FI.UTF-8" />
       </EnvironmentVariables>
     </EnvironmentVariables>
   </PropertyGroup>

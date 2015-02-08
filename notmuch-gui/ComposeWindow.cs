@@ -18,33 +18,36 @@ namespace NotMuchGUI
 			return wnd;
 		}
 
-		[UI] readonly Box vbox2;
+		[UI] readonly Box box1;
 		[UI] readonly Button editButton;
 		[UI] readonly Button sendButton;
 
 		MK.MimeMessage m_message;
 
-		MessageWidget messagewidget1;
+		Gtk.Socket m_gtkSocket;
 
-		ComposeWindow(Builder builder, IntPtr handle) : base(handle)
+
+		ComposeWindow(Builder builder, IntPtr handle)
+			: base(handle)
 		{
 			builder.Autoconnect(this);
 
-			messagewidget1 = new MessageWidget();
-			vbox2.Add(messagewidget1);
+			this.WidthRequest = 800;
+			this.HeightRequest = 600;
 
 			editButton.Clicked += OnEditButtonClicked;
 			sendButton.Clicked += OnSendButtonClicked;
 		}
 
-		public MK.MimeMessage Message
+		public void New()
 		{
-			get { return m_message; }
-			set
-			{
-				m_message = value;
-				messagewidget1.ShowEmail(m_message, null, null);
-			}
+			var msg = new MK.MimeMessage();
+			msg.From.Add(Globals.MyAddresses.First());	// XXX
+			msg.Body = new MK.TextPart() { Text = "" };
+
+			m_message = msg;
+
+			Edit();
 		}
 
 		public void Reply(string msgId, bool replyAll)
@@ -66,16 +69,9 @@ namespace NotMuchGUI
 
 			var reply = MimeKitHelpers.CreateReply(msg, replyAll);
 
-			this.Message = reply;
-		}
+			m_message = reply;
 
-		public void New()
-		{
-			var msg = new MK.MimeMessage();
-			msg.From.Add(Globals.MyAddresses.First());	// XXX
-			msg.Body = new MK.TextPart() { Text = "" };
-
-			this.Message = msg;
+			Edit();
 		}
 
 		static int FindFirstBlankLine(string filename)
@@ -97,7 +93,23 @@ namespace NotMuchGUI
 			return 0;
 		}
 
-		void OnEditButtonClicked(object sender, EventArgs args)
+		void View()
+		{
+			editButton.Sensitive = true;
+			sendButton.Sensitive = true;
+
+			foreach (var widget in box1.Children)
+				box1.Remove(widget);
+
+			var messagewidget = new MessageWidget();
+			box1.Add(messagewidget);
+
+			messagewidget.ShowEmail(m_message, null, null);
+
+			messagewidget.ShowAll();
+		}
+
+		string WriteMessageToTmpFile()
 		{
 			var tmpFile = System.IO.Path.GetTempFileName();
 
@@ -112,49 +124,58 @@ namespace NotMuchGUI
 				writer.Write(((MK.TextPart)m_message.Body).Text);
 			}
 
+			return tmpFile;
+		}
+
+		void Edit()
+		{
+			editButton.Sensitive = false;
+			sendButton.Sensitive = false;
+
+			var tmpFile = WriteMessageToTmpFile();
+
+			foreach (var widget in box1.Children)
+				box1.Remove(widget);
+
+			m_gtkSocket = new Gtk.Socket();
+			m_gtkSocket.Expand = true;
+			m_gtkSocket.CanFocus = true;
+			m_gtkSocket.PlugAdded += (o, e) =>
+			{
+				// https://bugzilla.gnome.org/show_bug.cgi?id=729248
+
+				m_gtkSocket.ChildFocus(DirectionType.TabForward);
+			};
+			m_gtkSocket.PlugRemoved += (o, e) =>
+			{
+				ReadEditedMail(tmpFile);
+			};
+
+			box1.Add(m_gtkSocket);
+			m_gtkSocket.ShowAll();
+
 			int lineNum = FindFirstBlankLine(tmpFile) + 1;
 
 			const string editorCmd = "gvim";
-			const string editorArgs = "-f \"+set columns=100\" \"+set lines=50\" \"+set filetype=mail\" +{1} {0}";
+			const string editorArgs = "-f '+set filetype=mail' '+set fileencoding=utf-8' '+set ff=unix' '+set enc=utf-8' +{1} {0} --socketid {2}";
 
-			using (var process = new Process())
-			{
-				var si = process.StartInfo;
-				si.FileName = editorCmd;
-				si.Arguments = String.Format(editorArgs, tmpFile, lineNum);
-				si.UseShellExecute = false;
-				si.CreateNoWindow = true;
+			var process = new Process();
 
-				var dlg = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Cancel,
-					          "Editing.\n\nEditor command {0}\n\nPress cancel to kill the editor.", si.Arguments);
+			var si = process.StartInfo;
+			si.FileName = editorCmd;
+			si.Arguments = String.Format(editorArgs, tmpFile, lineNum, m_gtkSocket.Id);
+			si.UseShellExecute = false;
+			si.CreateNoWindow = true;
 
-				process.EnableRaisingEvents = true;
+			process.EnableRaisingEvents = true;
 
-				process.Exited += (s, a) =>
-				{
-					Application.Invoke((_s, _e) =>
-					{
-						dlg.Destroy();
-					});
-				};
+			bool b = process.Start();
+			if (!b)
+				throw new Exception("Failed to edit start edit process");
+		}
 
-				dlg.Response += (o, e) =>
-				{
-					process.Kill();
-				};
-
-				bool b = process.Start();
-				if (!b)
-					Console.WriteLine("Failed to edit start edit process");
-
-				dlg.Run();
-
-				process.WaitForExit();
-
-				if (process.ExitCode != 0)
-					Console.WriteLine("Failed to edit reply");
-			}
-
+		void ReadEditedMail(string tmpFile)
+		{
 			using (var reader = File.OpenText(tmpFile))
 			{
 				string line;
@@ -164,44 +185,44 @@ namespace NotMuchGUI
 					if (line.Length == 0)
 						break;
 
-					var parts = line.Split(new[] {": "}, 2, StringSplitOptions.RemoveEmptyEntries);
+					var parts = line.Split(new[] { ": " }, 2, StringSplitOptions.RemoveEmptyEntries);
 
 					switch (parts.Length)
 					{
-						case 1:
-							// empty
-							continue;
+					case 1:
+						// empty
+						continue;
 
-						case 2:
-							// normal
-							break;
+					case 2:
+						// normal
+						break;
 
-						default:
-							throw new Exception("bad header");
+					default:
+						throw new Exception("bad header");
 					}
 
 					MK.HeaderId hid;
 
 					switch (parts[0])
 					{
-						case "To":
-							hid = MK.HeaderId.To;
-							break;
+					case "To":
+						hid = MK.HeaderId.To;
+						break;
 
-						case "From":
-							hid = MK.HeaderId.From;
-							break;
+					case "From":
+						hid = MK.HeaderId.From;
+						break;
 
-						case "Cc":
-							hid = MK.HeaderId.Cc;
-							break;
+					case "Cc":
+						hid = MK.HeaderId.Cc;
+						break;
 
-						case "Subject":
-							hid = MK.HeaderId.Subject;
-							break;
+					case "Subject":
+						hid = MK.HeaderId.Subject;
+						break;
 
-						default:
-							continue;
+					default:
+						continue;
 					}
 
 
@@ -213,11 +234,16 @@ namespace NotMuchGUI
 				part.SetText(Encoding.UTF8, bodyText);
 
 				m_message.Body = part;
-
-				this.Message = m_message;
 			}
 
 			File.Delete(tmpFile);
+
+			View();
+		}
+
+		void OnEditButtonClicked(object sender, EventArgs args)
+		{
+			Edit();
 		}
 
 		void OnSendButtonClicked(object sender, EventArgs e)
@@ -239,7 +265,8 @@ namespace NotMuchGUI
 			Console.WriteLine("got resp {0}", resp);
 
 			dlg.Destroy();
+
+			File.Delete(tmpFile);
 		}
 	}
 }
-
