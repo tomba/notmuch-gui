@@ -44,11 +44,10 @@ namespace NotMuchGUI
 			m_webView = new WebKit.WebView();
 			m_webView.Editable = false;
 			m_webView.Expand = true;
-			// Disable context menu
-			m_webView.ContextMenu += (o, args) => args.RetVal = true;
 
 			var settings = new WebKit.WebSettings();
 			settings.AutoLoadImages = true;
+			settings.EnableDeveloperExtras = true;
 			m_webView.Settings = settings;
 
 			scrolledwindowWeb.Add(m_webView);
@@ -60,6 +59,24 @@ namespace NotMuchGUI
 			attachmentIconview.PixbufColumn = 2;
 			attachmentIconview.TextColumn = 0;
 			attachmentIconview.ItemActivated += OnAttachmentItemActivated;
+
+			var inspector = m_webView.Inspector;
+			inspector.InspectWebView += (o, args) =>
+			{
+				var wnd = new Window("Inspector");
+				var sv = new ScrolledWindow();
+				var wv = new WebKit.WebView();
+
+				wnd.SetDefaultSize(800, 600);
+
+				sv.Add(wv);
+				wnd.Add(sv);
+
+				args.RetVal = wv;
+
+				wnd.ShowAll();
+				wnd.Maximize();
+			};
 		}
 
 		public void Clear()
