@@ -136,40 +136,11 @@ namespace NotMuchGUI
 
 		void ShowBody(MessageParser.ParseContext ctx)
 		{
-			if (ctx.Pieces.Count == 0)
-			{
-				m_webView.LoadString("No parts found", null, null, null);
-				return;
-			}
-
-			var sb = new StringBuilder();
-
-			foreach (var piece in ctx.Pieces)
-			{
-				if (piece.Text != null)
-				{
-					sb.AppendLine(piece.Text);
-					sb.AppendLine("</p>");
-					continue;
-				}
-
-				var textpart = (TextPart)piece.MimePart;
-
-				string html;
-
-				if (textpart.ContentType.Matches("text", "html"))
-					html = textpart.Text;
-				else
-					html = TextToHtmlHelper.TextToHtml(textpart.Text);
-
-				sb.Append(html);
-			}
-
-			var content = sb.ToString();
+			var content = ctx.Builder.ToString();
 
 			this.HtmlContent = content;
 
-			m_webView.LoadString(content, null, null, null);
+			m_webView.LoadString(content, "text/html", "UTF-8", null);
 		}
 
 		void ShowAttachments(MessageParser.ParseContext ctx)
@@ -180,9 +151,7 @@ namespace NotMuchGUI
 
 			foreach (var attachment in ctx.Attachments)
 			{
-				var part = attachment.MimePart;
-
-				string filename = part.FileName;
+				string filename = attachment.FileName;
 				if (filename == null)
 					filename = "attachment-" + System.IO.Path.GetFileName(System.IO.Path.GetTempFileName());
 
@@ -190,7 +159,7 @@ namespace NotMuchGUI
 
 				Gdk.Pixbuf pix = null;
 
-				var icon = GLib.ContentType.GetIcon(part.ContentType.MimeType.ToLower());
+				var icon = GLib.ContentType.GetIcon(attachment.ContentType.MimeType.ToLower());
 				if (icon != null)
 				{
 					var iconInfo = IconTheme.Default.LookupIcon(icon, iconSize, 0);

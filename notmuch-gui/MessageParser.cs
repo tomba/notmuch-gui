@@ -9,44 +9,33 @@ namespace NotMuchGUI
 {
 	public class MessageParser
 	{
-		public class MessagePiece
-		{
-			public MimePart MimePart;
-			public string Text;
-		}
-
-		public class Attachment
-		{
-			public MimePart MimePart;
-		}
-
 		public class ParseContext
 		{
-			public List<MessagePiece> Pieces = new List<MessagePiece>();
-			public List<Attachment> Attachments = new List<Attachment>();
+			public StringBuilder Builder = new StringBuilder();
+			public List<MimePart> Attachments = new List<MimePart>();
 
 			public void AddMimePart(MimePart mimePart)
 			{
-				this.Pieces.Add(new MessagePiece()
-				{
-					MimePart = mimePart,
-				});
+				var textpart = (TextPart)mimePart;
+
+				string html;
+
+				if (textpart.ContentType.Matches("text", "html"))
+					html = textpart.Text;
+				else
+					html = TextToHtmlHelper.TextToHtml(textpart.Text);
+
+				this.Builder.Append(html);
 			}
 
-			public void AddText(string text)
+			public void AddLine(string text)
 			{
-				this.Pieces.Add(new MessagePiece()
-				{
-					Text = text,
-				});
+				this.Builder.AppendLine(text);
 			}
 
 			public void AddAttachment(MimePart mimePart)
 			{
-				this.Attachments.Add(new Attachment()
-				{
-					MimePart = mimePart,
-				});
+				this.Attachments.Add(mimePart);
 			}
 		}
 
@@ -87,31 +76,27 @@ namespace NotMuchGUI
 						{
 							var decrypted = encryptedPart.Decrypt(gpgCtx);
 
-							var sb = new StringBuilder();
-							sb.AppendLine("<small>");
-							sb.AppendLine("-- Start encrypted part --<br>");
-							sb.AppendLine("</small>");
-							ctx.AddText(sb.ToString());
+							ctx.AddLine("<small>-- Start encrypted part --</small><br>");
 
 							ParseMessage(decrypted, ctx);
 
-							ctx.AddText("<small>-- End encrypted part --</small><p>");
+							ctx.AddLine("<small>-- End encrypted part --</small><p>");
 						}
 						catch (OperationCanceledException)
 						{
-							ctx.AddText("Canceled");
+							ctx.AddLine("Canceled");
 						}
 						catch (UnauthorizedAccessException)
 						{
-							ctx.AddText("Unauthorized");
+							ctx.AddLine("Unauthorized");
 						}
 						catch (PrivateKeyNotFoundException)
 						{
-							ctx.AddText("Private key not found");
+							ctx.AddLine("Private key not found");
 						}
 						catch (Exception e)
 						{
-							ctx.AddText(String.Format("Error: {0}", e.Message));
+							ctx.AddLine(String.Format("Error: {0}", e.Message));
 						}
 					}
 					break;
@@ -152,16 +137,16 @@ namespace NotMuchGUI
 
 						sb.AppendLine("</small>");
 
-						ctx.AddText(sb.ToString());
+						ctx.AddLine(sb.ToString());
 
 						ParseMessage(multiPart[0], ctx);
 
-						ctx.AddText("<small>-- End signed part --</small><p>");
+						ctx.AddLine("<small>-- End signed part --</small><p>");
 					}
 					break;
 
 				default:
-					ctx.AddText(String.Format("unhandled multipart type {0}", ent.ContentType.MediaSubtype));
+					ctx.AddLine(String.Format("unhandled multipart type {0}", ent.ContentType.MediaSubtype));
 					break;
 				}
 			}
