@@ -77,6 +77,22 @@ namespace NotMuchGUI
 				wnd.ShowAll();
 				wnd.Maximize();
 			};
+
+			m_webView.LoadFinished += (o, args) =>
+			{
+				if (m_webView.ViewSourceMode)
+					return;
+
+				var doc = m_webView.DomDocument;
+				if (doc == null || doc.Head == null)
+					return;
+
+				var link = (WebKit.DOMHTMLLinkElement)doc.CreateElement("link");
+				link.SetAttribute("rel", "stylesheet");
+				link.Type = "text/css";
+				link.Href = "message.css";
+				doc.Head.AppendChild(link);
+			};
 		}
 
 		public void Clear()
@@ -140,7 +156,9 @@ namespace NotMuchGUI
 
 			this.HtmlContent = content;
 
-			m_webView.LoadString(content, "text/html", "UTF-8", null);
+			var baseUri = "file://" + AppDomain.CurrentDomain.BaseDirectory;
+
+			m_webView.LoadString(content, "text/html", "UTF-8", baseUri);
 		}
 
 		void ShowAttachments(MessageParser.ParseContext ctx)
