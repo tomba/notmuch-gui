@@ -6,3 +6,22 @@ blockquote {
 	/*border-left: 3px #aaa solid;*/
 	border-left: #5555EE solid 0.2em;
 }
+
+div.signed-part {
+	border-right: grey solid 0.1em;
+}
+
+div.signed-header {
+	font-size: 75%;
+	font-weight: lighter;
+	text-align: center;
+}
+
+div.signed-content {
+}
+
+div.encrypted-header {
+	font-size: 75%;
+	font-weight: lighter;
+	text-align: center;
+}

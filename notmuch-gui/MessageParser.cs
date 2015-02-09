@@ -72,15 +72,41 @@ namespace NotMuchGUI
 
 						var gpgCtx = new MyGPGContext();
 
+						ctx.AddLine("<div class=\"encrypted-part\">");
+
 						try
 						{
-							var decrypted = encryptedPart.Decrypt(gpgCtx);
+							DigitalSignatureCollection sigs;
 
-							ctx.AddLine("<small>-- Start encrypted part --</small><br>");
+							var decrypted = encryptedPart.Decrypt(gpgCtx, out sigs);
+
+							ctx.AddLine("<div class=\"encrypted-header\">");
+
+							foreach (var signature in sigs)
+							{
+								try
+								{
+									bool valid = signature.Verify();
+
+									var cert = signature.SignerCertificate;
+
+									var txt = String.Format("{0} &lt;{1}&gt; ({2})",
+										cert.Name, cert.Email, cert.Fingerprint);
+
+									if (valid)
+										ctx.AddLine("Encrypted & Signed by " + txt + "<br>");
+									else
+										ctx.AddLine("FAILED to verify signature by " + txt + "<br>");
+								}
+								catch (DigitalSignatureVerifyException e)
+								{
+									ctx.AddLine(String.Format("Error: {0}<br>", e.Message));
+								}
+							}
+
+							ctx.AddLine("</div>");  /* encrypted-header */
 
 							ParseMessage(decrypted, ctx);
-
-							ctx.AddLine("<small>-- End encrypted part --</small><p>");
 						}
 						catch (OperationCanceledException)
 						{
@@ -98,6 +124,8 @@ namespace NotMuchGUI
 						{
 							ctx.AddLine(String.Format("Error: {0}", e.Message));
 						}
+
+						ctx.AddLine("</div>");  /* encrypted-part */
 					}
 					break;
 
@@ -107,9 +135,9 @@ namespace NotMuchGUI
 
 						var gpgCtx = new MyGPGContext();
 
-						var sb = new StringBuilder();
-						sb.AppendLine("<small>");
-						sb.AppendLine("-- Start signed part --<br>");
+						ctx.AddLine("<div class=\"signed-part\">");
+
+						ctx.AddLine("<div class=\"signed-header\">");
 
 						var sigs = signedPart.Verify(gpgCtx);
 
@@ -125,23 +153,23 @@ namespace NotMuchGUI
 									          cert.Name, cert.Email, cert.Fingerprint);
 
 								if (valid)
-									sb.AppendLine("Signed by " + txt + "<br>");
+									ctx.AddLine("Signed by " + txt + "<br>");
 								else
-									sb.AppendLine("FAILED to verify signature by " + txt + "<br>");
+									ctx.AddLine("FAILED to verify signature by " + txt + "<br>");
 							}
 							catch (DigitalSignatureVerifyException e)
 							{
-								sb.AppendLine(String.Format("Error: {0}<br>", e.Message));
+								ctx.AddLine(String.Format("Error: {0}<br>", e.Message));
 							}
 						}
 
-						sb.AppendLine("</small>");
+						ctx.AddLine("</div>");  /* signed-header */
 
-						ctx.AddLine(sb.ToString());
-
+						ctx.AddLine("<div class=\"signed-content\">");
 						ParseMessage(multiPart[0], ctx);
+						ctx.AddLine("</div>");  /* signed-content */
 
-						ctx.AddLine("<small>-- End signed part --</small><p>");
+						ctx.AddLine("</div>");  /* signed-part */
 					}
 					break;
 
