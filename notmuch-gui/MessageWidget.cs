@@ -47,6 +47,10 @@ namespace NotMuchGUI
 				Expand = true,
 			};
 
+			m_webView.PrintRequested += (o, args) => args.RetVal = true;
+			m_webView.NewWindowPolicyDecisionRequested += HandleNewWindowPolicyDecisionRequested;
+			m_webView.NavigationPolicyDecisionRequested += HandleNavigationPolicyDecisionRequested;
+
 			var settings = new WebKit.WebSettings()
 			{
 				AutoLoadImages = true,
@@ -98,6 +102,28 @@ namespace NotMuchGUI
 				link.Href = "message.css";
 				doc.Head.AppendChild(link);
 			};
+		}
+
+		void HandleNavigationPolicyDecisionRequested(object o, WebKit.NavigationPolicyDecisionRequestedArgs args)
+		{
+			var reason = args.NavigationAction.Reason;
+
+			if (reason == WebKit.WebNavigationReason.Other)
+				return;
+
+			args.PolicyDecision.Ignore();
+			args.RetVal = true;
+		}
+
+		void HandleNewWindowPolicyDecisionRequested(object o, WebKit.NewWindowPolicyDecisionRequestedArgs args)
+		{
+			var reason = args.NavigationAction.Reason;
+
+			if (reason == WebKit.WebNavigationReason.Other)
+				return;
+
+			args.PolicyDecision.Ignore();
+			args.RetVal = true;
 		}
 
 		public void Clear()
