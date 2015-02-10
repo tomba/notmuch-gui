@@ -41,13 +41,18 @@ namespace NotMuchGUI
 			builder.Autoconnect(this);
 			Add((Box)builder.GetObject("MessageWidget"));
 
-			m_webView = new WebKit.WebView();
-			m_webView.Editable = false;
-			m_webView.Expand = true;
+			m_webView = new WebKit.WebView()
+			{
+				Editable = false,
+				Expand = true,
+			};
 
-			var settings = new WebKit.WebSettings();
-			settings.AutoLoadImages = true;
-			settings.EnableDeveloperExtras = true;
+			var settings = new WebKit.WebSettings()
+			{
+				AutoLoadImages = true,
+				EnableDeveloperExtras = true,
+				EnableScripts = false,
+			};
 			m_webView.Settings = settings;
 
 			scrolledwindowWeb.Add(m_webView);

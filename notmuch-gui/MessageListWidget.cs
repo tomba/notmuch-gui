@@ -35,7 +35,6 @@ namespace NotMuchGUI
 			m_messagesTreeview = new MyTreeView()
 			{
 				FixedHeightMode = true,
-				EnableTreeLines = true,
 			};
 
 			m_messagesTreeview.Selection.Mode = SelectionMode.Multiple;
