@@ -22,7 +22,7 @@ namespace NotMuchGUI
 		int m_maxMsgs;
 
 		readonly ScrolledWindow m_scrolledWindow;
-		readonly TreeView m_messagesTreeview;
+		readonly MyTreeView m_messagesTreeview;
 
 		public MessageListWidget()
 		{
@@ -431,7 +431,7 @@ namespace NotMuchGUI
 				}
 
 				if (m_selectMsgIDs.Length == 0)
-					ScrollToMostRecent(model);
+					m_parent.m_messagesTreeview.ScrollToMostRecent();
 				else
 					SelectOldMessages(model);
 
@@ -549,36 +549,6 @@ namespace NotMuchGUI
 				}
 			}
 
-			void ScrollToMostRecent(MessageTreeStore model)
-			{
-				int num = model.IterNChildren();
-
-				if (num == 0)
-					return;
-
-				TreeIter iter;
-
-				var b = model.IterNthChild(out iter, num - 1);
-				if (b == false)
-					throw new Exception();
-
-				while ((num = model.IterNChildren(iter)) != 0)
-				{
-					b = model.IterNthChild(out iter, iter, num - 1);
-					if (b == false)
-						throw new Exception();
-				}
-
-				var path = model.GetPath(iter);
-
-				m_parent.m_messagesTreeview.ExpandToPath(path);
-
-				m_parent.m_messagesTreeview.Selection.UnselectAll();
-				m_parent.m_messagesTreeview.Selection.SelectPath(path);
-
-				m_parent.m_messagesTreeview.ScrollToCell(path, null, false, 0, 0);
-			}
-
 			void SelectOldMessages(MessageTreeStore model)
 			{
 				m_parent.m_messagesTreeview.Selection.UnselectAll();
@@ -606,7 +576,7 @@ namespace NotMuchGUI
 
 				// if the new query didn't contain any of the old messages, scroll to end
 				if (l.Count == m_selectMsgIDs.Length)
-					ScrollToMostRecent(model);
+					m_parent.m_messagesTreeview.ScrollToMostRecent();
 			}
 
 			TreeIter AddMsg(MessageTreeStore model, NM.Message msg, int depth, int msgNum, ref TreeIter parent, int threadNum,

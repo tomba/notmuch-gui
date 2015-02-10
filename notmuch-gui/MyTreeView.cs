@@ -64,6 +64,38 @@ namespace NotMuchGUI
 
 			return base.OnKeyPressEvent(evnt);
 		}
+
+		public void ScrollToMostRecent()
+		{
+			var model = this.Model;
+
+			int num = model.IterNChildren();
+
+			if (num == 0)
+				return;
+
+			TreeIter iter;
+
+			var b = model.IterNthChild(out iter, num - 1);
+			if (b == false)
+				throw new Exception();
+
+			while ((num = model.IterNChildren(iter)) != 0)
+			{
+				b = model.IterNthChild(out iter, iter, num - 1);
+				if (b == false)
+					throw new Exception();
+			}
+
+			var path = model.GetPath(iter);
+
+			ExpandToPath(path);
+
+			Selection.UnselectAll();
+			Selection.SelectPath(path);
+
+			ScrollToCell(path, null, false, 0, 0);
+		}
 	}
 }
 
