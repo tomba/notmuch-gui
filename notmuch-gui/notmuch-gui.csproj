@@ -65,7 +65,6 @@
     <EmbeddedResource Include="UI\TagsWidget.ui" />
     <EmbeddedResource Include="UI\MessageWidget.ui" />
     <EmbeddedResource Include="UI\QueryWidget.ui" />
-    <EmbeddedResource Include="UI\MessageListWidget.ui" />
     <EmbeddedResource Include="UI\TermDialog.ui" />
     <EmbeddedResource Include="UI\ComposeWindow.ui" />
   </ItemGroup>
@@ -96,6 +95,7 @@
     <Compile Include="PasswordCache.cs" />
     <Compile Include="MyGPGContext.cs" />
     <Compile Include="MessageParser.cs" />
+    <Compile Include="MyTreeView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

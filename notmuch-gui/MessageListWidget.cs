@@ -1,10 +1,9 @@
 using System;
-using Gtk;
-using System.Diagnostics;
-using NM = NotMuch;
-using System.Linq;
 using System.Collections.Generic;
-using UI = Gtk.Builder.ObjectAttribute;
+using System.Diagnostics;
+using System.Linq;
+using Gtk;
+using NM = NotMuch;
 
 namespace NotMuchGUI
 {
@@ -22,37 +21,45 @@ namespace NotMuchGUI
 
 		int m_maxMsgs;
 
-		[UI] readonly TreeView messagesTreeview;
+		readonly ScrolledWindow m_scrolledWindow;
+		readonly TreeView m_messagesTreeview;
 
 		public MessageListWidget()
 		{
-			Builder builder = new Builder(null, "NotMuchGUI.UI.MessageListWidget.ui", null);
-			builder.Autoconnect(this);
-			Add((Box)builder.GetObject("MessageListWidget"));
-
 			if (MainClass.AppKeyFile.GetIntegerOrFalse("ui", "max-msgs", out m_maxMsgs) == false)
 				m_maxMsgs = 1000;
 
-			messagesTreeview.Selection.Mode = SelectionMode.Multiple;
-			messagesTreeview.ButtonPressEvent += OnMessagesTreeviewButtonPressEvent;
+			m_scrolledWindow = new ScrolledWindow();
+			this.Add(m_scrolledWindow);
+
+			m_messagesTreeview = new MyTreeView()
+			{
+				FixedHeightMode = true,
+				EnableTreeLines = true,
+			};
+
+			m_messagesTreeview.Selection.Mode = SelectionMode.Multiple;
+			m_messagesTreeview.ButtonPressEvent += OnMessagesTreeviewButtonPressEvent;
 
 			SetupMessagesTreeView();
 
-			messagesTreeview.Selection.Changed += (sender, e) =>
+			m_messagesTreeview.Selection.Changed += (sender, e) =>
 			{
 				if (this.MessageSelected != null)
 					this.MessageSelected(this, e);
 			};
+
+			m_scrolledWindow.Add(m_messagesTreeview);
 		}
 
 		public void MyFocus()
 		{
-			messagesTreeview.GrabFocus();
+			m_messagesTreeview.GrabFocus();
 		}
 
 		void SetupMessagesTreeView()
 		{
-			var tv = messagesTreeview;
+			var tv = m_messagesTreeview;
 
 			TreeViewColumn c;
 
@@ -205,7 +212,7 @@ namespace NotMuchGUI
 			{
 				var db = cdb.Database;
 
-				messagesTreeview.Model.Foreach((m, path, iter) =>
+				m_messagesTreeview.Model.Foreach((m, path, iter) =>
 				{
 					var model = (MessageTreeStore)m;
 					var id = model.GetMessageID(ref iter);
@@ -230,12 +237,12 @@ namespace NotMuchGUI
 			TreePath path;
 			TreeViewColumn column;
 
-			messagesTreeview.GetCursor(out path, out column);
+			m_messagesTreeview.GetCursor(out path, out column);
 
 			if (path == null)
 				return null;
 
-			var model = (MessageTreeStore)messagesTreeview.Model;
+			var model = (MessageTreeStore)m_messagesTreeview.Model;
 
 			TreeIter iter;
 
@@ -249,7 +256,7 @@ namespace NotMuchGUI
 		/// </summary>
 		public string GetSelectedMessageID()
 		{
-			TreeSelection selection = messagesTreeview.Selection;
+			TreeSelection selection = m_messagesTreeview.Selection;
 
 			var paths = selection.GetSelectedRows();
 
@@ -258,7 +265,7 @@ namespace NotMuchGUI
 
 			var path = paths[0];
 
-			var model = (MessageTreeStore)messagesTreeview.Model;
+			var model = (MessageTreeStore)m_messagesTreeview.Model;
 
 			TreeIter iter;
 
@@ -272,9 +279,9 @@ namespace NotMuchGUI
 		/// </summary>
 		public string[] GetSelectedMessageIDs()
 		{
-			TreeSelection selection = messagesTreeview.Selection;
+			TreeSelection selection = m_messagesTreeview.Selection;
 
-			var model = (MessageTreeStore)messagesTreeview.Model;
+			var model = (MessageTreeStore)m_messagesTreeview.Model;
 
 			var arr = selection.GetSelectedRows().Select(path =>
 			{
@@ -298,7 +305,7 @@ namespace NotMuchGUI
 
 			if (string.IsNullOrWhiteSpace(queryString))
 			{
-				messagesTreeview.Model = null;
+				m_messagesTreeview.Model = null;
 				return;
 			}
 
@@ -411,7 +418,7 @@ namespace NotMuchGUI
 				if (!m_threaded)
 				{
 					SearchMessages(query, model, out count);
-					m_parent.messagesTreeview.Model = model;
+					m_parent.m_messagesTreeview.Model = model;
 				}
 				else
 				{
@@ -419,8 +426,8 @@ namespace NotMuchGUI
 
 					SearchThreads(query, model, out count);
 
-					m_parent.messagesTreeview.Model = model;
-					m_parent.messagesTreeview.ExpandAll();
+					m_parent.m_messagesTreeview.Model = model;
+					m_parent.m_messagesTreeview.ExpandAll();
 				}
 
 				if (m_selectMsgIDs.Length == 0)
@@ -564,17 +571,17 @@ namespace NotMuchGUI
 
 				var path = model.GetPath(iter);
 
-				m_parent.messagesTreeview.ExpandToPath(path);
+				m_parent.m_messagesTreeview.ExpandToPath(path);
 
-				m_parent.messagesTreeview.Selection.UnselectAll();
-				m_parent.messagesTreeview.Selection.SelectPath(path);
+				m_parent.m_messagesTreeview.Selection.UnselectAll();
+				m_parent.m_messagesTreeview.Selection.SelectPath(path);
 
-				m_parent.messagesTreeview.ScrollToCell(path, null, false, 0, 0);
+				m_parent.m_messagesTreeview.ScrollToCell(path, null, false, 0, 0);
 			}
 
 			void SelectOldMessages(MessageTreeStore model)
 			{
-				m_parent.messagesTreeview.Selection.UnselectAll();
+				m_parent.m_messagesTreeview.Selection.UnselectAll();
 
 				var l = new List<string>(m_selectMsgIDs);
 
@@ -584,13 +591,13 @@ namespace NotMuchGUI
 					
 					if (l.Remove(id))
 					{
-						m_parent.messagesTreeview.ExpandToPath(path);
-						m_parent.messagesTreeview.Selection.SelectIter(iter);
+						m_parent.m_messagesTreeview.ExpandToPath(path);
+						m_parent.m_messagesTreeview.Selection.SelectIter(iter);
 					}
 
 					if (l.Count == 0)
 					{
-						m_parent.messagesTreeview.ScrollToCell(path, null, true, 0.5f, 0);
+						m_parent.m_messagesTreeview.ScrollToCell(path, null, true, 0.5f, 0);
 						return true;
 					}
 					
