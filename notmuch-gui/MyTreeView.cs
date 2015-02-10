@@ -7,6 +7,8 @@ namespace NotMuchGUI
 	{
 		protected override bool OnKeyPressEvent(Gdk.EventKey evnt)
 		{
+			bool shift = (evnt.State & Gdk.ModifierType.ShiftMask) != 0;
+
 			if (evnt.Key == Gdk.Key.Right)
 			{
 				TreePath path;
@@ -17,7 +19,7 @@ namespace NotMuchGUI
 				if (path == null)
 					return false;
 
-				ExpandRow(path, true);
+				ExpandRow(path, shift ? false : true);
 
 				return true;
 			}
@@ -31,7 +33,31 @@ namespace NotMuchGUI
 				if (path == null)
 					return false;
 
+				TreeIter iter;
+				this.Model.GetIter(out iter, path);
+
+				if (!shift)
+				{
+					TreeIter parent;
+
+					while (this.Model.IterParent(out parent, iter))
+						iter = parent;
+
+					path = this.Model.GetPath(iter);
+					SetCursor(path, null, false);
+				}
+				else if (!GetRowExpanded(path) || !this.Model.IterHasChild(iter))
+				{
+					if (this.Model.IterParent(out iter, iter))
+					{
+						path = this.Model.GetPath(iter);
+						SetCursor(path, null, false);
+					}
+				}
+
 				CollapseRow(path);
+
+				ScrollToCell(path, null, false, 0, 0);
 
 				return true;
 			}
