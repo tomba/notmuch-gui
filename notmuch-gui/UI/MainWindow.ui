@@ -81,6 +81,11 @@
         <property name="label" translatable="yes">Delete</property>
       </object>
     </child>
+    <child>
+      <object class="GtkAction" id="quitAction">
+        <property name="label" translatable="yes">Quit</property>
+      </object>
+    </child>
   </object>
   <object class="GtkWindow" id="MainWindow">
     <property name="can_focus">False</property>
@@ -107,9 +112,45 @@
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkMenuItem" id="menuitem2">
+                        <property name="use_action_appearance">True</property>
+                        <property name="related_action">quitAction</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Quit</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem3">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Debug</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem4">
+                        <property name="use_action_appearance">True</property>
+                        <property name="related_action">GCAction</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">GC</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckMenuItem" id="menuitem5">
+                        <property name="use_action_appearance">True</property>
+                        <property name="related_action">htmlSrcAction</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">HTML Source</property>
                         <property name="use_underline">True</property>
                       </object>
                     </child>
@@ -129,19 +170,6 @@
             <property name="can_focus">False</property>
             <property name="toolbar_style">text</property>
             <property name="show_arrow">False</property>
-            <child>
-              <object class="GtkToolButton" id="toolbutton3">
-                <property name="use_action_appearance">True</property>
-                <property name="related_action">GCAction</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_underline">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkToolButton" id="toolbutton4">
                 <property name="use_action_appearance">True</property>
@@ -185,19 +213,6 @@
               <object class="GtkToolButton" id="toolbutton7">
                 <property name="use_action_appearance">True</property>
                 <property name="related_action">msgSourceAction</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_underline">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToggleToolButton" id="toolbutton8">
-                <property name="use_action_appearance">True</property>
-                <property name="related_action">htmlSrcAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_underline">True</property>
@@ -289,6 +304,7 @@
                 <property name="show_arrow">False</property>
                 <child>
                   <object class="GtkToolButton" id="toolbuttonBack">
+                    <property name="use_action_appearance">True</property>
                     <property name="related_action">goBackAction</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -301,6 +317,7 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="toolbuttonForward">
+                    <property name="use_action_appearance">True</property>
                     <property name="related_action">goForwardAction</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>

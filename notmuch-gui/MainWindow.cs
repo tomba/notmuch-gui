@@ -20,6 +20,7 @@ public class MainWindow: Window
 	[UI] Gtk.Action goForwardAction;
 	[UI] ToggleAction threadedAction;
 
+	[UI] Gtk.Action quitAction;
 	[UI] Gtk.Action GCAction;
 	[UI] Gtk.Action newAction;
 	[UI] Gtk.Action replyAction;
@@ -65,6 +66,7 @@ public class MainWindow: Window
 		deleteAction.Activated += OnDeleteActionActivated;
 		refreshAction.Activated += OnRefreshActionActivated;
 		toggleReadAction.Activated += OnToggleReadActionActivated;
+		quitAction.Activated += (sender, e) => Application.Quit();
 
 		querywidget = new QueryWidget();
 		hpaned1.Pack1(querywidget, true, true);
