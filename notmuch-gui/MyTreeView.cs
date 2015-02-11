@@ -5,64 +5,63 @@ namespace NotMuchGUI
 {
 	class MyTreeView : TreeView
 	{
-		protected override bool OnKeyPressEvent(Gdk.EventKey evnt)
+		protected override bool OnExpandCollapseCursorRow(bool logical, bool expand, bool open_all)
 		{
-			bool shift = (evnt.State & Gdk.ModifierType.ShiftMask) != 0;
-
-			if (evnt.Key == Gdk.Key.Right)
+			if (!expand)
 			{
-				TreePath path;
-				TreeViewColumn column;
-
-				GetCursor(out path, out column);
-
-				if (path == null)
-					return false;
-
-				ExpandRow(path, shift ? false : true);
-
-				return true;
-			}
-			else if (evnt.Key == Gdk.Key.Left)
-			{
-				TreePath path;
-				TreeViewColumn column;
-
-				GetCursor(out path, out column);
-
-				if (path == null)
-					return false;
-
-				TreeIter iter;
-				this.Model.GetIter(out iter, path);
-
-				if (!shift)
+				if (open_all)
 				{
-					TreeIter parent;
-
-					while (this.Model.IterParent(out parent, iter))
-						iter = parent;
-
-					path = this.Model.GetPath(iter);
-					SetCursor(path, null, false);
+					/* collapse whole branch */
+					MoveCursorToBranchRoot();
 				}
-				else if (!GetRowExpanded(path) || !this.Model.IterHasChild(iter))
+				else
 				{
-					if (this.Model.IterParent(out iter, iter))
+					TreePath path;
+					TreeViewColumn col;
+					this.GetCursor(out path, out col);
+
+					TreeIter iter;
+					this.Model.GetIter(out iter, path);
+
+					/* if the row is already collapsed, move to parent */
+					if (!GetRowExpanded(path) || !this.Model.IterHasChild(iter))
 					{
-						path = this.Model.GetPath(iter);
-						SetCursor(path, null, false);
+						if (this.Model.IterParent(out iter, iter))
+						{
+							path = this.Model.GetPath(iter);
+							SetCursor(path, null, false);
+						}
 					}
 				}
-
-				CollapseRow(path);
-
-				ScrollToCell(path, null, false, 0, 0);
-
-				return true;
 			}
 
-			return base.OnKeyPressEvent(evnt);
+			bool b = base.OnExpandCollapseCursorRow(logical, expand, open_all);
+
+			/* gtk doesn't seem to scroll to the cursor when collapsing, so we need to do that here */
+			ScrollToCursor();
+
+			return b;
+		}
+
+		public void MoveCursorToBranchRoot()
+		{
+			TreePath path;
+			TreeViewColumn col;
+
+			this.GetCursor(out path, out col);
+
+			path = new TreePath(new [] { path.Indices[0] });
+
+			SetCursor(path, null, false);
+		}
+
+		public void ScrollToCursor()
+		{
+			TreePath path;
+			TreeViewColumn col;
+			this.GetCursor(out path, out col);
+
+			ScrollToCell(path, col, false, 0, 0);
 		}
 
 		public void ScrollToMostRecent()

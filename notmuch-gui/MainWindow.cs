@@ -47,6 +47,8 @@ public class MainWindow: Window
 	{
 		builder.Autoconnect(this);
 
+		LoadAccelMap();
+
 		this.Icon = Gdk.Pixbuf.LoadFromResource("NotMuchGUI.mail.png");
 
 		this.DeleteEvent += OnDeleteEvent;
@@ -123,6 +125,16 @@ public class MainWindow: Window
 		};
 
 		messageListWidget.MyFocus();
+	}
+
+	void LoadAccelMap()
+	{
+		var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MainWindow.accel");
+
+		if (System.IO.File.Exists(path) == false)
+			return;
+
+		Gtk.AccelMap.Load(path);
 	}
 
 	protected override bool OnKeyPressEvent(Gdk.EventKey evnt)

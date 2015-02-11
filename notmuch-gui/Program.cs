@@ -22,6 +22,8 @@ namespace NotMuchGUI
 		{
 			Application.Init();
 
+			LoadCustomTheme();
+
 			s_mainThread = System.Threading.Thread.CurrentThread;
 
 			try
@@ -53,6 +55,19 @@ namespace NotMuchGUI
 			MainClass.MainWindow.ShowAll();
 			
 			Application.Run();
+		}
+
+		static void LoadCustomTheme()
+		{
+			var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "notmuch-gui.css");
+
+			if (System.IO.File.Exists(path) == false)
+				return;
+
+			var prov = new CssProvider();
+			prov.LoadFromPath(path);
+
+			StyleContext.AddProviderForScreen(Gdk.Screen.Default, prov, 600);
 		}
 
 		public static void VerifyThread()

@@ -2,7 +2,9 @@
 <!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
+  <object class="GtkAccelGroup" id="accelgroup1"/>
   <object class="GtkActionGroup" id="actiongroup1">
+    <property name="accel_group">accelgroup1</property>
     <child>
       <object class="GtkToggleAction" id="threadedAction">
         <property name="label" translatable="yes">Threaded</property>
@@ -38,6 +40,7 @@
       <object class="GtkToggleAction" id="htmlSrcAction">
         <property name="label" translatable="yes">HTML Source</property>
       </object>
+      <accelerator key="F2"/>
     </child>
     <child>
       <object class="GtkAction" id="fetchAction">
@@ -92,6 +95,9 @@
     <property name="title" translatable="yes">MainWindow</property>
     <property name="default_width">1200</property>
     <property name="default_height">800</property>
+    <accel-groups>
+      <group name="accelgroup1"/>
+    </accel-groups>
     <child>
       <object class="GtkBox" id="vbox2">
         <property name="can_focus">False</property>

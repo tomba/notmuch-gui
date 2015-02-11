@@ -1,0 +1,6 @@
+; notmuch-gui GtkAccelMap rc-file         -*- scheme -*-
+; this file is an automated accelerator map dump
+;
+;(gtk_accel_path "<Actions>/actiongroup1/GCAction" "")
+(gtk_accel_path "<Actions>/actiongroup1/htmlSrcAction" "F4")
+;(gtk_accel_path "<Actions>/actiongroup1/quitAction" "")
