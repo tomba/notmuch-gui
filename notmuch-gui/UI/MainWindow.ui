@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.16.1 -->
+<!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
   <object class="GtkActionGroup" id="actiongroup1">
@@ -35,8 +35,8 @@
       </object>
     </child>
     <child>
-      <object class="GtkToggleAction" id="msgSrcAction">
-        <property name="label" translatable="yes">Msg Source</property>
+      <object class="GtkToggleAction" id="htmlSrcAction">
+        <property name="label" translatable="yes">HTML Source</property>
       </object>
     </child>
     <child>
@@ -72,8 +72,8 @@
       </object>
     </child>
     <child>
-      <object class="GtkToggleAction" id="dbgAction">
-        <property name="label" translatable="yes">Dbg</property>
+      <object class="GtkToggleAction" id="msgSourceAction">
+        <property name="label" translatable="yes">Msg Source</property>
       </object>
     </child>
     <child>
@@ -131,6 +131,7 @@
             <property name="show_arrow">False</property>
             <child>
               <object class="GtkToolButton" id="toolbutton3">
+                <property name="use_action_appearance">True</property>
                 <property name="related_action">GCAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -183,7 +184,7 @@
             <child>
               <object class="GtkToolButton" id="toolbutton7">
                 <property name="use_action_appearance">True</property>
-                <property name="related_action">dbgAction</property>
+                <property name="related_action">msgSourceAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_underline">True</property>
@@ -195,7 +196,8 @@
             </child>
             <child>
               <object class="GtkToggleToolButton" id="toolbutton8">
-                <property name="related_action">msgSrcAction</property>
+                <property name="use_action_appearance">True</property>
+                <property name="related_action">htmlSrcAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_underline">True</property>

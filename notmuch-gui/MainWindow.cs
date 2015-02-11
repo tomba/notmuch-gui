@@ -10,7 +10,6 @@ using UI = Gtk.Builder.ObjectAttribute;
 
 public class MainWindow: Window
 {
-	DebugWindow m_dbgWnd;
 	List<string> m_allTags = new List<string>();
 
 	[UI] Label label1;
@@ -25,8 +24,8 @@ public class MainWindow: Window
 	[UI] Gtk.Action newAction;
 	[UI] Gtk.Action replyAction;
 	[UI] Gtk.Action replyAllAction;
-	[UI] ToggleAction dbgAction;
-	[UI] ToggleAction msgSrcAction;
+	[UI] ToggleAction msgSourceAction;
+	[UI] ToggleAction htmlSrcAction;
 	[UI] Gtk.Action fetchAction;
 	[UI] Gtk.Action processAction;
 	[UI] Gtk.Action deleteAction;
@@ -59,8 +58,8 @@ public class MainWindow: Window
 		newAction.Activated += OnNewActionActivated;
 		replyAction.Activated += OnReplyActionActivated;
 		replyAllAction.Activated += OnReplyAllActionActivated;
-		dbgAction.Activated += OnDbgActionActivated;
-		msgSrcAction.Activated += OnMsgSrcActionActivated;
+		msgSourceAction.Activated += OnMsgSrcActionActivated;
+		htmlSrcAction.Activated += OnHtmlSrcActionActivated;
 		fetchAction.Activated += OnFetchActionActivated;
 		processAction.Activated += OnProcessActionActivated;
 		deleteAction.Activated += OnDeleteActionActivated;
@@ -209,15 +208,6 @@ public class MainWindow: Window
 				messagewidget.ShowError(string.Format(
 					"Failed to parse message from '{0}':\n{1}", filename, exc.Message));
 				return;
-			}
-
-			if (m_dbgWnd != null)
-			{
-				m_dbgWnd.SetSrc(File.ReadAllText(filename));
-
-				var sb = new System.Text.StringBuilder();
-				MimeKitHelpers.DumpMessage(mkmsg, sb);
-				m_dbgWnd.SetDump(sb.ToString());
 			}
 
 			#if MBOX_PARSE_HACK
@@ -373,24 +363,20 @@ public class MainWindow: Window
 		ExecuteQuery(m_currentItem.Value, true);
 	}
 
-	void OnDbgActionActivated(object sender, EventArgs e)
-	{
-		if (m_dbgWnd != null)
-		{
-			m_dbgWnd.Destroy();
-			m_dbgWnd = null;
-		}
-
-		if (dbgAction.Active)
-		{
-			m_dbgWnd = DebugWindow.Create();
-			m_dbgWnd.ShowAll();
-		}
-	}
-
 	void OnMsgSrcActionActivated(object sender, EventArgs e)
 	{
-		messagewidget.ShowHtmlSource = msgSrcAction.Active;
+		var id = messageListWidget.GetCurrentMessageID();
+		if (id == null)
+			return;
+
+		var wnd = MessageSourceWindow.Create();
+		wnd.ShowMessage(id);
+		wnd.ShowAll();
+	}
+
+	void OnHtmlSrcActionActivated(object sender, EventArgs e)
+	{
+		messagewidget.ShowHtmlSource = htmlSrcAction.Active;
 	}
 
 	void OnFetchActionActivated(object sender, EventArgs e)
