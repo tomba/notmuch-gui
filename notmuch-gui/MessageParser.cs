@@ -108,21 +108,21 @@ namespace NotMuchGUI
 
 							ParseMessage(decrypted, ctx);
 						}
-						catch (OperationCanceledException)
+						catch (OperationCanceledException e)
 						{
-							ctx.AddLine("Canceled");
+							ctx.AddLine(String.Format("Canceled: {0}<br>", e.Message));
 						}
-						catch (UnauthorizedAccessException)
+						catch (UnauthorizedAccessException e)
 						{
-							ctx.AddLine("Unauthorized");
+							ctx.AddLine(String.Format("Unauthorized: {0}<br>", e.Message));
 						}
-						catch (PrivateKeyNotFoundException)
+						catch (PrivateKeyNotFoundException e)
 						{
-							ctx.AddLine("Private key not found");
+							ctx.AddLine(String.Format("Private key not found: {0}<br>", e.KeyId));
 						}
 						catch (Exception e)
 						{
-							ctx.AddLine(String.Format("Error: {0}", e.Message));
+							ctx.AddLine(String.Format("Error: {0}<br>", e.Message));
 						}
 
 						ctx.AddLine("</div>");  /* encrypted-part */
