@@ -34,13 +34,17 @@ namespace NotMuch
 			}
 		}
 
-		public FileNames GetFileNames()
+		public IEnumerable<string> GetFileNames()
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
 
-			IntPtr filenames = notmuch_message_get_filenames(m_handle);
+			IntPtr hFileNames = notmuch_message_get_filenames(m_handle);
 
-			return new FileNames(filenames);
+			while (FileNames.Valid(hFileNames))
+			{
+				yield return FileNames.Get(hFileNames);
+				FileNames.MoveToNext(hFileNames);
+			}
 		}
 
 		public Tags GetTags()

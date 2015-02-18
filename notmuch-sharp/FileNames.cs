@@ -1,40 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 
 namespace NotMuch
 {
-	public struct FileNames : IEnumerable<string>
+	static class FileNames
 	{
-		IntPtr m_handle;
-
-		internal FileNames(IntPtr handle)
+		public static bool Valid(IntPtr filenames)
 		{
-			m_handle = handle;
+			return notmuch_filenames_valid(filenames);
 		}
 
-		#region IEnumerable implementation
-
-		public IEnumerator<string> GetEnumerator()
+		public static void MoveToNext(IntPtr filenames)
 		{
-			if (m_handle == IntPtr.Zero)
-				yield break;
-
-			while (notmuch_filenames_valid(m_handle))
-			{
-				IntPtr ptr = notmuch_filenames_get(m_handle);
-				yield return Marshal.PtrToStringAnsi(ptr);
-				notmuch_filenames_move_to_next(m_handle);
-			}
+			notmuch_filenames_move_to_next(filenames);
 		}
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		public static string Get(IntPtr filenames)
 		{
-			return GetEnumerator();
+			return Marshal.PtrToStringAnsi(notmuch_filenames_get(filenames));
 		}
-
-		#endregion
 
 		[DllImport("libnotmuch")]
 		static extern void notmuch_filenames_destroy(IntPtr filenames);
