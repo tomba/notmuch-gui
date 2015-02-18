@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace NotMuch
 {
@@ -44,13 +45,17 @@ namespace NotMuch
 			return new Messages(msgsP);
 		}
 
-		public Threads SearchThreads()
+		public IEnumerable<Thread> SearchThreads()
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
 
-			IntPtr msgsP = notmuch_query_search_threads(m_handle);
+			IntPtr hThreads = notmuch_query_search_threads(m_handle);
 
-			return new Threads(msgsP);
+			while (Threads.Valid(hThreads))
+			{
+				yield return Threads.Get(hThreads);
+				Threads.MoveToNext(hThreads);
+			}
 		}
 
 		public SortOrder Sort

@@ -5,35 +5,22 @@ using System.Diagnostics;
 
 namespace NotMuch
 {
-	public struct Threads : IEnumerable<Thread>
+	class Threads
 	{
-		IntPtr m_handle;
-
-		internal Threads(IntPtr handle)
+		public static bool Valid(IntPtr threads)
 		{
-			m_handle = handle;
+			return notmuch_threads_valid(threads);
 		}
 
-		#region IEnumerable implementation
-
-		public IEnumerator<Thread> GetEnumerator()
+		public static void MoveToNext(IntPtr threads)
 		{
-			if (m_handle == IntPtr.Zero)
-				yield break;
-
-			while (notmuch_threads_valid(m_handle))
-			{
-				yield return new Thread(notmuch_threads_get(m_handle));
-				notmuch_threads_move_to_next(m_handle);
-			}
+			notmuch_threads_move_to_next(threads);
 		}
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		public static Thread Get(IntPtr threads)
 		{
-			return GetEnumerator();
+			return new Thread(notmuch_threads_get(threads));
 		}
-
-		#endregion
 
 		[DllImport("libnotmuch")]
 		static extern void notmuch_threads_destroy(IntPtr threads);
