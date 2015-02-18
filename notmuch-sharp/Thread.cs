@@ -40,13 +40,17 @@ namespace NotMuch
 		 *
 		 * The returned list will be destroyed when the thread is destroyed.
 		 */
-		public Messages GetToplevelMessages()
+		public IEnumerable<Message> GetToplevelMessages()
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
 
-			IntPtr msgsP = notmuch_thread_get_toplevel_messages(m_handle);
+			IntPtr hMessages = notmuch_thread_get_toplevel_messages(m_handle);
 
-			return new Messages(msgsP);
+			while (Messages.Valid(hMessages))
+			{
+				yield return Messages.Get(hMessages);
+				Messages.MoveToNext(hMessages);
+			}
 		}
 
 		/**
@@ -55,13 +59,17 @@ namespace NotMuch
 		 *
 		 * The returned list will be destroyed when the thread is destroyed.
 		 */
-		public Messages GetMessages()
+		public IEnumerable<Message> GetMessages()
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
 
-			IntPtr msgsP = notmuch_thread_get_messages(m_handle);
+			IntPtr hMessages = notmuch_thread_get_messages(m_handle);
 
-			return new Messages(msgsP);
+			while (Messages.Valid(hMessages))
+			{
+				yield return Messages.Get(hMessages);
+				Messages.MoveToNext(hMessages);
+			}
 		}
 
 		public string Authors

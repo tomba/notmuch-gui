@@ -36,13 +36,17 @@ namespace NotMuch
 			return (int)notmuch_query_count_threads(m_handle);
 		}
 
-		public Messages SearchMessages()
+		public IEnumerable<Message> SearchMessages()
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
 
-			IntPtr msgsP = notmuch_query_search_messages(m_handle);
+			IntPtr hMessages = notmuch_query_search_messages(m_handle);
 
-			return new Messages(msgsP);
+			while (Messages.Valid(hMessages))
+			{
+				yield return Messages.Get(hMessages);
+				Messages.MoveToNext(hMessages);
+			}
 		}
 
 		public IEnumerable<Thread> SearchThreads()

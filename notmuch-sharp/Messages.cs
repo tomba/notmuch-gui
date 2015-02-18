@@ -5,35 +5,22 @@ using System.Diagnostics;
 
 namespace NotMuch
 {
-	public struct Messages : IEnumerable<Message>
+	static class Messages
 	{
-		IntPtr m_handle;
-
-		internal Messages(IntPtr handle)
+		public static bool Valid(IntPtr messages)
 		{
-			m_handle = handle;
+			return notmuch_messages_valid(messages);
 		}
 
-		#region IEnumerable implementation
-
-		public IEnumerator<Message> GetEnumerator()
+		public static void MoveToNext(IntPtr messages)
 		{
-			if (m_handle == IntPtr.Zero)
-				yield break;
-
-			while (notmuch_messages_valid(m_handle))
-			{
-				yield return new Message(notmuch_messages_get(m_handle));
-				notmuch_messages_move_to_next(m_handle);
-			}
+			notmuch_messages_move_to_next(messages);
 		}
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		public static Message Get(IntPtr messages)
 		{
-			return GetEnumerator();
+			return new Message(notmuch_messages_get(messages));
 		}
-
-		#endregion
 
 		[DllImport("libnotmuch")]
 		static extern bool notmuch_messages_destroy(IntPtr messages);

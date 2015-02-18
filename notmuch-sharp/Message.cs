@@ -154,13 +154,17 @@ namespace NotMuch
 			}
 		}
 
-		public Messages GetReplies()
+		public IEnumerable<Message> GetReplies()
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
 
-			IntPtr msgsP = notmuch_message_get_replies(m_handle);
+			IntPtr hMessages = notmuch_message_get_replies(m_handle);
 
-			return new Messages(msgsP);
+			while (Messages.Valid(hMessages))
+			{
+				yield return Messages.Get(hMessages);
+				Messages.MoveToNext(hMessages);
+			}
 		}
 
 		public bool GetFlag(MessageFlag flag)
