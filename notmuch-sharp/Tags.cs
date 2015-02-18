@@ -1,40 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 
 namespace NotMuch
 {
-	public struct Tags : IEnumerable<string>
+	static class Tags
 	{
-		IntPtr m_handle;
-
-		internal Tags(IntPtr handle)
+		public static bool Valid(IntPtr tags)
 		{
-			m_handle = handle;
+			return notmuch_tags_valid(tags);
 		}
 
-		#region IEnumerable implementation
-
-		public IEnumerator<string> GetEnumerator()
+		public static void MoveToNext(IntPtr tags)
 		{
-			if (m_handle == IntPtr.Zero)
-				yield break;
-
-			while (notmuch_tags_valid(m_handle))
-			{
-				IntPtr ptr = notmuch_tags_get(m_handle);
-				yield return Marshal.PtrToStringAnsi(ptr);
-				notmuch_tags_move_to_next(m_handle);
-			}
+			notmuch_tags_move_to_next(tags);
 		}
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		public static string Get(IntPtr tags)
 		{
-			return GetEnumerator();
+			return Marshal.PtrToStringAnsi(notmuch_tags_get(tags));
 		}
-
-		#endregion
 
 		[DllImport("libnotmuch")]
 		static extern void notmuch_tags_destroy(IntPtr tags);

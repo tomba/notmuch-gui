@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace NotMuch
 {
@@ -98,13 +99,19 @@ namespace NotMuch
 			}
 		}
 
-		public Tags GetTags()
+		public IEnumerable<string> GetTags()
 		{
 			Debug.Assert(m_handle != IntPtr.Zero);
 
-			IntPtr tags = notmuch_thread_get_tags(m_handle);
+			IntPtr hTags = notmuch_thread_get_tags(m_handle);
 
-			return new Tags(tags);
+			while (Tags.Valid(hTags))
+			{
+				var str = Tags.Get(hTags);
+				str = string.Intern(str);
+				yield return str;
+				Tags.MoveToNext(hTags);
+			}
 		}
 
 		[DllImport("libnotmuch")]
