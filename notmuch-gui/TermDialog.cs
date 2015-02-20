@@ -1,7 +1,8 @@
 using System;
-using System.Diagnostics;
+using GLib;
 using Gtk;
 using UI = Gtk.Builder.ObjectAttribute;
+using System.Collections.Generic;
 
 namespace NotMuchGUI
 {
@@ -17,6 +18,12 @@ namespace NotMuchGUI
 		[UI] readonly Button cancelButton;
 		[UI] readonly TextView textview;
 
+		IOChannel m_channelOut;
+		IOChannel m_channelErr;
+
+		System.Text.Encoding m_outEncoding;
+		System.Text.Encoding m_errEncoding;
+
 		Process m_process;
 
 		TermDialog(Builder builder, IntPtr handle)
@@ -25,97 +32,143 @@ namespace NotMuchGUI
 			builder.Autoconnect(this);
 
 			cancelButton.Clicked += OnButtonCancelClicked;
+
+			var font = Pango.FontDescription.FromString("monospace");
+			textview.OverrideFont(font);
 		}
 
 		void Append(string txt)
 		{
 			TextIter iter;
-
 			iter = textview.Buffer.EndIter;
 			textview.Buffer.Insert(ref iter, txt);
 
-			iter = textview.Buffer.EndIter;
-			textview.Buffer.PlaceCursor(iter);
-			var mark = textview.Buffer.GetMark("insert");
-			textview.ScrollMarkOnscreen(mark);
+			GLib.Idle.Add(() =>
+			{
+				textview.ScrollToIter(textview.Buffer.EndIter, 0, false, 0, 0);
+				return false;
+			});
 		}
 
 		public void Start(string cmd, params string[] args)
 		{
-			this.Title = string.Format("Running...");
+			this.Title = string.Format("Running {0}...", cmd);
 
-			Append(string.Format("Running {0} {1}\n", cmd, string.Join(" ", args)));
-
-			var psi = new ProcessStartInfo(cmd, string.Join(" ", args))
-			{
-				CreateNoWindow = true,
-				UseShellExecute = false,
-				RedirectStandardError = true,
-				RedirectStandardOutput = true,
-			};
-
-			var p = new Process();
-			p.StartInfo = psi;
-			p.ErrorDataReceived += (sender, e) =>
-			{
-				//Console.WriteLine("ERR {0}", e.Data);
-
-				if (string.IsNullOrEmpty(e.Data))
-					return;
-
-				Application.Invoke((s, o) => Append(e.Data + "\n"));
-			};
-			p.OutputDataReceived += (sender, e) =>
-			{
-				//Console.WriteLine("OUT '{0}'", e.Data);
-
-				if (string.IsNullOrEmpty(e.Data))
-					return;
-
-				Application.Invoke((s, o) => Append(e.Data + "\n"));
-			};
-
-			p.Exited += (sender, e) =>
-			{
-				//Console.WriteLine("EXIT");
-
-				Application.Invoke((s, o) =>
-				{
-					this.Title = "Finished";
-
-					Append("<Process ended>\n");
-
-					cancelButton.Label = "Close";
-					cancelButton.GrabFocus();
-
-					m_process = null;
-				});
-			};
-
-			m_process = p;
+			Append(string.Format("<running {0} {1}>\n", cmd, string.Join(" ", args)));
 
 			try
 			{
-				p.Start();
+				var argv = new List<string>();
+				argv.Add(cmd);
+				argv.AddRange(args);
 
-				p.BeginOutputReadLine();
-				p.BeginErrorReadLine();
-				p.EnableRaisingEvents = true;
+				StartInternal(argv.ToArray());
 			}
 			catch (Exception e)
 			{
 				Append(String.Format("<Process start failed: {0}>\n", e.Message));
-				m_process = null;
 			}
 		}
 
-		protected void OnButtonCancelClicked(object sender, EventArgs e)
+		void StartInternal(string[] argv)
+		{
+			int stdin = Process.IgnorePipe;
+			int stdout = Process.RequestPipe;
+			int stderr = Process.RequestPipe;
+
+			bool b = GLib.Process.SpawnAsyncWithPipes(null, argv, null,
+				         SpawnFlags.SearchPath | SpawnFlags.DoNotReapChild, null,
+				         out m_process,
+				         ref stdin, ref stdout, ref stderr);
+
+			if (b == false)
+				throw new Exception("Failed to spawn process");
+
+			GLibHelpers.Watch(m_process, OnProcessExited);
+
+			m_channelOut = new IOChannel(stdout);
+			m_channelOut.Flags |= IOFlags.Nonblock;
+			m_outEncoding = System.Text.Encoding.GetEncoding(m_channelOut.Encoding);
+			m_channelOut.AddWatch(0, IOCondition.In | IOCondition.Hup, OnReadStdout);
+
+			m_channelErr = new IOChannel(stderr);
+			m_channelErr.Flags |= IOFlags.Nonblock;
+			m_errEncoding = System.Text.Encoding.GetEncoding(m_channelErr.Encoding);
+			m_channelErr.AddWatch(0, IOCondition.In | IOCondition.Hup, OnReadStderr);
+		}
+
+		void OnProcessExited(int pid, int status, object data)
+		{
+			m_process.Close();
+			m_process = null;
+
+			// Run an iteration so that the stdout and stderr will get handled first
+			Gtk.Application.RunIteration();
+
+			this.Title = "Finished";
+
+			Append(String.Format("<Process ended: {0}>\n", status));
+
+			cancelButton.Label = "Close";
+			cancelButton.GrabFocus();
+
+		}
+
+		static byte[] g_inBuf = new byte[4096];
+
+		bool OnReadStdout(IOChannel source, IOCondition condition)
+		{
+			if ((condition & IOCondition.In) == IOCondition.In)
+			{
+				ulong len;
+
+				while (source.ReadChars(g_inBuf, out len) == IOStatus.Normal)
+				{
+					var txt = m_outEncoding.GetString(g_inBuf, 0, (int)len);
+					Append(txt);
+				}
+			}
+
+			if ((condition & IOCondition.Hup) == IOCondition.Hup)
+			{
+				Append("<stdout closed>\n");
+				source.Dispose();
+				return false;
+			}
+
+			return true;
+		}
+
+		bool OnReadStderr(IOChannel source, IOCondition condition)
+		{
+			if ((condition & IOCondition.In) == IOCondition.In)
+			{
+				ulong len;
+
+				while (source.ReadChars(g_inBuf, out len) == IOStatus.Normal)
+				{
+					var txt = m_errEncoding.GetString(g_inBuf, 0, (int)len);
+					Append(txt);
+				}
+			}
+
+			if ((condition & IOCondition.Hup) == IOCondition.Hup)
+			{
+				Append("<stderr closed>\n");
+				source.Dispose();
+				return false;
+			}
+
+			return true;
+		}
+
+		void OnButtonCancelClicked(object sender, EventArgs e)
 		{
 			if (m_process != null)
 			{
-				this.Title = "Aborted";
+				this.Title = "Aborting...";
 				Append("<Abort>\r\n");
-				m_process.Kill();
+				Mono.Unix.Native.Syscall.kill(m_process.Pid(), Mono.Unix.Native.Signum.SIGKILL);
 			}
 			else
 			{

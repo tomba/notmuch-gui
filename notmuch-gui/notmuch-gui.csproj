@@ -96,6 +96,7 @@
     <Compile Include="MessageParser.cs" />
     <Compile Include="MyTreeView.cs" />
     <Compile Include="MessageSourceWindow.cs" />
+    <Compile Include="GLibHelpers.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
