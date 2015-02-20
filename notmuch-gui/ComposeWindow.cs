@@ -256,7 +256,6 @@ namespace NotMuchGUI
 				m_message.WriteTo(stream);
 
 			var dlg = TermDialog.Create();
-			dlg.ParentWindow = this.RootWindow;
 			dlg.Start(exe, tmpFile);
 			var resp = (ResponseType)dlg.Run();
 
