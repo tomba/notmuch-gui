@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -156,22 +155,21 @@ namespace NotMuchGUI
 
 			int lineNum = FindFirstBlankLine(tmpFile) + 1;
 
-			const string editorCmd = "gvim";
-			const string editorArgs = "-f '+set filetype=mail' '+set fileencoding=utf-8' '+set ff=unix' '+set enc=utf-8' +{1} {0} --socketid {2}";
+			var args = new []
+			{
+				"gvim",
+				"--socketid", m_gtkSocket.Id.ToString(),
+				"-f",
+				"+set filetype=mail",
+				"+set fileencoding=utf-8",
+				"+set ff=unix",
+				"+set enc=utf-8",
+				String.Format("+{0}", lineNum),
+				tmpFile,
+			};
 
-			var process = new Process();
-
-			var si = process.StartInfo;
-			si.FileName = editorCmd;
-			si.Arguments = String.Format(editorArgs, tmpFile, lineNum, m_gtkSocket.Id);
-			si.UseShellExecute = false;
-			si.CreateNoWindow = true;
-
-			process.EnableRaisingEvents = true;
-
-			bool b = process.Start();
-			if (!b)
-				throw new Exception("Failed to edit start edit process");
+			GLib.Process process;
+			GLib.Process.SpawnAsync(null, args, null, GLib.SpawnFlags.SearchPath, null, out process);
 		}
 
 		void ReadEditedMail(string tmpFile)
