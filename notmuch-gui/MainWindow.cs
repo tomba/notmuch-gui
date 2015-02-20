@@ -382,6 +382,7 @@ public class MainWindow: Window
 			return;
 
 		var wnd = MessageSourceWindow.Create();
+		wnd.TransientFor = this;
 		wnd.ShowMessage(id);
 		wnd.ShowAll();
 	}
@@ -398,6 +399,7 @@ public class MainWindow: Window
 			throw new Exception();
 
 		var dlg = TermDialog.Create();
+		dlg.TransientFor = this;
 		dlg.Start(exe);
 		var resp = (ResponseType)dlg.Run();
 

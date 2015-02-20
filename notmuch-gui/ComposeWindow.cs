@@ -256,6 +256,7 @@ namespace NotMuchGUI
 				m_message.WriteTo(stream);
 
 			var dlg = TermDialog.Create();
+			dlg.TransientFor = this;
 			dlg.Start(exe, tmpFile);
 			var resp = (ResponseType)dlg.Run();
 
