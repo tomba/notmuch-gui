@@ -3,6 +3,7 @@ using GLib;
 using Gtk;
 using UI = Gtk.Builder.ObjectAttribute;
 using System.Collections.Generic;
+using Mono.Unix.Native;
 
 namespace NotMuchGUI
 {
@@ -42,7 +43,6 @@ namespace NotMuchGUI
 			TextIter iter;
 			iter = textview.Buffer.EndIter;
 			textview.Buffer.Insert(ref iter, txt);
-
 			GLib.Idle.Add(() =>
 			{
 				textview.ScrollToIter(textview.Buffer.EndIter, 0, false, 0, 0);
@@ -107,7 +107,26 @@ namespace NotMuchGUI
 
 			this.Title = "Finished";
 
-			Append(String.Format("<Process ended: {0}>\n", status));
+			if (Syscall.WIFEXITED(status))
+			{
+				status = Syscall.WEXITSTATUS(status);
+
+				Append(String.Format("<Process ended with status: {0}>\n", status));
+			}
+			else if (Syscall.WIFSIGNALED(status))
+			{
+				var sig = Syscall.WTERMSIG(status);
+				Append(String.Format("<Process killed by signal: {0}>\n", sig));
+			}
+			else if (Syscall.WIFSTOPPED(status))
+			{
+				var sig = Syscall.WSTOPSIG(status);
+				Append(String.Format("<Process stopped by signal: {0}>\n", sig));
+			}
+			else
+			{
+				Append("<Process exited abnormally>\n");
+			}
 
 			cancelButton.Label = "Close";
 			cancelButton.GrabFocus();
@@ -167,7 +186,7 @@ namespace NotMuchGUI
 			{
 				this.Title = "Aborting...";
 				Append("<Abort>\r\n");
-				Mono.Unix.Native.Syscall.kill(m_process.Pid(), Mono.Unix.Native.Signum.SIGKILL);
+				Syscall.kill(m_process.Pid(), Signum.SIGKILL);
 			}
 			else
 			{
