@@ -28,7 +28,6 @@ public class MainWindow: Window
 	[UI] ToggleAction msgSourceAction;
 	[UI] ToggleAction htmlSrcAction;
 	[UI] Gtk.Action fetchAction;
-	[UI] Gtk.Action processAction;
 	[UI] Gtk.Action deleteAction;
 	[UI] Gtk.Action refreshAction;
 	[UI] ToggleAction toggleReadAction;
@@ -64,7 +63,6 @@ public class MainWindow: Window
 		msgSourceAction.Activated += OnMsgSrcActionActivated;
 		htmlSrcAction.Activated += OnHtmlSrcActionActivated;
 		fetchAction.Activated += OnFetchActionActivated;
-		processAction.Activated += OnProcessActionActivated;
 		deleteAction.Activated += OnDeleteActionActivated;
 		refreshAction.Activated += OnRefreshActionActivated;
 		toggleReadAction.Activated += OnToggleReadActionActivated;
@@ -406,19 +404,6 @@ public class MainWindow: Window
 		Console.WriteLine("got resp {0}", resp);
 
 		dlg.Destroy();
-	}
-
-	void OnProcessActionActivated(object sender, EventArgs e)
-	{
-		var dlg = TermDialog.Create();
-		dlg.Start(MainClass.NotmuchExe, "new");
-		var resp = (ResponseType)dlg.Run();
-
-		Console.WriteLine("got resp {0}", resp);
-
-		dlg.Destroy();
-
-		ExecuteQuery(m_currentItem.Value, true);
 	}
 
 	void OnToggleReadActionActivated(object sender, EventArgs e)

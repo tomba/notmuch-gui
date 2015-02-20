@@ -111,7 +111,6 @@ namespace NotMuchGUI
 
 			cancelButton.Label = "Close";
 			cancelButton.GrabFocus();
-
 		}
 
 		static byte[] g_inBuf = new byte[4096];

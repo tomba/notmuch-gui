@@ -65,11 +65,6 @@
       </object>
     </child>
     <child>
-      <object class="GtkAction" id="processAction">
-        <property name="label" translatable="yes">Process</property>
-      </object>
-    </child>
-    <child>
       <object class="GtkToggleAction" id="toggleReadAction">
         <property name="label" translatable="yes">Toggle Read</property>
       </object>
@@ -242,9 +237,9 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="toolbutton10">
+              <object class="GtkToolButton" id="toolbutton12">
                 <property name="use_action_appearance">True</property>
-                <property name="related_action">processAction</property>
+                <property name="related_action">refreshAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_underline">True</property>
@@ -258,19 +253,6 @@
               <object class="GtkToolButton" id="deleteToolbutton">
                 <property name="use_action_appearance">True</property>
                 <property name="related_action">deleteAction</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_underline">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="toolbutton12">
-                <property name="use_action_appearance">True</property>
-                <property name="related_action">refreshAction</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_underline">True</property>
