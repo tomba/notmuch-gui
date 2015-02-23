@@ -50,6 +50,11 @@ namespace NotMuchGUI
 			};
 
 			m_scrolledWindow.Add(m_messagesTreeview);
+
+			this.Destroyed += (sender, e) =>
+			{
+				Cancel();
+			};
 		}
 
 		public void MyFocus()

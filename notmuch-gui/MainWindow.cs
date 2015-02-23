@@ -50,7 +50,10 @@ public class MainWindow: Window
 
 		this.Icon = Gdk.Pixbuf.LoadFromResource("NotMuchGUI.mail.png");
 
-		this.DeleteEvent += OnDeleteEvent;
+		this.Destroyed += (sender, e) =>
+		{
+			Application.Quit();
+		};
 
 		goBackAction.Activated += OnGoBackActionActivated;
 		goForwardAction.Activated += OnGoForwardActionActivated;
@@ -155,15 +158,6 @@ public class MainWindow: Window
 		default:
 			return false;
 		}
-	}
-
-	void OnDeleteEvent(object sender, DeleteEventArgs a)
-	{
-		querywidget.CancelUpdate();
-		messageListWidget.Cancel();
-
-		Application.Quit();
-		a.RetVal = true;
 	}
 
 	void OnQuerySelected(string query)

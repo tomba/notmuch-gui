@@ -24,6 +24,10 @@ namespace NotMuchGUI
 
 			SetupQueryList();
 
+			this.Destroyed += (sender, e) =>
+			{
+				CancelUpdate();
+			};
 
 			using (var cdb = new CachedDB())
 			{
