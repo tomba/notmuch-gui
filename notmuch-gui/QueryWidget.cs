@@ -16,11 +16,11 @@ namespace NotMuchGUI
 
 		public QueryWidget()
 		{
-			Builder builder = new Gtk.Builder (null, "NotMuchGUI.UI.QueryWidget.ui", null);
-			builder.Autoconnect (this);
-			Add ((Box) builder.GetObject ("QueryWidget"));
+			Builder builder = new Gtk.Builder(null, "NotMuchGUI.UI.QueryWidget.ui", null);
+			builder.Autoconnect(this);
+			Add((Box)builder.GetObject("QueryWidget"));
 
-			queryTreeview.CursorChanged += OnQueryTreeviewCursorChanged;
+			queryTreeview.Selection.Changed += OnQueryTreeviewSelectionChanged;
 
 			SetupQueryList();
 
@@ -58,11 +58,11 @@ namespace NotMuchGUI
 			m_queryCountUpdater.Start(queries);
 
 			GLib.Idle.Add(() =>
-				{
-					// select first items
-					queryTreeview.SetCursor(TreePath.NewFirst(), null, false);
-					return false;
-				});
+			{
+				// select first items
+				queryTreeview.SetCursor(TreePath.NewFirst(), null, false);
+				return false;
+			});
 		}
 
 		public void CancelUpdate()
@@ -115,10 +115,10 @@ namespace NotMuchGUI
 
 			m_queryStore = queryStore;
 		}
-			
-		void OnQueryTreeviewCursorChanged(object sender, EventArgs e)
+
+		void OnQueryTreeviewSelectionChanged(object sender, EventArgs e)
 		{
-			TreeSelection selection = (sender as TreeView).Selection;
+			TreeSelection selection = (TreeSelection)sender;
 			ITreeModel model;
 			TreeIter iter;
 
@@ -132,4 +132,3 @@ namespace NotMuchGUI
 		}
 	}
 }
-
