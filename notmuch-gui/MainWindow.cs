@@ -382,7 +382,6 @@ public class MainWindow: Window
 			return;
 
 		var wnd = MessageSourceWindow.Create();
-		wnd.TransientFor = this;
 		wnd.ShowMessage(id);
 		wnd.ShowAll();
 	}
