@@ -29,20 +29,8 @@ namespace NotMuchGUI
 				CancelUpdate();
 			};
 
-			using (var cdb = new CachedDB())
-			{
-				var db = cdb.Database;
-
-				foreach (var tag in db.GetAllTags())
-				{
-					var queryStr = String.Format("tag:{0}", tag);
-
-					if (m_queryStore.Contains(i => (string)m_queryStore.GetValue(i, 0) == queryStr))
-						continue;
-
-					m_queryStore.AppendValues(String.Format("tag:{0}", tag), -1, -1);
-				}
-			}
+			AddUserQueries();
+			AddTagQueries();
 
 			m_queryCountUpdater = new QueryCountUpdater();
 
@@ -101,19 +89,40 @@ namespace NotMuchGUI
 
 			queryTreeview.Model = queryStore;
 
-			var uiTags = MainClass.AppKeyFile.GetStringListOrNull("ui", "queries");
-			if (uiTags != null)
+			m_queryStore = queryStore;
+		}
+
+		void AddUserQueries()
+		{
+			var queries = MainClass.AppKeyFile.GetStringListOrNull("ui", "queries");
+			if (queries != null)
 			{
-				foreach (var tag in uiTags)
+				foreach (var query in queries)
 				{
-					if (queryStore.Contains(i => (string)queryStore.GetValue(i, 0) == tag))
+					if (m_queryStore.Contains(i => (string)m_queryStore.GetValue(i, 0) == query))
 						continue;
 
-					queryStore.AppendValues(tag, 0, 0);
+					m_queryStore.AppendValues(query, -1, -1);
 				}
 			}
+		}
 
-			m_queryStore = queryStore;
+		void AddTagQueries()
+		{
+			using (var cdb = new CachedDB())
+			{
+				var db = cdb.Database;
+
+				foreach (var tag in db.GetAllTags())
+				{
+					var queryStr = String.Format("tag:{0}", tag);
+
+					if (m_queryStore.Contains(i => (string)m_queryStore.GetValue(i, 0) == queryStr))
+						continue;
+
+					m_queryStore.AppendValues(String.Format("tag:{0}", tag), -1, -1);
+				}
+			}
 		}
 
 		void OnQueryTreeviewSelectionChanged(object sender, EventArgs e)
